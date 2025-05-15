@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Transit Map Maker</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<section id="map">
+  <div id="canvas-wrapper">
+    <canvas id="canvas"></canvas>
+  </div>
+
+  <div>
+  <section id="legend">
+    <h2>Legend</h2>
+  </section>
+
+  <div id="zoom-controls">
+    <button id="zoomOut">-</button>
+    <button id="zoomIn">+</button>
+  </div>
+
+</section>
+
+<section id="controls">
+  <div>
+      <h1>Transit Map Maker</h1>
+      <p><a href="https://bencebarens.nl/">Made by Bence</a></p>
+  </div>
+
+  <details>
+    <summary>Lines</summary>
+    <ul>
+      <li>
+      </li>
+    </ul>
+  </details>
+  <details>
+    <summary>Stations</summary>
+    <ul>
+      <li>
+        <label class="switch-wrapper"><span class="switch-label">Add station</span>
+        <label class="switch"><input type="checkbox" id="toggleAddStation"><span class="slider"></span></label>
+        </label>
+      </li>
+    </ul>
+  </details>
+  <details>
+    <summary>Legend</summary>
+    <ul>
+      <li>
+        <label class="switch-wrapper"><span class="switch-label">Show legend</span>
+        <label class="switch"><input type="checkbox" id="toggleShowLegend" checked><span class="slider"></span></label>
+        </label>
+      </li>
+    </ul>
+  </details>
+  <details>
+    <summary>Export</summary>
+    <ul>
+      <li><p>Export function under construction.</p>
+      </li>
+    </ul>
+  </details>
+
+</section>
+
+
+<script src="script.js"></script>
+</body>
+</html>
