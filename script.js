@@ -6,7 +6,8 @@ const c = canvas.getContext("2d");
 
 const stations = [
   { x: 3, y: 8, name: "Station A", type: 1 },
-  { x: 14, y: 10, name: "Station B", type: 1 },
+  { x: 4, y: 8, name: "Station B", type: 1 },
+  { x: 14, y: 10, name: "Station C", type: 1 },
 ];
 
 
@@ -72,15 +73,15 @@ function drawStations() {
 
     c.fillStyle = "#232322";
     
-    c.rect(x - cellSize / 4, y - cellSize / 4, cellSize / 2, cellSize / 2);
+    c.rect(x + cellSize / 4, y + cellSize / 4, cellSize / 2, cellSize / 2);
     c.fill();
     
     c.save(); // Sla huidige staat op
     c.translate(x, y); // Verplaats het coördinatenstelsel naar (x, y)
     c.rotate(-45 * Math.PI / 180); // Roteer 45 graden (in radialen)
-    c.font = "1.2rem Inter";
+    c.font = "1rem Inter, sans-serif";
     // c.textBaseline = "middle";
-    c.fillText(station.name, 10, -10); // Teken tekst op nieuwe oorsprong
+    c.fillText(station.name, 15, 15); // Teken tekst op nieuwe oorsprong
     c.restore(); // Herstel oorspronkelijke staat
 
     console.log("DRAW: Station ingetekend");
@@ -141,31 +142,34 @@ toggleShowLegend.addEventListener('change', function() {
   console.log("CONTROLS: legenda status: " + document.querySelector("#legend").style.display);
 });
 
+//Edit stations
+function updateStationList() {
+  const controlsStations = document.querySelector("#controls-stations");
+  controlsStations.innerHTML = "";
 
-
-//Legenda invullen -----------------------------------------------------------------
-
-function updateLegend() {
-  const legend = document.querySelector("#legend");
-  const legendList = legend.querySelector("ul");
-
-  legendList.innerHTML = "";
-
-  stations.forEach(station => {
+  stations.forEach((station, index) => {
     const li = document.createElement("li");
-    li.textContent = station.name;
-    legendList.appendChild(li);
-  });
 
-  console.log("Legenda geupdatet");
+    const icon = document.createElement("span");
+    icon.className = "material-symbols-outlined";
+    icon.textContent = "edit";
+    icon.style.marginRight = ".5rem";
+    
+    li.style.display = "flex";
+    li.style.alignItems = "center";
+    li.style.marginBottom = ".5rem";
+
+    li.appendChild(icon);
+    li.append(station.name + " (" + station.x + ", " + station.y + ")");
+
+    controlsStations.appendChild(li);
+  });
 }
+
 
 //Waarschuwing bij herladen --------------------------------------------------------
 
 draw();
-function updateStationList(){
-  updateLegend();
-}
 updateStationList();
 
 // window.addEventListener("beforeunload", function (e) {
