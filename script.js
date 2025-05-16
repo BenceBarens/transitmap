@@ -1,9 +1,12 @@
+
+console.log("TRANSIT MAP MAKER - Made by Bence");
+
 const canvas = document.querySelector("#canvas");
 const c = canvas.getContext("2d");
 
 const stations = [
-  { x: 5, y: 3 },
-  { x: 10, y: 7 }
+  { x: 3, y: 8, name: "Station A", type: 1 },
+  { x: 14, y: 10, name: "Station B", type: 1 },
 ];
 
 
@@ -14,10 +17,13 @@ const gridRows = 50;
 function resizeCanvas() {
   canvas.width = gridCols * cellSize;
   canvas.height = gridRows * cellSize;
+  console.log("DRAW: Canvas grootte ingesteld (" + cellSize + "px)");
 }
 
+//Drawing functies -------------------------------------------------------------
+
 function drawGrid() {
-  //ECHTE GRID
+  //ECHTE GRID \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
   //De grid waarop coordinaten worden weergegeven
   c.clearRect(0, 0, canvas.width, canvas.height);
   c.strokeStyle = "rgba(255, 0, 0, 0.16)";
@@ -36,7 +42,8 @@ function drawGrid() {
   }
 
   c.stroke();
-  //GEBRUIKER GRID
+
+  //GEBRUIKER GRID \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
   //De grid die de gebruiker ziet
   c.strokeStyle = "rgba(35, 35, 34, 0.2)";
   c.beginPath();
@@ -54,12 +61,40 @@ function drawGrid() {
   }
 
   c.stroke();
+
+  console.log("DRAW: Grid ingetekend (" + gridCols + " x " + gridRows + " cellen)");
+}
+
+function drawStations() {
+  stations.forEach(station => {
+    const x = station.x * cellSize;
+    const y = station.y * cellSize;
+
+    c.fillStyle = "#232322";
+    
+    c.rect(x - cellSize / 4, y - cellSize / 4, cellSize / 2, cellSize / 2);
+    c.fill();
+    
+    c.save(); // Sla huidige staat op
+    c.translate(x, y); // Verplaats het coördinatenstelsel naar (x, y)
+    c.rotate(-45 * Math.PI / 180); // Roteer 45 graden (in radialen)
+    c.font = "1.2rem Inter";
+    // c.textBaseline = "middle";
+    c.fillText(station.name, 10, -10); // Teken tekst op nieuwe oorsprong
+    c.restore(); // Herstel oorspronkelijke staat
+
+    console.log("DRAW: Station ingetekend");
+  });
 }
 
 function draw() {
+  console.log(" ");
+  console.log("DRAW START ----------------------------------");
   resizeCanvas();
   drawGrid();
   drawStations();
+  console.log("DRAW IS UITGEVOERD --------------------------");
+  console.log(" ");
 }
 
 //In- en uitzoomen ----------------------------------------------------------------
@@ -69,6 +104,7 @@ function zoomIn() {
     cellSize += 5;
     draw();
   }
+  console.log("CONTROLS: zoom in, niveau " + cellSize);
 }
 
 function zoomOut() {
@@ -76,6 +112,7 @@ function zoomOut() {
     cellSize -= 5;
     draw();
   }
+  console.log("CONTROLS: zoom out, niveau " + cellSize);
 }
 
 document.getElementById("zoomIn").addEventListener("click", zoomIn);
@@ -88,23 +125,9 @@ const toggleAddStation = document.querySelector('#toggleAddStation');
 
 canvas.addEventListener('click', function() {
   if (toggleAddStation.checked) {
-    console.log("er was een station");
+    console.log("Station toevoegen...");
   }
 });
-
-function drawStations() {
-
-  stations.forEach(station => {
-    const x = station.x * cellSize;
-    const y = station.y * cellSize;
-
-    c.fillStyle = "red";
-    c.beginPath();
-    c.arc(x + cellSize / 2, y + cellSize / 2, cellSize / 4, 0, Math.PI * 2);
-    c.fill();
-  });
-}
-
 
 //Toggle legenda
 const toggleShowLegend = document.querySelector('#toggleShowLegend');
@@ -115,11 +138,35 @@ toggleShowLegend.addEventListener('change', function() {
   } else {
     document.querySelector("#legend").style.display = "none";
   }
+  console.log("CONTROLS: legenda status: " + document.querySelector("#legend").style.display);
 });
 
-draw();
+
+
+//Legenda invullen -----------------------------------------------------------------
+
+function updateLegend() {
+  const legend = document.querySelector("#legend");
+  const legendList = legend.querySelector("ul");
+
+  legendList.innerHTML = "";
+
+  stations.forEach(station => {
+    const li = document.createElement("li");
+    li.textContent = station.name;
+    legendList.appendChild(li);
+  });
+
+  console.log("Legenda geupdatet");
+}
 
 //Waarschuwing bij herladen --------------------------------------------------------
+
+draw();
+function updateStationList(){
+  updateLegend();
+}
+updateStationList();
 
 // window.addEventListener("beforeunload", function (e) {
 //   e.preventDefault(); // sommige browsers vereisen dit

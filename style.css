@@ -155,6 +155,11 @@ canvas {
   margin-bottom: 1.5rem;
 }
 
+#legend ul{
+  list-style: none;
+  padding: 0;
+}
+
 #zoom-controls{
   position: absolute;
   display: flex;
