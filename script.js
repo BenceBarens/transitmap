@@ -1,13 +1,13 @@
 
-console.log("TRANSIT MAP MAKER - Made by Bence");
+console.log("TRANSIT MAP MAKER - MADE BY BENCE");
 
 const canvas = document.querySelector("#canvas");
 const c = canvas.getContext("2d");
 
 const stations = [
-  { x: 3, y: 4, name: "Station A", type: 1 },
-  { x: 4, y: 4, name: "Station B", type: 1 },
-  { x: 14, y: 7, name: "Station C", type: 1 },
+  { x: 3, y: 4, name: "Station 1", type: 1 },
+  { x: 4, y: 4, name: "Station 2", type: 1 },
+  { x: 14, y: 7, name: "Station 3", type: 1 },
 ];
 
 
@@ -26,23 +26,23 @@ function resizeCanvas() {
 function drawGrid() {
   //ECHTE GRID \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
   //De grid waarop coordinaten worden weergegeven
-  c.clearRect(0, 0, canvas.width, canvas.height);
-  c.strokeStyle = "rgba(255, 0, 0, 0.16)";
-  c.beginPath();
+  // c.clearRect(0, 0, canvas.width, canvas.height);
+  // c.strokeStyle = "rgba(255, 0, 0, 0.16)";
+  // c.beginPath();
 
-  for (let x = 0; x <= gridCols; x++) {
-    const pos = x * cellSize;
-    c.moveTo(pos, 0);
-    c.lineTo(pos, canvas.height);
-  }
+  // for (let x = 0; x <= gridCols; x++) {
+  //   const pos = x * cellSize;
+  //   c.moveTo(pos, 0);
+  //   c.lineTo(pos, canvas.height);
+  // }
 
-  for (let y = 0; y <= gridRows; y++) {
-    const pos = y * cellSize;
-    c.moveTo(0, pos);
-    c.lineTo(canvas.width, pos);
-  }
+  // for (let y = 0; y <= gridRows; y++) {
+  //   const pos = y * cellSize;
+  //   c.moveTo(0, pos);
+  //   c.lineTo(canvas.width, pos);
+  // }
 
-  c.stroke();
+  // c.stroke();
 
   //GEBRUIKER GRID \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
   //De grid die de gebruiker ziet
@@ -121,16 +121,36 @@ document.getElementById("zoomOut").addEventListener("click", zoomOut);
 
 // Controls ------------------------------------------------------------------------
 
-//Add station
+//Add station \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
 const toggleAddStation = document.querySelector('#toggleAddStation');
 
-canvas.addEventListener('click', function() {
+canvas.addEventListener("click", function (event) {
   if (toggleAddStation.checked) {
-    console.log("Station toevoegen...");
+    const rect = canvas.getBoundingClientRect();
+    const x = event.clientX - rect.left;
+    const y = event.clientY - rect.top;
+
+    // Coördinaten omzetten naar grid
+    const col = Math.floor(x / cellSize);
+    const row = Math.floor(y / cellSize);
+
+    // Station aanmaken en toevoegen
+    const station = {
+      id: Date.now(),
+      name: `Station ${stations.length + 1}`,
+      x: col,
+      y: row,
+      lines: [],
+    };
+    stations.push(station);
+    console.log("CONTROLS: station toegevoegd (" + station.name + ")");
+    draw();
+    updateStationList();
   }
 });
 
-//Toggle legenda
+
+//Toggle legenda \\\\\\\\\\\\\\\\\\\\\\\\\\\\\
 const toggleShowLegend = document.querySelector('#toggleShowLegend');
 
 toggleShowLegend.addEventListener('change', function() {
@@ -142,7 +162,7 @@ toggleShowLegend.addEventListener('change', function() {
   console.log("CONTROLS: legenda status: " + document.querySelector("#legend").style.display);
 });
 
-//Edit stations
+//Edit stations \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
 function updateStationList() {
   const controlsStations = document.querySelector("#controls-stations");
   controlsStations.innerHTML = "";
@@ -158,6 +178,7 @@ function updateStationList() {
     li.style.display = "flex";
     li.style.alignItems = "center";
     li.style.marginBottom = ".5rem";
+    li.style.cursor = "pointer";
 
     li.appendChild(icon);
     li.append(station.name + " (" + station.x + ", " + station.y + ")");

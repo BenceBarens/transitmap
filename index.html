@@ -14,7 +14,6 @@
     <canvas id="canvas"></canvas>
   </div>
 
-  <div>
   <section id="legend">
     <h2>Legend</h2>
     <ul>
@@ -46,9 +45,8 @@
     <ul id="controls-stations"></ul>
     <ul>
       <li>
-        <label class="switch-wrapper"><span class="switch-label">Add new station</span>
-        <label class="switch"><input type="checkbox" id="toggleAddStation"><span class="slider"></span></label>
-        </label>
+        <label class="toggle-wrapper"><span class="switch-label">Add new station</span>
+        <input type="checkbox" id="toggleAddStation"><span class="slider"></span></label>
       </li>
     </ul>
   </details>
@@ -56,9 +54,9 @@
     <summary>Legend</summary>
     <ul>
       <li>
-        <label class="switch-wrapper"><span class="switch-label">Show legend</span>
+        <div class="switch-wrapper"><span class="switch-label">Show legend</span>
         <label class="switch"><input type="checkbox" id="toggleShowLegend" checked><span class="slider"></span></label>
-        </label>
+        </div>
       </li>
     </ul>
   </details>
