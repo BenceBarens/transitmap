@@ -235,20 +235,48 @@ canvas {
   body {
     flex-direction: column;
     overflow: hidden;
+    height: 100vh;
   }
 
-  #map {
-    height: 60vh;
-    width: 100vw;
+  #controls{
+    width: 95%;
+    margin: auto;
+    height: 40%;
   }
 
-  #controls {
-    height: 40vh;
-    width: 100vw;
-    padding-right: 1rem;
+  #map{
+    width: 95%;
+    height: 60%;
+    margin: auto;
+  }
+
+  #controls > div{
+    position: absolute;
+    top: .5rem;
+    text-align: left;
+    color: #232322;
+    line-height: 1rem;
+  }
+
+  #zoom-controls{
+    position: absolute;
+    top: 0;
+    right: 0;
+    left: auto;
+    margin: 1rem;
+  }
+
+  #controls > div h1{
+    font-size: 1.7rem;
+    
+  }
+
+  #controls > div a{
+    color: #232322;
+    font-size: 1rem;
   }
 
   #legend{
-    bottom: calc(40vh + 1rem);
+    display: none;
   }
 }
