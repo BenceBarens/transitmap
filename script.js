@@ -5,9 +5,9 @@ const canvas = document.querySelector("#canvas");
 const c = canvas.getContext("2d");
 
 const stations = [
-  { x: 3, y: 8, name: "Station A", type: 1 },
-  { x: 4, y: 8, name: "Station B", type: 1 },
-  { x: 14, y: 10, name: "Station C", type: 1 },
+  { x: 3, y: 4, name: "Station A", type: 1 },
+  { x: 4, y: 4, name: "Station B", type: 1 },
+  { x: 14, y: 7, name: "Station C", type: 1 },
 ];
 
 
@@ -15,7 +15,7 @@ let cellSize = 50;
 const gridCols = 60;
 const gridRows = 50;
 
-function resizeCanvas() {
+function resizeCanvas() { 
   canvas.width = gridCols * cellSize;
   canvas.height = gridRows * cellSize;
   console.log("DRAW: Canvas grootte ingesteld (" + cellSize + "px)");

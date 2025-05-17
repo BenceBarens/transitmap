@@ -242,6 +242,7 @@ canvas {
     width: 95%;
     margin: auto;
     height: 40%;
+    padding-bottom: 2rem;
   }
 
   #map{
@@ -255,20 +256,26 @@ canvas {
     top: .5rem;
     text-align: left;
     color: #232322;
-    line-height: 1rem;
   }
 
   #zoom-controls{
     position: absolute;
     top: 0;
-    right: 0;
+    right: .5rem;
     left: auto;
     margin: 1rem;
+    gap: .5rem;
+  }
+
+  #zoom-controls button{
+    width: 2.5rem;
+    height: 2.5rem;
+    font-size: 1rem;
   }
 
   #controls > div h1{
     font-size: 1.7rem;
-    
+    margin-bottom: -.8rem;    
   }
 
   #controls > div a{
@@ -277,6 +284,11 @@ canvas {
   }
 
   #legend{
-    display: none;
+    bottom: calc(40% + 1.5rem);
+    padding: .5rem;
+  }
+
+  #legend h2{
+    font-size: 1.2rem;
   }
 }
