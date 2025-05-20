@@ -10,6 +10,17 @@ const stations = [
   { x: 14, y: 7, name: "Station 3", type: 1 },
 ];
 
+const lines = [
+  {
+    name: "Lijn A",
+    color: "#E91E63",
+    stations: [
+      { x: 3, y: 4 },
+      { x: 4, y: 4 },
+      { x: 14, y: 7 },
+    ]
+  }
+];
 
 let cellSize = 50;
 const gridCols = 60;
@@ -66,33 +77,52 @@ function drawGrid() {
   console.log("DRAW: Grid ingetekend (" + gridCols + " x " + gridRows + " cellen)");
 }
 
+function drawLines() {
+  lines.forEach(line => {
+    c.strokeStyle = line.color;
+    c.lineWidth = 10;
+    c.beginPath();
+
+    line.stations.forEach((station, index) => {
+      const x = station.x * cellSize + cellSize / 2;
+      const y = station.y * cellSize + cellSize / 2;
+
+      c.lineTo(x, y);
+    });
+
+    c.stroke();
+    console.log("DRAW: Lijn ingetekend");
+  });
+}
+
 function drawStations() {
   stations.forEach(station => {
     const x = station.x * cellSize;
     const y = station.y * cellSize;
-
+    c.beginPath();
     c.fillStyle = "#232322";
     
     c.rect(x + cellSize / 4, y + cellSize / 4, cellSize / 2, cellSize / 2);
     c.fill();
     
-    c.save(); // Sla huidige staat op
-    c.translate(x, y); // Verplaats het coördinatenstelsel naar (x, y)
-    c.rotate(-45 * Math.PI / 180); // Roteer 45 graden (in radialen)
+    c.save();
+    c.translate(x, y);
+    c.rotate(-45 * Math.PI / 180);
     c.font = "1rem Inter, sans-serif";
-    // c.textBaseline = "middle";
-    c.fillText(station.name, 15, 15); // Teken tekst op nieuwe oorsprong
-    c.restore(); // Herstel oorspronkelijke staat
+    c.fillText(station.name, 15, 15);
+    c.restore();
 
     console.log("DRAW: Station ingetekend");
   });
 }
+
 
 function draw() {
   console.log(" ");
   console.log("DRAW START ----------------------------------");
   resizeCanvas();
   drawGrid();
+  drawLines();
   drawStations();
   console.log("DRAW IS UITGEVOERD --------------------------");
   console.log(" ");
@@ -145,7 +175,7 @@ canvas.addEventListener("click", function (event) {
     stations.push(station);
     console.log("CONTROLS: station toegevoegd (" + station.name + ")");
     draw();
-    updateStationList();
+    renderStationList();
   }
 });
 
@@ -163,38 +193,86 @@ toggleShowLegend.addEventListener('change', function() {
 });
 
 //Edit stations \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
-function updateStationList() {
-  const controlsStations = document.querySelector("#controls-stations");
-  controlsStations.innerHTML = "";
+
+
+
+
+
+
+
+
+
+
+let selectedStationIndex = null;
+
+function renderStationList() {
+  const stationList = document.getElementById('station-list');
+  stationList.innerHTML = '';
 
   stations.forEach((station, index) => {
-    const li = document.createElement("li");
-
-    const icon = document.createElement("span");
-    icon.className = "material-symbols-outlined";
-    icon.textContent = "edit";
-    icon.style.marginRight = ".5rem";
-    
-    li.style.display = "flex";
-    li.style.alignItems = "center";
-    li.style.marginBottom = ".5rem";
-    li.style.cursor = "pointer";
-
-    li.appendChild(icon);
-    li.append(station.name + " (" + station.x + ", " + station.y + ")");
-
-    controlsStations.appendChild(li);
+    const stationItem = document.createElement('div');
+    stationItem.className = 'station-item';
+    stationItem.innerHTML = `
+      <span>${station.name}</span>
+      <button onclick="editStation(${index})">✏️</button>
+    `;
+    stationList.appendChild(stationItem);
+    draw();
   });
 }
+
+function editStation(index) {
+  selectedStationIndex = index;
+  const station = stations[index];
+
+  document.getElementById('station-name-input').value = station.name;
+  document.getElementById('station-type-input').value = station.type || 'regular';
+  document.getElementById('station-popup').classList.remove('hidden');
+  draw();
+}
+
+function saveStationEdits() {
+  if (selectedStationIndex !== null) {
+    stations[selectedStationIndex].name = document.getElementById('station-name-input').value;
+    stations[selectedStationIndex].type = document.getElementById('station-type-input').value;
+    renderStationList();
+    draw();
+    closePopup();
+  }
+}
+
+function deleteStation() {
+  if (selectedStationIndex !== null) {
+    stations.splice(selectedStationIndex, 1);
+    renderStationList();
+    draw();
+    closePopup();
+  }
+}
+
+function closePopup() {
+  document.getElementById('station-popup').classList.add('hidden');
+  selectedStationIndex = null;
+}
+
+
+
+
+
+
+
+
+
+
 
 
 //Waarschuwing bij herladen --------------------------------------------------------
 
 draw();
-updateStationList();
+renderStationList();
 
 // window.addEventListener("beforeunload", function (e) {
-//   e.preventDefault(); // sommige browsers vereisen dit
-//   e.returnValue = ""; // verplicht voor de melding
+//   e.preventDefault();
+//   e.returnValue = "";
 // });
 

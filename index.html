@@ -42,7 +42,35 @@
   </details>
   <details>
     <summary>Stations</summary>
-    <ul id="controls-stations"></ul>
+
+
+
+
+
+    <div class="controls">
+      <div id="station-list"></div>
+    </div>
+
+    <!-- Popup voor station bewerken -->
+    <div id="station-popup" class="popup hidden">
+      <label>
+        Naam:
+        <input type="text" id="station-name-input">
+      </label>
+      <label>
+        Type:
+        <select id="station-type-input">
+          <option value="regular">Normaal</option>
+          <option value="interchange">Knooppunt</option>
+        </select>
+      </label>
+      <button onclick="saveStationEdits()">Opslaan</button>
+      <button onclick="deleteStation()">Verwijderen</button>
+      <button onclick="closePopup()">Annuleer</button>
+    </div>
+
+
+
     <ul>
       <li>
         <label class="toggle-wrapper"><span class="switch-label">Add new station</span>
