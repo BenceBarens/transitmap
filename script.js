@@ -100,11 +100,24 @@ function drawStations() {
     const x = station.x * cellSize;
     const y = station.y * cellSize;
     c.beginPath();
-    c.fillStyle = "#232322";
     
+    if(station.type === 1) {
+    c.fillStyle = "#232322";
     c.rect(x + cellSize / 4, y + cellSize / 4, cellSize / 2, cellSize / 2);
     c.fill();
-    
+    }
+
+    if(station.type === 2) {
+    c.strokeStyle = "#232322";
+    c.rect(x + cellSize / 4, y + cellSize / 4, cellSize / 2, cellSize / 2);
+    c.strokeWidth = 2;
+    c.stroke();
+    c.fillStyle = "#F7F4ED";
+    c.fill();
+    }
+
+    c.beginPath();
+    c.fillStyle = "#232322";
     c.save();
     c.translate(x, y);
     c.rotate(-45 * Math.PI / 180);
@@ -118,14 +131,10 @@ function drawStations() {
 
 
 function draw() {
-  console.log(" ");
-  console.log("DRAW START ----------------------------------");
   resizeCanvas();
   drawGrid();
   drawLines();
   drawStations();
-  console.log("DRAW IS UITGEVOERD --------------------------");
-  console.log(" ");
 }
 
 //In- en uitzoomen ----------------------------------------------------------------
@@ -171,6 +180,7 @@ canvas.addEventListener("click", function (event) {
       x: col,
       y: row,
       lines: [],
+      type: 1,
     };
     stations.push(station);
     console.log("CONTROLS: station toegevoegd (" + station.name + ")");
@@ -194,15 +204,6 @@ toggleShowLegend.addEventListener('change', function() {
 
 //Edit stations \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
 
-
-
-
-
-
-
-
-
-
 let selectedStationIndex = null;
 
 function renderStationList() {
@@ -210,12 +211,10 @@ function renderStationList() {
   stationList.innerHTML = '';
 
   stations.forEach((station, index) => {
-    const stationItem = document.createElement('div');
+    const stationItem = document.createElement('li');
     stationItem.className = 'station-item';
-    stationItem.innerHTML = `
-      <span>${station.name}</span>
-      <button onclick="editStation(${index})">✏️</button>
-    `;
+    
+    stationItem.innerHTML = `<button onclick="editStation(${index})">✏️ ${station.name} (${station.x}, ${station.y})</button>`;
     stationList.appendChild(stationItem);
     draw();
   });
@@ -225,21 +224,22 @@ function editStation(index) {
   selectedStationIndex = index;
   const station = stations[index];
 
-  document.getElementById('station-name-input').value = station.name;
-  document.getElementById('station-type-input').value = station.type || 'regular';
-  document.getElementById('station-popup').classList.remove('hidden');
+  document.querySelector('#station-name-input').value = station.name;
+  document.querySelector('#station-type-input').value = station.type || 'regular'; // 'regular' als fallback
+  document.querySelector('#station-popup').classList.remove('hidden');
   draw();
 }
 
 function saveStationEdits() {
   if (selectedStationIndex !== null) {
     stations[selectedStationIndex].name = document.getElementById('station-name-input').value;
-    stations[selectedStationIndex].type = document.getElementById('station-type-input').value;
+    stations[selectedStationIndex].type = parseInt(document.getElementById('station-type-input').value, 10); // parse int
     renderStationList();
     draw();
     closePopup();
   }
 }
+
 
 function deleteStation() {
   if (selectedStationIndex !== null) {
@@ -254,17 +254,6 @@ function closePopup() {
   document.getElementById('station-popup').classList.add('hidden');
   selectedStationIndex = null;
 }
-
-
-
-
-
-
-
-
-
-
-
 
 //Waarschuwing bij herladen --------------------------------------------------------
 

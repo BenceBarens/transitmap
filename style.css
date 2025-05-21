@@ -71,6 +71,17 @@ a{
 
 button{
   cursor: pointer;
+  background-color: #F7F4ED;
+  border: #232322 solid 0.1rem;
+  transition: all 0.1s ease;
+  padding: 0.5rem 1rem;
+}
+
+button:hover{
+  background-color: #232322;
+  color:#F7F4ED;
+  border: #232322 solid 0.1rem;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
 }
 
 .switch-wrapper{
@@ -128,8 +139,9 @@ button{
 .toggle-wrapper{
   cursor: pointer;
   padding: .5rem 0;
-  display: flex;
-  justify-content: space-between;
+  width: 100%;
+  border: #232322 solid 0.1rem;
+  height: fit-content;
 
   .toggle {
     position: relative;
@@ -137,6 +149,26 @@ button{
     width: 2.5rem;
     height: 1.5rem;
   }
+
+  .toggle-description{
+    display: none;
+  }
+
+  input{
+    opacity: 0;
+    width: 0;
+    height: 0;
+  }
+
+  input:checked ~ .toggle-label {
+    background-color: #232322;
+    color: #F7F4ED;
+  }
+
+  input:checked ~ .toggle-description {
+    display: block;
+  }
+  
 }
 
 /* MAP -------------------------------------------------------------------- */
@@ -195,9 +227,6 @@ canvas {
   width: 3rem;
   height: 3rem;
   border-radius: 50%;
-  border: none;
-  background-color: #F7F4ED;
-  border: #232322 solid 0.1rem;
   font-size: 1.2rem;
   font-weight: bold;
 }
@@ -215,7 +244,7 @@ canvas {
   padding-bottom: 5rem;
   overflow-y: scroll;
 
-  div{
+  >div{
     text-align: right;
   }
 
@@ -241,12 +270,16 @@ canvas {
     padding-bottom: .1rem;
     background-color: #F7F4ED;
     color:#232322;
-    position: relative;
   }
 
   details ul {
     list-style: none;
     padding: 0 1rem;
+  }
+
+  details ul li {
+    padding: 0.5rem 0;
+    width: 100%;
   }
 }
 
@@ -320,25 +353,27 @@ canvas {
 
 .popup {
   position: absolute;
-  bottom: 0;
-  right: 0;
+  top: 50%;
+  right: 50%;
+  transform: translate(50%, -50%);
   background: #F7F4ED;
   padding: 1em;
   z-index: 1000;
   box-shadow: 0 4px 12px rgba(0,0,0,0.15);
 }
+
 .hidden {
   display: none;
 }
+
 #station-list .station-item {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 4px;
-  padding: 4px;
   background: #F7F4ED;
-  border-radius: 4px;
 }
+
 #station-list .station-item button {
-  margin-left: 8px;
+  width: 100%;
+  text-align: left;
 }

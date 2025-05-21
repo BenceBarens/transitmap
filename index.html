@@ -36,7 +36,7 @@
   <details>
     <summary>Lines</summary>
     <ul>
-      <li><p>Section under construction.</p>
+      <li>Section under construction.
       </li>
     </ul>
   </details>
@@ -48,7 +48,7 @@
 
 
     <div class="controls">
-      <div id="station-list"></div>
+      <ul id="station-list"></ul>
     </div>
 
     <!-- Popup voor station bewerken -->
@@ -60,8 +60,8 @@
       <label>
         Type:
         <select id="station-type-input">
-          <option value="regular">Normaal</option>
-          <option value="interchange">Knooppunt</option>
+          <option value="1">1</option>
+          <option value="2">2</option>
         </select>
       </label>
       <button onclick="saveStationEdits()">Opslaan</button>
@@ -73,8 +73,11 @@
 
     <ul>
       <li>
-        <label class="toggle-wrapper"><span class="switch-label">Add new station</span>
-        <input type="checkbox" id="toggleAddStation"><span class="slider"></span></label>
+        <label class="toggle-wrapper" >
+          <input type="checkbox" id="toggleAddStation">
+          <span class="toggle-label">➕ Add new station</span>
+          <span class="toggle-description">Click on the map to add a new station</span>
+        </label>
       </li>
     </ul>
   </details>
