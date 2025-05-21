@@ -53,20 +53,19 @@
 
     <!-- Popup voor station bewerken -->
     <div id="station-popup" class="popup hidden">
-      <label>
-        Naam:
+        <h3>Edit station</h3>
+        <br>
+        Name:
         <input type="text" id="station-name-input">
-      </label>
-      <label>
-        Type:
+        <br>Type:
         <select id="station-type-input">
           <option value="1">1</option>
           <option value="2">2</option>
         </select>
-      </label>
-      <button onclick="saveStationEdits()">Opslaan</button>
-      <button onclick="deleteStation()">Verwijderen</button>
-      <button onclick="closePopup()">Annuleer</button>
+      <br><br>
+      <button onclick="saveStationEdits()">Save</button>
+      <button onclick="deleteStation()">Delete</button>
+      <button onclick="closePopup()">Cancel</button>
     </div>
 
 
