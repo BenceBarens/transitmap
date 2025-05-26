@@ -5,20 +5,21 @@ const c = canvas.getContext("2d");
 const stations = [
   { x: 3, y: 4, name: "Station 1", type: 1 },
   { x: 4, y: 4, name: "Station 2", type: 1 },
-  { x: 14, y: 7, name: "Station 3", type: 1 },
+  { x: 14, y: 6, name: "Station 3", type: 1 },
   { x: 12, y: 4, name: "Station 4", type: 1 },
   { x: 8, y: 8, name: "Station 5", type: 1 },
   { x: 4, y: 8, name: "Station 6", type: 1 },
+  { x: 10, y: 6, name: "Station 7", type: 2 },
 ];
 
 const lines = [
   { name: "Line A",
     color: "#E91E63",
-    stations: [{ x: 3, y: 4 }, { x: 4, y: 4 }, { x: 14, y: 7 },]
+    stations: [{ x: 3, y: 4 }, { x: 4, y: 4 }, {x: 10, y: 6}, { x: 14, y: 6 }]
   },
   { name: "Line B",
     color: "#5925E9",
-    stations: [{ x: 12, y: 4 }, { x: 8, y: 8 }, { x: 4, y: 8 },]
+    stations: [{ x: 12, y: 4 }, {x: 10, y: 6}, { x: 8, y: 8 }, { x: 4, y: 8 },]
   }
 ];
 
