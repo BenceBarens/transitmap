@@ -16,8 +16,7 @@
 
   <section id="legend">
     <h2>Legend</h2>
-    <ul>
-    </ul>
+    <ul id="legend-list"></ul>
   </section>
 
   <div id="zoom-controls">
@@ -35,17 +34,25 @@
 
   <details>
     <summary>Lines</summary>
-    <ul>
-      <li>Section under construction.
-      </li>
-    </ul>
+
+    <ul id="line-list"></ul>
+
+    <!-- Popup voor lijn bewerken -->
+    <div id="line-popup" class="popup hidden">
+      <h3>Edit line</h3>
+      <ul>
+        <li>Name: <input type="text" id="line-name-input"></li>
+        <li>Color: <input type="color" id="line-color-input"></li>
+        <li><button onclick="saveLineEdits()">Save</button></li>
+        <li><button onclick="deleteLine()">Delete</button></li>
+        <li><button onclick="closeLinePopup()">Cancel</button></li>
+      </ul>
+    </div>
+
+
   </details>
   <details>
     <summary>Stations</summary>
-
-
-
-
 
     <div class="controls">
       <ul id="station-list"></ul>
@@ -54,28 +61,29 @@
     <!-- Popup voor station bewerken -->
     <div id="station-popup" class="popup hidden">
         <h3>Edit station</h3>
-        <br>
-        Name:
-        <input type="text" id="station-name-input">
-        <br>Type:
-        <select id="station-type-input">
-          <option value="1">1</option>
-          <option value="2">2</option>
-        </select>
-      <br><br>
-      <button onclick="saveStationEdits()">Save</button>
-      <button onclick="deleteStation()">Delete</button>
-      <button onclick="closePopup()">Cancel</button>
+        <ul>
+          <li>Name: <input type="text" id="station-name-input"></li>
+          <li>Type: 
+          <select id="station-type-input">
+            <option value="1">1</option>
+            <option value="2">2</option>
+          </select></li>
+        <li><button onclick="saveStationEdits()">Save</button></li>
+        <li><button onclick="deleteStation()">Delete</button></li>
+        <li><button onclick="closePopup()">Cancel</button></li>
+      </ul>
     </div>
 
 
 
     <ul>
       <li>
-        <label class="toggle-wrapper" >
+        <label class="toggle-wrapper">
           <input type="checkbox" id="toggleAddStation">
-          <span class="toggle-label">➕ Add new station</span>
-          <span class="toggle-description">Click on the map to add a new station</span>
+          <div class="toggle-content">
+            <span class="toggle-label">➕ Add new station</span>
+            <span class="toggle-description">Click anywhere on the map to add a new station</span>
+          </div>
         </label>
       </li>
     </ul>
@@ -93,8 +101,7 @@
   <details>
     <summary>Export</summary>
     <ul>
-      <li><p>Export function under construction.</p>
-      </li>
+      <li><button id="export-btn"> Export as PNG</button></li>
     </ul>
   </details>
 

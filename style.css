@@ -74,7 +74,6 @@ button{
   background-color: #F7F4ED;
   border: #232322 solid 0.1rem;
   transition: all 0.1s ease;
-  padding: 0.5rem 1rem;
 }
 
 button:hover{
@@ -136,40 +135,38 @@ button:hover{
   }
 }
 
-.toggle-wrapper{
+.toggle-wrapper {
   cursor: pointer;
-  padding: .5rem 0;
-  width: 100%;
-  border: #232322 solid 0.1rem;
   height: fit-content;
-
-  .toggle {
-    position: relative;
-    display: inline-block;
-    width: 2.5rem;
-    height: 1.5rem;
-  }
-
-  .toggle-description{
-    display: none;
-  }
-
-  input{
-    opacity: 0;
-    width: 0;
-    height: 0;
-  }
-
-  input:checked ~ .toggle-label {
-    background-color: #232322;
-    color: #F7F4ED;
-  }
-
-  input:checked ~ .toggle-description {
-    display: block;
-  }
-  
 }
+
+.toggle-wrapper input {
+  display: none; /* volledig verbergen */
+}
+
+.toggle-content {
+  padding: 0.5rem;
+  border: 0.1rem solid #232322;
+  transition: background-color 0.3s, border-color 0.3s;
+}
+
+.toggle-description {
+  display: none;
+  margin-top: 0.25rem;
+  color: #F7F4ED;
+}
+
+/* Wanneer de checkbox is aangevinkt: kleur en beschrijving tonen */
+.toggle-wrapper input:checked + .toggle-content {
+  background-color: #232322;
+  color: #F7F4ED;
+}
+
+.toggle-wrapper input:checked + .toggle-content .toggle-description {
+  display: block;
+}
+
+
 
 /* MAP -------------------------------------------------------------------- */
 
@@ -252,6 +249,13 @@ canvas {
     line-height: 2.1rem;
   }
 
+  button, .toggle-wrapper{
+    width: 100%;
+    font-size: 1rem;
+    text-align: left;
+    padding: 0.5rem;
+  }
+
   summary{
     font-family: "Noto Serif", serif;
     font-optical-sizing: auto;
@@ -278,7 +282,7 @@ canvas {
   }
 
   details ul li {
-    padding: 0.5rem 0;
+    padding: 0.2rem 0;
     width: 100%;
   }
 }
@@ -348,9 +352,6 @@ canvas {
   }
 }
 
-
-
-
 .popup {
   position: absolute;
   top: 50%;
@@ -362,6 +363,11 @@ canvas {
   box-shadow: 0 4px 12px rgba(0,0,0,0.15);
 }
 
+.popup button{
+  width:min-content;
+  margin: 0 auto;
+}
+
 .hidden {
   display: none;
 }
@@ -371,9 +377,4 @@ canvas {
   justify-content: space-between;
   align-items: center;
   background: #F7F4ED;
-}
-
-#station-list .station-item button {
-  width: 100%;
-  text-align: left;
 }
