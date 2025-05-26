@@ -24,8 +24,8 @@ const lines = [
 ];
 
 let cellSize = 50;
-const gridCols = 60;
-const gridRows = 50;
+const gridCols = 30;
+const gridRows = 30;
 
 function resizeCanvas() { 
   canvas.width = gridCols * cellSize;
@@ -194,7 +194,7 @@ function zoomIn() {
 }
 
 function zoomOut() {
-  if (cellSize > 30) {
+  if (cellSize > 40) {
     cellSize -= 5;
     draw();
   }
