@@ -41,7 +41,7 @@
 <section id="controls">
   <div>
       <h1>Transit Map Maker</h1>
-      <p><a href="https://bencebarens.nl/">Made by Bence</a></p>
+      <p><a href="https://bencebarens.nl/" target="_blank">Made by Bence</a></p>
   </div>
 
   <details>
@@ -49,7 +49,7 @@
 
     <ul id="line-list"></ul>
     <ul>
-      <button id="btn-addline">➕ Add new line</button>
+      <li><button id="btn-addline">➕ Add new line</button></li>
     </ul>
 
 
@@ -63,7 +63,7 @@
       </ul>
       <h3>Edit line stations</h3>
       <table id="stationList"></table>
-      <select id="stationSelect"></select></th>
+      <select id="stationSelect"></select>
       <button onclick="addStationToLine()">Add</button>
       <button class="closepopup" onclick="closeLinePopup()">×</button>
     </div>
@@ -88,8 +88,8 @@
             <option value="2">2</option>
           </select></li>
         <li><button onclick="saveStationEdits()">Save edits</button> <button onclick="deleteStation()">Delete station</button></li>
-        <button class="closepopup" onclick="closePopup()">×</button>
       </ul>
+      <button class="closepopup" onclick="closePopup()">×</button>
     </div>
 
 
@@ -128,6 +128,15 @@
           </div>
         </label>
       </li>
+    </ul>
+  </details>
+  <details>
+    <summary>Map</summary>
+    <ul>
+      <li><button id="mapWidthMin" onclick="widthMin()">-</button> Map width <button id="mapWidthPlus" onclick="widthPlus()">+</button></li>
+      <li><button id="mapHeightMin" onclick="heightMin()">-</button> Map height <button id="mapHeightPlus" onclick="heightPlus()">+</button></li>
+    </ul><ul>
+      <li><button onclick="clearAll()">Clear whole map</button></li>
     </ul>
   </details>
 

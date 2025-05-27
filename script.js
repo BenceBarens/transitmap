@@ -18,14 +18,30 @@ const lines = [
   { name: "Line 2", color: "#5925E9", stations: [4, 7, 5, 6] },
 ];
 
-
 let cellSize = 50;
-const gridCols = 30;
-const gridRows = 30;
+let gridCols = 30;
+let gridRows = 30;
 
 function resizeCanvas() { 
   canvas.width = gridCols * cellSize;
   canvas.height = gridRows * cellSize;
+}
+
+function widthPlus(){
+  gridCols += 2;
+  draw();
+}
+function widthMin(){
+  gridCols -= 2;
+  draw();
+}
+function heightPlus(){
+  gridRows += 2;
+  draw();
+}
+function heightMin(){
+  gridRows -= 2;
+  draw();
 }
 
 //Drawing  -------------------------------------------------------------------
@@ -58,19 +74,39 @@ function drawLines() {
     c.lineWidth = 10;
     c.beginPath();
 
-    line.stations.forEach((stationId, index) => {
+    let prevX = null;
+    let prevY = null;
+
+    line.stations.forEach((stationId) => {
       const station = stations.find(s => s.id === stationId);
       if (station) {
         const x = station.x * cellSize + cellSize / 2;
         const y = station.y * cellSize + cellSize / 2;
+
+        if (prevX !== null && prevY !== null) {
+          const deltax = x - prevX;
+          const deltay = y - prevY;
+
+          const absDeltaX = Math.abs(deltax);
+          const absDeltaY = Math.abs(deltay);
+
+          if (absDeltaX !== absDeltaY && deltax !== 0 && deltay !== 0) {
+            const correction = Math.min(absDeltaX, absDeltaY);
+            const midX = prevX + correction * Math.sign(deltax);
+            const midY = prevY + correction * Math.sign(deltay);
+            c.lineTo(midX, midY);
+          }
+        }
+
         c.lineTo(x, y);
+        prevX = x;
+        prevY = y;
       }
     });
 
     c.stroke();
   });
 }
-
 
 function drawStations() {
   stations.forEach(station => {
@@ -95,10 +131,12 @@ function drawStations() {
 
     c.beginPath();
     c.fillStyle = "#232322";
+    c.strokeStyle = "#F7F4ED";
     c.save();
     c.translate(x, y);
     c.rotate(-45 * Math.PI / 180);
     c.font = "1rem Inter, sans-serif";
+    c.strokeText(station.name, 15, 15);
     c.fillText(station.name, 15, 15);
     c.restore();
   });
@@ -110,6 +148,7 @@ function draw() {
   drawGrid();
   drawLines();
   drawStations();
+  console.log("DRAW UITGEVOERD -----------");
 }
 
 //Rendering station and line lists ------------------------------------------------
@@ -179,19 +218,17 @@ function renderLineList() {
   });
 }
 
-
-
 //In- en uitzoomen ----------------------------------------------------------------
 
 function zoomIn() {
-  if (cellSize < 75) {
+  if (cellSize < 80) {
     cellSize += 5;
     draw();
   }
 }
 
 function zoomOut() {
-  if (cellSize > 40) {
+  if (cellSize > (2100/(gridCols+gridRows))) {
     cellSize -= 5;
     draw();
   }
@@ -303,8 +340,6 @@ function moveStationInLine(index, direction) {
   draw();
 }
 
-
-
 //Add line \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
 
 document.querySelector("#btn-addline").addEventListener("click", () => {
@@ -407,6 +442,8 @@ function closePopup() {
 
 //Export as PNG \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
 document.querySelector("#export-btn").addEventListener("click", () => {
+  cellSize = 50;
+  draw();
   const link = document.createElement("a");
   link.download = "My Transit Map.png";
   link.href = canvas.toDataURL("image/png");
@@ -428,7 +465,7 @@ function exportMapData() {
   const url = URL.createObjectURL(blob);
 
   const link = document.createElement("a");
-  link.download = "transit-map.json";
+  link.download = "My Transit Map.json";
   link.href = url;
   link.click();
 
@@ -457,6 +494,17 @@ function importMapData(event) {
   };
 
   reader.readAsText(file);
+}
+
+//Clear map \\\\\\\\\\\\\\\\\\\\\\\\\\\\\
+function clearAll() {
+  if (confirm("Are you sure you want to clear the whole map? All stations and lines will be erased.")) {
+    stations.length = 0;
+    lines.length = 0;
+    draw();
+    renderStationList();
+    renderLineList();
+  }
 }
 
 
