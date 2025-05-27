@@ -135,13 +135,13 @@ button:hover{
   }
 }
 
+label input{
+   display: none;
+}
+
 .toggle-wrapper {
   cursor: pointer;
   height: fit-content;
-}
-
-.toggle-wrapper input {
-  display: none; /* volledig verbergen */
 }
 
 .toggle-content {
@@ -249,7 +249,7 @@ canvas {
     line-height: 2.1rem;
   }
 
-  button, .toggle-wrapper{
+  button, .toggle-wrapper, #import-json-btn{
     width: 100%;
     font-size: 1rem;
     text-align: left;

@@ -3,25 +3,21 @@ const canvas = document.querySelector("#canvas");
 const c = canvas.getContext("2d");
 
 const stations = [
-  { x: 3, y: 4, name: "Station 1", type: 1 },
-  { x: 4, y: 4, name: "Station 2", type: 1 },
-  { x: 14, y: 6, name: "Station 3", type: 1 },
-  { x: 12, y: 4, name: "Station 4", type: 1 },
-  { x: 8, y: 8, name: "Station 5", type: 1 },
-  { x: 4, y: 8, name: "Station 6", type: 1 },
-  { x: 10, y: 6, name: "Station 7", type: 2 },
+  { id: 1, x: 3, y: 4, name: "Station 1", type: 1 },
+  { id: 2, x: 4, y: 4, name: "Station 2", type: 1 },
+  { id: 3, x: 14, y: 6, name: "Station 3", type: 1 },
+  { id: 4, x: 12, y: 4, name: "Station 4", type: 1 },
+  { id: 5, x: 8, y: 8, name: "Station 5", type: 1 },
+  { id: 6, x: 4, y: 8, name: "Station 6", type: 1 },
+  { id: 7, x: 10, y: 6, name: "Station 7", type: 2 },
 ];
 
+
 const lines = [
-  { name: "Line A",
-    color: "#E91E63",
-    stations: [{ x: 3, y: 4 }, { x: 4, y: 4 }, {x: 10, y: 6}, { x: 14, y: 6 }]
-  },
-  { name: "Line B",
-    color: "#5925E9",
-    stations: [{ x: 12, y: 4 }, {x: 10, y: 6}, { x: 8, y: 8 }, { x: 4, y: 8 },]
-  }
+  { name: "Line 1", color: "#E91E63", stations: [1, 2, 7, 3] },
+  { name: "Line 2", color: "#5925E9", stations: [4, 7, 5, 6] },
 ];
+
 
 let cellSize = 50;
 const gridCols = 30;
@@ -30,7 +26,6 @@ const gridRows = 30;
 function resizeCanvas() { 
   canvas.width = gridCols * cellSize;
   canvas.height = gridRows * cellSize;
-  console.log("DRAW: Canvas grootte ingesteld (" + cellSize + "px)");
 }
 
 //Drawing  -------------------------------------------------------------------
@@ -63,16 +58,19 @@ function drawLines() {
     c.lineWidth = 10;
     c.beginPath();
 
-    line.stations.forEach((station, index) => {
-      const x = station.x * cellSize + cellSize / 2;
-      const y = station.y * cellSize + cellSize / 2;
-
-      c.lineTo(x, y);
+    line.stations.forEach((stationId, index) => {
+      const station = stations.find(s => s.id === stationId);
+      if (station) {
+        const x = station.x * cellSize + cellSize / 2;
+        const y = station.y * cellSize + cellSize / 2;
+        c.lineTo(x, y);
+      }
     });
 
     c.stroke();
   });
 }
+
 
 function drawStations() {
   stations.forEach(station => {
@@ -190,7 +188,6 @@ function zoomIn() {
     cellSize += 5;
     draw();
   }
-  console.log("CONTROLS: zoom in, niveau " + cellSize);
 }
 
 function zoomOut() {
@@ -198,7 +195,6 @@ function zoomOut() {
     cellSize -= 5;
     draw();
   }
-  console.log("CONTROLS: zoom out, niveau " + cellSize);
 }
 
 document.querySelector("#zoomIn").addEventListener("click", zoomIn);
@@ -209,10 +205,6 @@ document.querySelector("#zoomOut").addEventListener("click", zoomOut);
 //Edit lines \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
 let selectedLineIndex = null;
 
-// Toon lijst met lijnen
-
-
-// Popup openen
 function openLinePopup(index) {
   selectedLineIndex = index;
   const line = lines[index];
@@ -222,13 +214,11 @@ function openLinePopup(index) {
   document.querySelector("#line-popup").classList.remove("hidden");
 }
 
-// Popup sluiten
 function closeLinePopup() {
   document.querySelector("#line-popup").classList.add("hidden");
   selectedLineIndex = null;
 }
 
-// Bewerking opslaan
 function saveLineEdits() {
   if (selectedLineIndex === null) return;
   const name = document.querySelector("#line-name-input").value;
@@ -239,10 +229,9 @@ function saveLineEdits() {
 
   renderLineList();
   closeLinePopup();
-  draw(); // opnieuw tekenen
+  draw();
 }
 
-// Verwijderen
 function deleteLine() {
   if (selectedLineIndex === null) return;
   lines.splice(selectedLineIndex, 1);
@@ -251,6 +240,25 @@ function deleteLine() {
   draw();
 }
 
+//Add line \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
+
+document.querySelector("#btn-addline").addEventListener("click", () => {
+    const letters = '0123456789ABCDEF';
+    let color = '#';
+    for (let i = 0; i < 6; i++) {
+        color += letters[Math.floor(Math.random() * 16)];
+    }
+
+    const lineNumber = lines.length + 1;
+    const newLine = {
+        name: `Line ${lineNumber}`,
+        color: color,
+        stations: []
+    };
+
+    lines.push(newLine);
+    renderLineList();
+  });
 
 
 //Add station \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
@@ -291,7 +299,6 @@ toggleShowLegend.addEventListener('change', function() {
   } else {
     document.querySelector("#legend").style.display = "none";
   }
-  console.log("CONTROLS: legenda status: " + document.querySelector("#legend").style.display);
 });
 
 //Edit stations \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
@@ -333,7 +340,7 @@ function closePopup() {
   selectedStationIndex = null;
 }
 
-//Export \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
+//Export as PNG \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
 document.querySelector("#export-btn").addEventListener("click", () => {
   const link = document.createElement("a");
   link.download = "My Transit Map.png";
@@ -341,6 +348,51 @@ document.querySelector("#export-btn").addEventListener("click", () => {
   link.click();
 });
 
+//Export as JSON \\\\\\\\\\\\\\\\\\\\\\\\
+document.querySelector("#export-json-btn").addEventListener("click", () => {
+  exportMapData();
+});
+
+function exportMapData() {
+  const data = {
+    stations,
+    lines
+  };
+  const jsonString = JSON.stringify(data, null, 2);
+  const blob = new Blob([jsonString], { type: "application/json" });
+  const url = URL.createObjectURL(blob);
+
+  const link = document.createElement("a");
+  link.download = "transit-map.json";
+  link.href = url;
+  link.click();
+
+  URL.revokeObjectURL(url);
+}
+
+//Import JSON \\\\\\\\\\\\\\\\\\\\\\\\
+function importMapData(event) {
+  const file = event.target.files[0];
+  if (!file) return;
+
+  const reader = new FileReader();
+  reader.onload = function(e) {
+    const data = JSON.parse(e.target.result);
+
+    // Vervang huidige data
+    stations.length = 0;
+    lines.length = 0;
+
+    data.stations.forEach(station => stations.push(station));
+    data.lines.forEach(line => lines.push(line));
+
+    draw();
+    renderStationList();
+    renderLineList();
+  };
+
+  reader.readAsText(file);
+}
 
 
 //Waarschuwing bij herladen --------------------------------------------------------

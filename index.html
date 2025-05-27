@@ -48,6 +48,10 @@
     <summary>Lines</summary>
 
     <ul id="line-list"></ul>
+    <ul>
+      <button id="btn-addline">➕ Add new line</button>
+    </ul>
+
 
     <!-- Popup voor lijn bewerken -->
     <div id="line-popup" class="popup hidden">
@@ -55,6 +59,10 @@
       <ul>
         <li>Name: <input type="text" id="line-name-input"></li>
         <li>Color: <input type="color" id="line-color-input"></li>
+        <!-- <li>Stations:
+          <select id="stationSelect"></select>
+          <button onclick="addStation()">➕Toevoegen</button>
+        </li> -->
         <li><button onclick="saveLineEdits()">Save</button></li>
         <li><button onclick="deleteLine()">Delete</button></li>
         <li><button onclick="closeLinePopup()">Cancel</button></li>
@@ -111,9 +119,17 @@
     </ul>
   </details>
   <details>
-    <summary>Export</summary>
+    <summary>Export & import</summary>
     <ul>
-      <li><button id="export-btn"> Export as PNG</button></li>
+      <li><button id="export-btn">⬇️ Export as PNG</button></li>
+      <li><button id="export-json-btn">⬇️ Export as JSON</button></li>
+      <li><label class="toggle-wrapper" for="import-json">
+          <input type="file" accept=".json" onchange="importMapData(event)" id="import-json">
+          <div class="toggle-content">
+            ⬆️ Import JSON file
+          </div>
+        </label>
+      </li>
     </ul>
   </details>
 
