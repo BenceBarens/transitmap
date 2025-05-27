@@ -212,6 +212,9 @@ function openLinePopup(index) {
   document.querySelector("#line-name-input").value = line.name;
   document.querySelector("#line-color-input").value = line.color;
   document.querySelector("#line-popup").classList.remove("hidden");
+
+  renderEditStationSelectOptions();
+  renderEditableStationList();
 }
 
 function closeLinePopup() {
@@ -239,6 +242,68 @@ function deleteLine() {
   closeLinePopup();
   draw();
 }
+
+//Edit line stations
+function renderEditStationSelectOptions() {
+  const select = document.querySelector("#stationSelect");
+  select.innerHTML = "";
+  stations.forEach(s => {
+    const option = document.createElement("option");
+    option.value = s.id;
+    option.textContent = s.name;
+    select.appendChild(option);
+  });
+}
+
+function renderEditableStationList() {
+  const stationList = document.querySelector("#stationList");
+  stationList.innerHTML = "";
+  if (selectedLineIndex === null) return;
+  const line = lines[selectedLineIndex];
+
+  line.stations.forEach((stationId, index) => {
+    const station = stations.find(s => s.id === stationId);
+    const tr = document.createElement("tr");
+    tr.innerHTML = `
+      <th>${station.name}</th>
+      <th><button onclick="moveStationInLine(${index}, -1)">⬆️</button>
+      <button onclick="moveStationInLine(${index}, 1)">⬇️</button>
+      <button onclick="removeStationFromLine(${index})">❌</button></th>
+
+    `;
+    stationList.appendChild(tr);
+  });
+}
+
+function addStationToLine() {
+  const id = parseInt(document.querySelector("#stationSelect").value);
+  if (selectedLineIndex === null) return;
+  const line = lines[selectedLineIndex];
+  if (!line.stations.includes(id)) {
+    line.stations.push(id);
+    renderEditableStationList();
+    draw();
+  }
+}
+
+function removeStationFromLine(index) {
+  if (selectedLineIndex === null) return;
+  lines[selectedLineIndex].stations.splice(index, 1);
+  renderEditableStationList();
+  draw();
+}
+
+function moveStationInLine(index, direction) {
+  if (selectedLineIndex === null) return;
+  const line = lines[selectedLineIndex];
+  const newIndex = index + direction;
+  if (newIndex < 0 || newIndex >= line.stations.length) return;
+  [line.stations[index], line.stations[newIndex]] = [line.stations[newIndex], line.stations[index]];
+  renderEditableStationList();
+  draw();
+}
+
+
 
 //Add line \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
 

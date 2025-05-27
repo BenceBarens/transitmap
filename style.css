@@ -287,6 +287,26 @@ canvas {
   }
 }
 
+#line-popup button, #station-popup button{
+  width: auto;
+}
+
+#line-popup button, #station-popup li{
+  margin-bottom: .5rem;
+}
+
+#line-popup table{
+  margin-top: 1rem;
+}
+
+.closepopup{
+  position: absolute;
+  top: 0;
+  right: 0;
+  border: none;
+  font-size: 2rem;
+}
+
 /* MOBILE   ------------------------------------------------------------------- */
 
 @media only screen and (max-width: 768px) {

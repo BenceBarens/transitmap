@@ -59,14 +59,13 @@
       <ul>
         <li>Name: <input type="text" id="line-name-input"></li>
         <li>Color: <input type="color" id="line-color-input"></li>
-        <!-- <li>Stations:
-          <select id="stationSelect"></select>
-          <button onclick="addStation()">➕Toevoegen</button>
-        </li> -->
-        <li><button onclick="saveLineEdits()">Save</button></li>
-        <li><button onclick="deleteLine()">Delete</button></li>
-        <li><button onclick="closeLinePopup()">Cancel</button></li>
+        <li><button onclick="saveLineEdits()">Save edits</button> <button onclick="deleteLine()">Delete line</button></li>
       </ul>
+      <h3>Edit line stations</h3>
+      <table id="stationList"></table>
+      <select id="stationSelect"></select></th>
+      <button onclick="addStationToLine()">Add</button>
+      <button class="closepopup" onclick="closeLinePopup()">×</button>
     </div>
 
 
@@ -88,9 +87,8 @@
             <option value="1">1</option>
             <option value="2">2</option>
           </select></li>
-        <li><button onclick="saveStationEdits()">Save</button></li>
-        <li><button onclick="deleteStation()">Delete</button></li>
-        <li><button onclick="closePopup()">Cancel</button></li>
+        <li><button onclick="saveStationEdits()">Save edits</button> <button onclick="deleteStation()">Delete station</button></li>
+        <button class="closepopup" onclick="closePopup()">×</button>
       </ul>
     </div>
 
