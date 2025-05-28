@@ -1,4 +1,3 @@
-
 const canvas = document.querySelector("#canvas");
 const c = canvas.getContext("2d");
 
@@ -265,86 +264,84 @@ function renderLineList() {
   });
 }
 
-function renderUsedStationTypes(){
+function renderUsedStationTypes() {
+  const controls = document.querySelector("#controls-legend-list");
   const legend = document.querySelector("#legend-station-list");
   legend.innerHTML = "";
+  controls.innerHTML = "";
 
-  if (stations.some(station => station.type == 1)) {
-    const typeInfo = stationTypes.find(t => t.type == 1);
-    if (typeInfo) {
-      const li = document.createElement("li");
+  const inputMap = new Map();
 
-      const stationShape = document.createElement("span");
-      stationShape.style.display = "inline-block";
-      stationShape.style.width = "1rem";
-      stationShape.style.height = "1rem";
-      stationShape.style.marginRight = ".5rem";
-      stationShape.style.backgroundColor = "#232322";
+  stationTypes.forEach(({ type, name }) => {
+    if (stations.some(station => station.type === type)) {
+      const shape = document.createElement("span");
+      shape.style.display = "inline-block";
+      shape.style.width = "1rem";
+      shape.style.height = "1rem";
+      shape.style.marginRight = ".5rem";
 
-      li.appendChild(stationShape);
-      li.appendChild(document.createTextNode(typeInfo.name));
+      switch (type) {
+        case 1:
+          shape.style.backgroundColor = "#232322";
+          break;
+        case 2:
+          shape.style.width = ".7rem";
+          shape.style.height = ".7rem";
+          shape.style.border = ".2rem solid #232322";
+          break;
+        case 3:
+          shape.style.borderRadius = "50%";
+          shape.style.backgroundColor = "#232322";
+          break;
+        case 4:
+          shape.style.width = ".7rem";
+          shape.style.height = ".7rem";
+          shape.style.borderRadius = "50%";
+          shape.style.border = ".2rem solid #232322";
+          break;
+      }
 
-      legend.appendChild(li);
+      const legendLi = document.createElement("li");
+      legendLi.appendChild(shape.cloneNode(true));
+      legendLi.appendChild(document.createTextNode(name));
+      legend.appendChild(legendLi);
+
+      const controlsLi = document.createElement("li");
+      controlsLi.id = `controls-legend-list-${type}`;
+
+      const input = document.createElement("input");
+      input.type = "text";
+      input.value = name;
+      input.style.marginLeft = ".5rem";
+
+      inputMap.set(type, input); // Bewaar referentie
+
+      controlsLi.appendChild(shape.cloneNode(true));
+      controlsLi.appendChild(input);
+      controls.appendChild(controlsLi);
     }
-  }
+  });
 
-  if (stations.some(station => station.type == 2)) {
-    const typeInfo = stationTypes.find(t => t.type == 2);
-    if (typeInfo) {
-      const li = document.createElement("li");
+  if (inputMap.size > 0) {
+    const saveBtn = document.createElement("button");
+    saveBtn.textContent = "Save changes";
+    saveBtn.style.marginTop = "1rem";
 
-      const stationShape = document.createElement("span");
-      stationShape.style.display = "inline-block";
-      stationShape.style.width = ".7rem";
-      stationShape.style.height = ".7rem";
-      stationShape.style.marginRight = ".5rem";
-      stationShape.style.border = ".2rem solid #232322";
+    saveBtn.addEventListener("click", () => {
+      inputMap.forEach((input, type) => {
+        const typeToUpdate = stationTypes.find(t => t.type == type);
+        if (typeToUpdate) {
+          typeToUpdate.name = input.value;
+        }
+      });
+      renderUsedStationTypes();
+    });
 
-      li.appendChild(stationShape);
-      li.appendChild(document.createTextNode(typeInfo.name));
-
-      legend.appendChild(li);
-    }
-  }
-  if (stations.some(station => station.type == 3)) {
-    const typeInfo = stationTypes.find(t => t.type == 3);
-    if (typeInfo) {
-      const li = document.createElement("li");
-
-      const stationShape = document.createElement("span");
-      stationShape.style.display = "inline-block";
-      stationShape.style.width = "1rem";
-      stationShape.style.height = "1rem";
-      stationShape.style.borderRadius = "50%";
-      stationShape.style.marginRight = ".5rem";
-      stationShape.style.backgroundColor = "#232322";
-
-      li.appendChild(stationShape);
-      li.appendChild(document.createTextNode(typeInfo.name));
-
-      legend.appendChild(li);
-    }
-  }
-  if (stations.some(station => station.type == 4)) {
-    const typeInfo = stationTypes.find(t => t.type == 4);
-    if (typeInfo) {
-      const li = document.createElement("li");
-
-      const stationShape = document.createElement("span");
-      stationShape.style.display = "inline-block";
-      stationShape.style.width = ".7rem";
-      stationShape.style.height = ".7rem";
-      stationShape.style.borderRadius = "50%";
-      stationShape.style.marginRight = ".5rem";
-      stationShape.style.border = ".2rem solid #232322";
-
-      li.appendChild(stationShape);
-      li.appendChild(document.createTextNode(typeInfo.name));
-
-      legend.appendChild(li);
-    }
+    controls.appendChild(saveBtn);
   }
 }
+
+
 
 //In- en uitzoomen ----------------------------------------------------------------
 
@@ -524,8 +521,10 @@ const toggleShowLegend = document.querySelector('#toggleShowLegend');
 toggleShowLegend.addEventListener('change', function() {
   if (toggleShowLegend.checked) {
     document.querySelector("#legend").style.display = "block";
+    document.querySelector("#controls-legend-list").style.display = "block";
   } else {
     document.querySelector("#legend").style.display = "none";
+    document.querySelector("#controls-legend-list").style.display = "none";
   }
 });
 
@@ -570,12 +569,15 @@ function closePopup() {
 
 //Export as PNG \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
 document.querySelector("#export-btn").addEventListener("click", () => {
+  cellSizeBefore = cellSize;
   cellSize = 50;
   draw();
   const link = document.createElement("a");
   link.download = "My Transit Map.png";
   link.href = canvas.toDataURL("image/png");
   link.click();
+  cellSize = cellSizeBefore;
+  draw();
 });
 
 //Export as JSON \\\\\\\\\\\\\\\\\\\\\\\\
@@ -586,19 +588,25 @@ document.querySelector("#export-json-btn").addEventListener("click", () => {
 function exportMapData() {
   const data = {
     stations,
-    lines
+    lines,
+    stationTypes,
+    cellSize,
+    gridCols,
+    gridRows
   };
-  const jsonString = JSON.stringify(data, null, 2);
-  const blob = new Blob([jsonString], { type: "application/json" });
+
+  const json = JSON.stringify(data, null, 2);
+  const blob = new Blob([json], { type: 'application/json' });
   const url = URL.createObjectURL(blob);
 
-  const link = document.createElement("a");
-  link.download = "My Transit Map.json";
-  link.href = url;
-  link.click();
-
-  URL.revokeObjectURL(url);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = 'My Transit Map.json';
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
 }
+
 
 //Import JSON \\\\\\\\\\\\\\\\\\\\\\\\
 function importMapData(event) {
@@ -609,13 +617,19 @@ function importMapData(event) {
   reader.onload = function(e) {
     const data = JSON.parse(e.target.result);
 
-    // Vervang huidige data
     stations.length = 0;
     lines.length = 0;
+    stationTypes.length = 0;
 
-    data.stations.forEach(station => stations.push(station));
-    data.lines.forEach(line => lines.push(line));
+    data.stations?.forEach(station => stations.push(station));
+    data.lines?.forEach(line => lines.push(line));
+    data.stationTypes?.forEach(type => stationTypes.push(type));
 
+    cellSize = data.cellSize;
+    gridCols = data.gridCols;
+    gridRows = data.gridRows;
+
+    drawGrid();
     draw();
     renderStationList();
     renderLineList();
@@ -623,6 +637,7 @@ function importMapData(event) {
 
   reader.readAsText(file);
 }
+
 
 //Show grid lines \\\\\\\\\\\\\\\\\\\\\\\
 const toggleShowGridLines = document.querySelector('#toggleShowGridLines');

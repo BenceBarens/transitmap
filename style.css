@@ -90,7 +90,7 @@ button:hover{
   background-color: #232322;
   color:#F7F4ED;
   border: #232322 solid 0.1rem;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.5);
 }
 
 .switch-wrapper {
@@ -329,7 +329,7 @@ canvas {
   background: #F7F4ED;
   padding: 1em;
   z-index: 1000;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.5);
   max-height: 90vh;
   overflow-y: scroll;
 }
@@ -350,7 +350,13 @@ canvas {
   background: #F7F4ED;
 }
 
-button#mapWidthMin, button#mapWidthPlus, button#mapHeightMin, button#mapHeightPlus {
+#zoomButtonsUl li{
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+#zoomButtonsUl button{
   width: 2rem;
   height: 2rem;
   text-align: center;
