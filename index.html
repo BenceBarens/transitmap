@@ -6,12 +6,12 @@
     <title>Transit Map Maker</title>
     <link rel="stylesheet" href="style.css">
 
-    <link rel="icon" type="image/png" href="/img/favicon/favicon-96x96.png" sizes="96x96" />
-    <link rel="icon" type="image/svg+xml" href="/img/favicon/favicon.svg" />
-    <link rel="shortcut icon" href="/img/favicon/favicon.ico" />
-    <link rel="apple-touch-icon" sizes="180x180" href="/img/favicon/apple-touch-icon.png" />
-    <meta name="apple-mobile-web-app-title" content="Transit Map Maker" />
-    <link rel="manifest" href="/img/favicon/site.webmanifest" />
+    <link rel="icon" type="image/png" href="/img/favicon/favicon-96x96.png" sizes="96x96">
+    <link rel="icon" type="image/svg+xml" href="/img/favicon/favicon.svg">
+    <link rel="shortcut icon" href="/img/favicon/favicon.ico">
+    <link rel="apple-touch-icon" sizes="180x180" href="/img/favicon/apple-touch-icon.png">
+    <meta name="apple-mobile-web-app-title" content="Transit Map Maker">
+    <link rel="manifest" href="/img/favicon/site.webmanifest">
     
     <meta property="og:title" content="Transit Map Maker">
     <meta property="og:type" content="website">
@@ -20,7 +20,7 @@
     <meta property="og:site_name" content="Transit Map Maker">
 </head>
 <body>
-
+<!-- Website online op https://transitmap.madebybence.com/ (of https://bencebarens.github.io/transitmap/) -->
 <section id="map">
   <div id="canvas-wrapper">
     <canvas id="canvas"></canvas>
@@ -42,7 +42,7 @@
 <section id="controls">
   <div>
       <h1>Transit Map Maker</h1>
-      <p>v2.23 | <a href="https://bencebarens.nl/" target="_blank">Made by Bence</a></p>
+      <p>v2.23.1 | <a href="https://bencebarens.nl/" target="_blank">Made by Bence</a></p>
   </div>
 
   <details>
@@ -60,13 +60,13 @@
       <ul>
         <li>Name: <input type="text" id="line-name-input"></li>
         <li>Color: <input type="color" id="line-color-input"></li>
-        <li><button onclick="saveLineEdits()">Save changes</button> <button onclick="deleteLine()">Delete line</button></li>
+        <li><button id="btn-savelineedits">Save changes</button> <button id="btn-deleteline">Delete line</button></li>
       </ul>
       <h3>Edit line stations</h3>
       <table id="stationList"></table>
       <select id="stationSelect"></select>
-      <button onclick="addStationToLine()">Add</button>
-      <button class="closepopup" onclick="closeLinePopup()">×</button>
+      <button id="btn-addstationtoline">Add</button>
+      <button class="closepopup" id="btn-closelinepopup">×</button>
     </div>
 
 
@@ -90,9 +90,9 @@
             <option value="3">Filled circle</option>
             <option value="4">Outlined circle</option>
           </select></li>
-        <li><button onclick="saveStationEdits()">Save changes</button> <button onclick="deleteStation()">Delete station</button></li>
+        <li><button id="btn-savestationedits">Save changes</button> <button id="btn-deletestation">Delete station</button></li>
       </ul>
-      <button class="closepopup" onclick="closePopup()">×</button>
+      <button class="closepopup" id="btn-closepopup">×</button>
     </div>
 
     <ul>
@@ -126,7 +126,7 @@
       <li><button id="export-json-btn">⬇️ Export as JSON</button></li>
       <li>
         <label class="toggle-wrapper" for="import-json">
-          <input type="file" accept=".json" onchange="importMapData(event)" id="import-json">
+          <input type="file" accept=".json" id="import-json">
           <span class="toggle-content">⬆️ Import JSON file</span>
         </label>
       </li>
@@ -149,11 +149,11 @@
       </li>
     </ul>
     <ul id="zoomButtonsUl">
-      <li><button id="mapWidthMin" onclick="widthMin()">-</button> Map width <button id="mapWidthPlus" onclick="widthPlus()">+</button></li>
-      <li><button id="mapHeightMin" onclick="heightMin()">-</button> Map height <button id="mapHeightPlus" onclick="heightPlus()">+</button></li>
+      <li><button id="mapWidthMin">-</button> Map width <button id="mapWidthPlus">+</button></li>
+      <li><button id="mapHeightMin">-</button> Map height <button id="mapHeightPlus">+</button></li>
     </ul>
     <ul>
-      <li><button onclick="clearAll()">Clear whole map</button></li>
+      <li><button id="btn-clearall">Clear whole map</button></li>
     </ul>
   </details>
 </section>

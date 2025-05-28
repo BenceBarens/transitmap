@@ -1,3 +1,5 @@
+//Website online op https://transitmap.madebybence.com/ (of https://bencebarens.github.io/transitmap/)
+
 const canvas = document.querySelector("#canvas");
 const c = canvas.getContext("2d");
 
@@ -32,6 +34,11 @@ function resizeCanvas() {
   canvas.width = gridCols * cellSize;
   canvas.height = gridRows * cellSize;
 }
+
+document.querySelector("#mapWidthMin").addEventListener("click", widthMin);
+document.querySelector("#mapWidthPlus").addEventListener("click", widthPlus);
+document.querySelector("#mapHeightMin").addEventListener("click", heightMin);
+document.querySelector("#mapHeightPlus").addEventListener("click", heightPlus);
 
 function widthPlus(){
   gridCols += 2;
@@ -273,53 +280,39 @@ function renderUsedStationTypes() {
   const inputMap = new Map();
 
   stationTypes.forEach(({ type, name }) => {
-    if (stations.some(station => station.type === type)) {
-      const shape = document.createElement("span");
-      shape.style.display = "inline-block";
-      shape.style.width = "1rem";
-      shape.style.height = "1rem";
-      shape.style.marginRight = ".5rem";
+    const isUsed = stations.some(s => s.type === type);
+    if (!isUsed) return;
 
-      switch (type) {
-        case 1:
-          shape.style.backgroundColor = "#232322";
-          break;
-        case 2:
-          shape.style.width = ".7rem";
-          shape.style.height = ".7rem";
-          shape.style.border = ".2rem solid #232322";
-          break;
-        case 3:
-          shape.style.borderRadius = "50%";
-          shape.style.backgroundColor = "#232322";
-          break;
-        case 4:
-          shape.style.width = ".7rem";
-          shape.style.height = ".7rem";
-          shape.style.borderRadius = "50%";
-          shape.style.border = ".2rem solid #232322";
-          break;
-      }
+    const shape = document.createElement("span");
+    shape.style.cssText = "display:inline-block;width:1rem;height:1rem;margin-right:.5rem";
 
-      const legendLi = document.createElement("li");
-      legendLi.appendChild(shape.cloneNode(true));
-      legendLi.appendChild(document.createTextNode(name));
-      legend.appendChild(legendLi);
-
-      const controlsLi = document.createElement("li");
-      controlsLi.id = `controls-legend-list-${type}`;
-
-      const input = document.createElement("input");
-      input.type = "text";
-      input.value = name;
-      input.style.marginLeft = ".5rem";
-
-      inputMap.set(type, input); // Bewaar referentie
-
-      controlsLi.appendChild(shape.cloneNode(true));
-      controlsLi.appendChild(input);
-      controls.appendChild(controlsLi);
+    if (type === 1) {
+      shape.style.backgroundColor = "#232322";
+    } else if (type === 2) {
+      shape.style.cssText += ";width:.7rem;height:.7rem;border:.2rem solid #232322";
+    } else if (type === 3) {
+      shape.style.borderRadius = "50%";
+      shape.style.backgroundColor = "#232322";
+    } else if (type === 4) {
+      shape.style.cssText += ";width:.7rem;height:.7rem;border:.2rem solid #232322;border-radius:50%";
     }
+
+    const legendItem = document.createElement("li");
+    legendItem.append(shape.cloneNode(true), document.createTextNode(name));
+    legend.appendChild(legendItem);
+
+    const controlsItem = document.createElement("li");
+    controlsItem.id = `controls-legend-list-${type}`;
+
+    const input = document.createElement("input");
+    input.type = "text";
+    input.value = name;
+    input.style.marginLeft = ".5rem";
+
+    inputMap.set(type, input);
+
+    controlsItem.append(shape.cloneNode(true), input);
+    controls.appendChild(controlsItem);
   });
 
   if (inputMap.size > 0) {
@@ -327,21 +320,17 @@ function renderUsedStationTypes() {
     saveBtn.textContent = "Save changes";
     saveBtn.style.marginTop = "1rem";
 
-    saveBtn.addEventListener("click", () => {
+    saveBtn.onclick = () => {
       inputMap.forEach((input, type) => {
-        const typeToUpdate = stationTypes.find(t => t.type == type);
-        if (typeToUpdate) {
-          typeToUpdate.name = input.value;
-        }
+        const foundType = stationTypes.find(t => t.type === type);
+        if (foundType) foundType.name = input.value;
       });
       renderUsedStationTypes();
-    });
+    };
 
     controls.appendChild(saveBtn);
   }
 }
-
-
 
 //In- en uitzoomen ----------------------------------------------------------------
 
@@ -379,10 +368,14 @@ function openLinePopup(index) {
   renderEditableStationList();
 }
 
+document.querySelector("#btn-closelinepopup").addEventListener("click", closeLinePopup);
+
 function closeLinePopup() {
   document.querySelector("#line-popup").classList.add("hidden");
   selectedLineIndex = null;
 }
+
+document.querySelector("#btn-savelineedits").addEventListener("click", saveLineEdits);
 
 function saveLineEdits() {
   if (selectedLineIndex === null) return;
@@ -396,6 +389,8 @@ function saveLineEdits() {
   closeLinePopup();
   draw();
 }
+
+document.querySelector("#btn-deleteline").addEventListener("click", deleteLine);
 
 function deleteLine() {
   if (selectedLineIndex === null) return;
@@ -431,11 +426,12 @@ function renderEditableStationList() {
       <th><button onclick="moveStationInLine(${index}, -1)">⬆️</button>
       <button onclick="moveStationInLine(${index}, 1)">⬇️</button>
       <button onclick="removeStationFromLine(${index})">❌</button></th>
-
     `;
     stationList.appendChild(tr);
   });
 }
+
+document.querySelector("#btn-addstationtoline").addEventListener("click", addStationToLine);
 
 function addStationToLine() {
   const id = parseInt(document.querySelector("#stationSelect").value);
@@ -466,25 +462,23 @@ function moveStationInLine(index, direction) {
 }
 
 //Add line \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
-
 document.querySelector("#btn-addline").addEventListener("click", () => {
-    const letters = '0123456789ABCDEF';
-    let color = '#';
-    for (let i = 0; i < 6; i++) {
-        color += letters[Math.floor(Math.random() * 16)];
-    }
+  const letters = '0123456789ABCDEF';
+  let color = '#';
+  for (let i = 0; i < 6; i++) {
+      color += letters[Math.floor(Math.random() * 16)];
+  }
 
-    const lineNumber = lines.length + 1;
-    const newLine = {
-        name: `Line ${lineNumber}`,
-        color: color,
-        stations: []
-    };
+  const lineNumber = lines.length + 1;
+  const newLine = {
+      name: `Line ${lineNumber}`,
+      color: color,
+      stations: []
+  };
 
-    lines.push(newLine);
-    renderLineList();
-  });
-
+  lines.push(newLine);
+  renderLineList();
+});
 
 //Add station \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
 const toggleAddStation = document.querySelector('#toggleAddStation');
@@ -529,7 +523,6 @@ toggleShowLegend.addEventListener('change', function() {
 });
 
 //Edit stations \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
-
 let selectedStationIndex = null;
 
 function editStation(index) {
@@ -542,6 +535,8 @@ function editStation(index) {
   draw();
 }
 
+document.querySelector("#btn-savestationedits").addEventListener("click", saveStationEdits);
+
 function saveStationEdits() {
   if (selectedStationIndex !== null) {
     stations[selectedStationIndex].name = document.querySelector('#station-name-input').value;
@@ -552,6 +547,7 @@ function saveStationEdits() {
   }
 }
 
+document.querySelector("#btn-deletestation").addEventListener("click", deleteStation);
 
 function deleteStation() {
   if (selectedStationIndex !== null) {
@@ -561,6 +557,8 @@ function deleteStation() {
     closePopup();
   }
 }
+
+document.querySelector("#btn-closepopup").addEventListener("click", closePopup);
 
 function closePopup() {
   document.querySelector('#station-popup').classList.add('hidden');
@@ -609,6 +607,8 @@ function exportMapData() {
 
 
 //Import JSON \\\\\\\\\\\\\\\\\\\\\\\\
+document.querySelector("#import-json").addEventListener("change", importMapData);
+
 function importMapData(event) {
   const file = event.target.files[0];
   if (!file) return;
@@ -638,7 +638,6 @@ function importMapData(event) {
   reader.readAsText(file);
 }
 
-
 //Show grid lines \\\\\\\\\\\\\\\\\\\\\\\
 const toggleShowGridLines = document.querySelector('#toggleShowGridLines');
 const toggleShowTrueGridLines = document.querySelector('#toggleShowTrueGridLines');
@@ -651,6 +650,8 @@ toggleShowTrueGridLines.addEventListener('change', function() {
 });
 
 //Clear map \\\\\\\\\\\\\\\\\\\\\\\\\\\\\
+document.querySelector("#btn-clearall").addEventListener("click", clearAll);
+
 function clearAll() {
   if (confirm("Are you sure you want to clear the whole map? All stations and lines will be erased.")) {
     stations.length = 0;
@@ -666,11 +667,3 @@ function clearAll() {
 draw();
 renderStationList();
 renderLineList();
-
-//Waarschuwing bij herladen --------------------------------------------------------
-
-// window.addEventListener("beforeunload", function (e) {
-//   e.preventDefault();
-//   e.returnValue = "";
-// });
-
