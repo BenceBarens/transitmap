@@ -18,6 +18,13 @@ const lines = [
   { name: "Line 2", color: "#5925E9", stations: [4, 7, 5, 6] },
 ];
 
+const stationTypes = [
+  {type: 1, name: "Station"},
+  {type: 2, name: "Transfer station"},
+  {type: 3, name: "Train station"},
+  {type: 4, name: "Large train station"}
+];
+
 let cellSize = 50;
 let gridCols = 30;
 let gridRows = 30;
@@ -50,22 +57,44 @@ function drawGrid() {
   c.beginPath();
   c.fillStyle = "#F7F4ED";
   c.fillRect(0, 0, canvas.width, canvas.height);
-  c.strokeStyle = "rgba(35, 35, 34, 0.2)";
-  c.beginPath();
 
-  for (let x = 0; x <= gridCols; x++) {
-    const pos = x * cellSize + (cellSize / 2);
-    c.moveTo(pos, 0);
-    c.lineTo(pos, canvas.height);
+  if (toggleShowGridLines.checked) {
+    c.strokeStyle = "rgba(35, 35, 34, 0.2)";
+    c.beginPath();
+
+    for (let x = 0; x <= gridCols; x++) {
+      const pos = x * cellSize + (cellSize / 2);
+      c.moveTo(pos, 0);
+      c.lineTo(pos, canvas.height);
+    }
+
+    for (let y = 0; y <= gridRows; y++) {
+      const pos = y * cellSize + (cellSize / 2);
+      c.moveTo(0, pos);
+      c.lineTo(canvas.width, pos);
+    }
+
+    c.stroke();
   }
 
-  for (let y = 0; y <= gridRows; y++) {
-    const pos = y * cellSize + (cellSize / 2);
-    c.moveTo(0, pos);
-    c.lineTo(canvas.width, pos);
-  }
+  if (toggleShowTrueGridLines.checked) {
+    c.strokeStyle = "rgba(255, 100, 100, 0.2)";
+    c.beginPath();
 
-  c.stroke();
+    for (let x = 0; x <= gridCols; x++) {
+      const pos = x * cellSize;
+      c.moveTo(pos, 0);
+      c.lineTo(pos, canvas.height);
+    }
+
+    for (let y = 0; y <= gridRows; y++) {
+      const pos = y * cellSize;
+      c.moveTo(0, pos);
+      c.lineTo(canvas.width, pos);
+    }
+
+    c.stroke();
+  }
 }
 
 function drawLines() {
@@ -114,21 +143,38 @@ function drawStations() {
     const y = station.y * cellSize;
     c.beginPath();
     
-    if(station.type === 1) {
-    c.fillStyle = "#232322";
-    c.rect(x + cellSize / 4, y + cellSize / 4, cellSize / 2, cellSize / 2);
-    c.fill();
+    if(station.type == 1) {
+      c.fillStyle = "#232322";
+      c.rect(x + cellSize / 4, y + cellSize / 4, cellSize / 2, cellSize / 2);
+      c.fill();
     }
 
-    if(station.type === 2) {
-    c.strokeStyle = "#232322";
-    c.rect(x + cellSize / 4, y + cellSize / 4, cellSize / 2, cellSize / 2);
-    c.strokeWidth = 2;
-    c.stroke();
-    c.fillStyle = "#F7F4ED";
-    c.fill();
+    if(station.type == 2) {
+      c.strokeStyle = "#232322";
+      c.rect(x + cellSize / 4, y + cellSize / 4, cellSize / 2, cellSize / 2);
+      c.lineWidth = 10;
+      c.stroke();
+      c.fillStyle = "#F7F4ED";
+      c.fill();
     }
 
+    if (station.type == 3) {
+      c.fillStyle = "#232322";
+      c.beginPath();
+      c.arc(x + cellSize / 2, y + cellSize / 2, cellSize / 4, 0, Math.PI * 2);
+      c.fill();
+    }
+
+    if (station.type == 4) {
+      c.strokeStyle = "#232322";
+      c.lineWidth = 10;
+      c.beginPath();
+      c.arc(x + cellSize / 2, y + cellSize / 2, cellSize / 4, 0, Math.PI * 2);
+      c.stroke();
+      c.fillStyle = "#F7F4ED";
+      c.fill();
+    }
+    
     c.beginPath();
     c.fillStyle = "#232322";
     c.strokeStyle = "#F7F4ED";
@@ -148,7 +194,6 @@ function draw() {
   drawGrid();
   drawLines();
   drawStations();
-  console.log("DRAW UITGEVOERD -----------");
 }
 
 //Rendering station and line lists ------------------------------------------------
@@ -165,6 +210,8 @@ function renderStationList() {
     stationList.appendChild(stationItem);
     draw();
   });
+
+  renderUsedStationTypes();
 }
 
 function renderLineList() {
@@ -216,6 +263,87 @@ function renderLineList() {
   li.appendChild(text);
   legend.appendChild(li);
   });
+}
+
+function renderUsedStationTypes(){
+  const legend = document.querySelector("#legend-station-list");
+  legend.innerHTML = "";
+
+  if (stations.some(station => station.type == 1)) {
+    const typeInfo = stationTypes.find(t => t.type == 1);
+    if (typeInfo) {
+      const li = document.createElement("li");
+
+      const stationShape = document.createElement("span");
+      stationShape.style.display = "inline-block";
+      stationShape.style.width = "1rem";
+      stationShape.style.height = "1rem";
+      stationShape.style.marginRight = ".5rem";
+      stationShape.style.backgroundColor = "#232322";
+
+      li.appendChild(stationShape);
+      li.appendChild(document.createTextNode(typeInfo.name));
+
+      legend.appendChild(li);
+    }
+  }
+
+  if (stations.some(station => station.type == 2)) {
+    const typeInfo = stationTypes.find(t => t.type == 2);
+    if (typeInfo) {
+      const li = document.createElement("li");
+
+      const stationShape = document.createElement("span");
+      stationShape.style.display = "inline-block";
+      stationShape.style.width = ".7rem";
+      stationShape.style.height = ".7rem";
+      stationShape.style.marginRight = ".5rem";
+      stationShape.style.border = ".2rem solid #232322";
+
+      li.appendChild(stationShape);
+      li.appendChild(document.createTextNode(typeInfo.name));
+
+      legend.appendChild(li);
+    }
+  }
+  if (stations.some(station => station.type == 3)) {
+    const typeInfo = stationTypes.find(t => t.type == 3);
+    if (typeInfo) {
+      const li = document.createElement("li");
+
+      const stationShape = document.createElement("span");
+      stationShape.style.display = "inline-block";
+      stationShape.style.width = "1rem";
+      stationShape.style.height = "1rem";
+      stationShape.style.borderRadius = "50%";
+      stationShape.style.marginRight = ".5rem";
+      stationShape.style.backgroundColor = "#232322";
+
+      li.appendChild(stationShape);
+      li.appendChild(document.createTextNode(typeInfo.name));
+
+      legend.appendChild(li);
+    }
+  }
+  if (stations.some(station => station.type == 4)) {
+    const typeInfo = stationTypes.find(t => t.type == 4);
+    if (typeInfo) {
+      const li = document.createElement("li");
+
+      const stationShape = document.createElement("span");
+      stationShape.style.display = "inline-block";
+      stationShape.style.width = ".7rem";
+      stationShape.style.height = ".7rem";
+      stationShape.style.borderRadius = "50%";
+      stationShape.style.marginRight = ".5rem";
+      stationShape.style.border = ".2rem solid #232322";
+
+      li.appendChild(stationShape);
+      li.appendChild(document.createTextNode(typeInfo.name));
+
+      legend.appendChild(li);
+    }
+  }
 }
 
 //In- en uitzoomen ----------------------------------------------------------------
@@ -496,6 +624,17 @@ function importMapData(event) {
   reader.readAsText(file);
 }
 
+//Show grid lines \\\\\\\\\\\\\\\\\\\\\\\
+const toggleShowGridLines = document.querySelector('#toggleShowGridLines');
+const toggleShowTrueGridLines = document.querySelector('#toggleShowTrueGridLines');
+
+toggleShowGridLines.addEventListener('change', function() {
+  draw();
+});
+toggleShowTrueGridLines.addEventListener('change', function() {
+  draw();
+});
+
 //Clear map \\\\\\\\\\\\\\\\\\\\\\\\\\\\\
 function clearAll() {
   if (confirm("Are you sure you want to clear the whole map? All stations and lines will be erased.")) {
@@ -507,12 +646,13 @@ function clearAll() {
   }
 }
 
-
-//Waarschuwing bij herladen --------------------------------------------------------
+//Initiatie ------------------------------------------------------------------------
 
 draw();
 renderStationList();
 renderLineList();
+
+//Waarschuwing bij herladen --------------------------------------------------------
 
 // window.addEventListener("beforeunload", function (e) {
 //   e.preventDefault();

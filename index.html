@@ -6,15 +6,15 @@
     <title>Transit Map Maker</title>
     <link rel="stylesheet" href="style.css">
 
-    <link rel="icon" type="image/png" href="/img/favicon/favicon-96x96.png" sizes="96x96" />
-    <link rel="icon" type="image/svg+xml" href="/img/favicon/favicon.svg" />
-    <link rel="shortcut icon" href="/img/favicon/favicon.ico" />
-    <link rel="apple-touch-icon" sizes="180x180" href="/img/favicon/apple-touch-icon.png" />
-    <link rel="manifest" href="/img/favicon/site.webmanifest" />
+    <link rel="icon" type="image/png" href="/img/favicon/favicon-96x96.png" sizes="96x96">
+    <link rel="icon" type="image/svg+xml" href="/img/favicon/favicon.svg">
+    <link rel="shortcut icon" href="/img/favicon/favicon.ico">
+    <link rel="apple-touch-icon" sizes="180x180" href="/img/favicon/apple-touch-icon.png">
+    <link rel="manifest" href="/img/favicon/site.webmanifest">
     
     <meta property="og:title" content="Transit Map Maker">
     <meta property="og:type" content="website">
-    <meta property="og:image" content="/img/social.jpg">
+    <meta property="og:image" content="https://transitmap.madebybence.com/img/social.jpg">
     <meta property="og:description" content="A transit map maker for creating and editing transit maps, Made by Bence.">
     <meta property="og:site_name" content="Transit Map Maker">
 </head>
@@ -28,6 +28,7 @@
   <section id="legend">
     <h2>Legend</h2>
     <ul id="legend-list"></ul>
+    <ul id="legend-station-list"></ul>
   </section>
 
   <div id="zoom-controls">
@@ -83,24 +84,24 @@
           <li>Name: <input type="text" id="station-name-input"></li>
           <li>Type: 
           <select id="station-type-input">
-            <option value="1">1</option>
-            <option value="2">2</option>
+            <option value="1">Filled square</option>
+            <option value="2">Outlined square</option>
+            <option value="3">Filled circle</option>
+            <option value="4">Outlined circle</option>
           </select></li>
         <li><button onclick="saveStationEdits()">Save edits</button> <button onclick="deleteStation()">Delete station</button></li>
       </ul>
       <button class="closepopup" onclick="closePopup()">×</button>
     </div>
 
-
-
     <ul>
       <li>
         <label class="toggle-wrapper">
           <input type="checkbox" id="toggleAddStation">
-          <div class="toggle-content">
+          <span class="toggle-content">
             <span class="toggle-label">➕ Add new station</span>
             <span class="toggle-description">Click anywhere on the map to add a new station</span>
-          </div>
+          </span>
         </label>
       </li>
     </ul>
@@ -109,9 +110,10 @@
     <summary>Legend</summary>
     <ul>
       <li>
-        <div class="switch-wrapper"><span class="switch-label">Show legend</span>
-        <label class="switch"><input type="checkbox" id="toggleShowLegend" checked><span class="slider"></span></label>
-        </div>
+        <label class="switch-wrapper">
+          <span class="switch-label">Show legend</span>
+          <span class="switch"><input type="checkbox" id="toggleShowLegend" checked><span class="slider"></span></span>
+        </label>
       </li>
     </ul>
   </details>
@@ -120,11 +122,10 @@
     <ul>
       <li><button id="export-btn">⬇️ Export as PNG</button></li>
       <li><button id="export-json-btn">⬇️ Export as JSON</button></li>
-      <li><label class="toggle-wrapper" for="import-json">
+      <li>
+        <label class="toggle-wrapper" for="import-json">
           <input type="file" accept=".json" onchange="importMapData(event)" id="import-json">
-          <div class="toggle-content">
-            ⬆️ Import JSON file
-          </div>
+          <span class="toggle-content">⬆️ Import JSON file</span>
         </label>
       </li>
     </ul>
@@ -132,16 +133,28 @@
   <details>
     <summary>Map</summary>
     <ul>
+      <li>
+        <label class="switch-wrapper">
+          <span class="switch-label">Show grid lines</span>
+          <span class="switch"><input type="checkbox" id="toggleShowGridLines" checked><span class="slider"></span></span>
+        </label>
+      </li>
+      <li>
+        <label class="switch-wrapper">
+          <span class="switch-label">Show true grid lines</span>
+          <span class="switch"><input type="checkbox" id="toggleShowTrueGridLines"><span class="slider"></span></span>
+        </label>
+      </li>
+    </ul>
+    <ul>
       <li><button id="mapWidthMin" onclick="widthMin()">-</button> Map width <button id="mapWidthPlus" onclick="widthPlus()">+</button></li>
       <li><button id="mapHeightMin" onclick="heightMin()">-</button> Map height <button id="mapHeightPlus" onclick="heightPlus()">+</button></li>
-    </ul><ul>
+    </ul>
+    <ul>
       <li><button onclick="clearAll()">Clear whole map</button></li>
     </ul>
   </details>
-
 </section>
-
-
 <script src="script.js"></script>
 </body>
 </html>
