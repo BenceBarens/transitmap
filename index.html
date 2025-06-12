@@ -20,7 +20,6 @@
     <meta property="og:site_name" content="Transit Map Maker">
 </head>
 <body>
-<!-- Website online op https://transitmap.madebybence.com/ (of https://bencebarens.github.io/transitmap/) -->
 <section id="map">
   <div id="canvas-wrapper">
     <canvas id="canvas"></canvas>
@@ -42,8 +41,31 @@
 <section id="controls">
   <div>
       <h1>Transit Map Maker</h1>
-      <p>v2.23.1 | <a href="https://bencebarens.nl/" target="_blank">Made by Bence</a></p>
+      <p>v2.24.1 | <a href="https://bencebarens.nl/" target="_blank">Made by Bence</a></p>
   </div>
+
+  <!-- Tutorial popup -->
+  <div id="tutorial-popup" class="popup hidden">
+    <div class="popup-content">
+      <h2>Welcome to Transit Map Maker</h2>
+      <p>Start by creating a new map or importing an existing one.</p>
+      <ul id="intro-options">
+        <li><button class="intro-option" id="intro-option-1">Blank slate</button></li>
+        <li><button class="intro-option" id="intro-option-2"><img src="img/ams.png" alt="">Amsterdam Metro system</button></li>
+        <li>
+          <label class="intro-option" for="import-json-2">
+            <input type="file" accept=".json" class="import-json" id="import-json-2">
+            <span class="toggle-content">⬆️<br>Import JSON file</span>
+          </label>
+        </li>
+      </ul>
+
+      <button>Show tutorial</button>
+      <button class="closepopup" id="btn-closetutorial">×</button>
+      <button id="dont-show-again">Don't show again</button>
+    </div>
+  </div>
+
 
   <details>
     <summary>Lines</summary>
@@ -125,8 +147,8 @@
       <li><button id="export-btn">⬇️ Export as PNG</button></li>
       <li><button id="export-json-btn">⬇️ Export as JSON</button></li>
       <li>
-        <label class="toggle-wrapper" for="import-json">
-          <input type="file" accept=".json" id="import-json">
+        <label class="toggle-wrapper" for="import-json-1">
+          <input type="file" accept=".json" class="import-json" id="import-json-1">
           <span class="toggle-content">⬆️ Import JSON file</span>
         </label>
       </li>

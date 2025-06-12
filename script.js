@@ -1,23 +1,12 @@
-//Website online op https://transitmap.madebybence.com/ (of https://bencebarens.github.io/transitmap/)
+const version = "2.24.1";
 
 const canvas = document.querySelector("#canvas");
 const c = canvas.getContext("2d");
 
-const stations = [
-  { id: 1, x: 3, y: 4, name: "Station 1", type: 1 },
-  { id: 2, x: 4, y: 4, name: "Station 2", type: 1 },
-  { id: 3, x: 14, y: 6, name: "Station 3", type: 1 },
-  { id: 4, x: 12, y: 4, name: "Station 4", type: 1 },
-  { id: 5, x: 8, y: 8, name: "Station 5", type: 1 },
-  { id: 6, x: 4, y: 8, name: "Station 6", type: 1 },
-  { id: 7, x: 10, y: 6, name: "Station 7", type: 2 },
-];
+const stations = [];
 
 
-const lines = [
-  { name: "Line 1", color: "#E91E63", stations: [1, 2, 7, 3] },
-  { name: "Line 2", color: "#5925E9", stations: [4, 7, 5, 6] },
-];
+const lines = [];
 
 const stationTypes = [
   {type: 1, name: "Station"},
@@ -590,7 +579,8 @@ function exportMapData() {
     stationTypes,
     cellSize,
     gridCols,
-    gridRows
+    gridRows,
+    version
   };
 
   const json = JSON.stringify(data, null, 2);
@@ -607,7 +597,10 @@ function exportMapData() {
 
 
 //Import JSON \\\\\\\\\\\\\\\\\\\\\\\\
-document.querySelector("#import-json").addEventListener("change", importMapData);
+document.querySelectorAll(".import-json").forEach(input => {
+  input.addEventListener("change", importMapData);
+});
+
 
 function importMapData(event) {
   const file = event.target.files[0];
@@ -633,6 +626,7 @@ function importMapData(event) {
     draw();
     renderStationList();
     renderLineList();
+    closeTutorialPopup();
   };
 
   reader.readAsText(file);
@@ -662,8 +656,57 @@ function clearAll() {
   }
 }
 
+// Tutorial ------------------------------------------------------------------------
+function showTutorialPopup() {
+  const popup = document.getElementById('tutorial-popup');
+  if (popup) popup.classList.remove('hidden');
+}
+
+document.querySelector("#intro-option-1").addEventListener("click", closeTutorialPopup);
+document.querySelector("#btn-closetutorial").addEventListener("click", closeTutorialPopup);
+function closeTutorialPopup() {
+  const popup = document.getElementById('tutorial-popup');
+  if (popup) popup.classList.add('hidden');
+}
+
+document.querySelector("#intro-option-2").addEventListener("click", () => {
+  fetch("example/ams-metro.json")
+    .then(response => {
+      if (!response.ok) throw new Error("Bestand niet gevonden");
+      return response.json();
+    })
+    .then(data => {
+      stations = data.stations;
+      lines = data.lines;
+      stationTypes = data.stationTypes;
+      cellSize = data.cellSize;
+      gridCols = data.gridCols;
+      gridRows = data.gridRows;
+
+      draw();
+    })
+});
+
+
+
 //Initiatie ------------------------------------------------------------------------
 
-draw();
-renderStationList();
-renderLineList();
+document.addEventListener('DOMContentLoaded', () => {
+  draw();
+  renderStationList();
+  renderLineList();
+  
+  if (localStorage.getItem('hideTutorial') !== 'true') {
+    showTutorialPopup();
+  }
+
+  const dontShowAgainBtn = document.querySelector('#dont-show-again');
+  if (dontShowAgainBtn) {
+    dontShowAgainBtn.addEventListener('click', () => {
+      localStorage.setItem('hideTutorial', 'true');
+      closeTutorialPopup();
+    });
+  }
+});
+
+localStorage.setItem('hideTutorial', 'false');

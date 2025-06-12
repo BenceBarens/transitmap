@@ -1,5 +1,3 @@
-/* Website online op https://transitmap.madebybence.com/ (of https://bencebarens.github.io/transitmap/) */
-
 @import url('https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,500&family=Noto+Serif:ital,wght@0,500;1,500&display=swap');
 
 .material-symbols-outlined {
@@ -180,9 +178,6 @@ label input{
   display: block;
 }
 
-
-
-
 /* MAP -------------------------------------------------------------------- */
 
 #map {
@@ -291,7 +286,7 @@ canvas {
   color: #232322;
 }
 
-#controls details ul {
+ul{
   list-style: none;
   padding: 0 1rem;
 }
@@ -301,8 +296,7 @@ canvas {
   width: 100%;
 }
 
-
-#line-popup button, #station-popup button{
+#line-popup button, #station-popup button, #tutorial-popup button{
   width: auto;
 }
 
@@ -324,6 +318,7 @@ canvas {
 }
 
 .popup {
+  color: #232322;
   position: absolute;
   top: 50%;
   right: 50%;
@@ -336,9 +331,39 @@ canvas {
   overflow-y: scroll;
 }
 
-.popup button{
-  width:min-content;
-  margin: 0 auto;
+#tutorial-popup h2 {
+  text-align: left;
+}
+
+#tutorial-popup p{
+  text-align: left;
+}
+
+#tutorial-popup ul{
+  display: flex;
+  padding: 0;
+  margin: 0;
+  list-style: none;
+  gap: 1rem;
+}
+
+#tutorial-popup ul li{
+  flex: 1;
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+#tutorial-popup ul li button{
+  width: 100%;
+  height: 100%;
+  text-align: center;
+}
+
+#tutorial-popup ul li img{
+  width: 100%;
+  height: auto;
+  max-width: 10rem;
+  max-height: 10rem;
 }
 
 .hidden {
