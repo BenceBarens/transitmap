@@ -1,4 +1,4 @@
-const version = "2.24.1";
+const version = "2.24.2";
 
 const canvas = document.querySelector("#canvas");
 const c = canvas.getContext("2d");
@@ -189,6 +189,7 @@ function draw() {
   drawGrid();
   drawLines();
   drawStations();
+  console.log("Draw executed");
 }
 
 //Rendering station and line lists ------------------------------------------------
@@ -622,7 +623,6 @@ function importMapData(event) {
     gridCols = data.gridCols;
     gridRows = data.gridRows;
 
-    drawGrid();
     draw();
     renderStationList();
     renderLineList();
@@ -670,24 +670,55 @@ function closeTutorialPopup() {
 }
 
 document.querySelector("#intro-option-2").addEventListener("click", () => {
-  fetch("example/ams-metro.json")
-    .then(response => {
-      if (!response.ok) throw new Error("Bestand niet gevonden");
-      return response.json();
+  loadMetroData("example/ams-metro.json");
+});
+
+document.querySelector("#intro-option-3").addEventListener("click", () => {
+  loadMetroData("example/bud-metro.json");
+});
+
+
+function loadMetroData(path) {
+  fetch(path)
+    .then(res => {
+      if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
+      return res.json();
     })
     .then(data => {
-      stations = data.stations;
-      lines = data.lines;
-      stationTypes = data.stationTypes;
+      stations.length = 0;
+      lines.length = 0;
+      stationTypes.length = 0;
+
+      data.stations?.forEach(station => stations.push(station));
+      data.lines?.forEach(line => lines.push(line));
+      data.stationTypes?.forEach(type => stationTypes.push(type));
+
       cellSize = data.cellSize;
       gridCols = data.gridCols;
       gridRows = data.gridRows;
 
       draw();
+      renderStationList();
+      renderLineList();
+      closeTutorialPopup();
     })
-});
+}
 
 
+
+
+//Change log ------------------------------------------------------------------------
+
+function showChangeLog(){
+  const changeLogPopup = document.querySelector("#change-log-popup");
+  changeLogPopup.classList.remove('hidden');
+}
+
+document.querySelector("#btn-closechangelog").addEventListener("click", closeChangeLog);
+function closeChangeLog(){
+  const changeLogPopup = document.querySelector("#change-log-popup");
+  changeLogPopup.classList.add('hidden');
+}
 
 //Initiatie ------------------------------------------------------------------------
 
@@ -709,4 +740,31 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 });
 
-localStorage.setItem('hideTutorial', 'false');
+// function drawLegend() {
+//   const padding = 10;
+//   const lineHeight = 24;
+//   let x = canvas.width - 250 + padding;
+//   let y = 20;
+
+//   c.font = "14px sans-serif";
+//   c.textBaseline = "middle";
+
+//   // Achtergrond
+//   c.fillStyle = "#f7f4ed";
+//   c.fillRect(x - padding, y - padding, 240, lines.length * lineHeight + padding * 2);
+
+//   lines.forEach(line => {
+//     // Lijnkleur tekenen
+//     c.fillStyle = line.color;
+//     c.fillRect(x, y, 20, 10);
+
+//     // Lijnnaam tekenen
+//     c.fillStyle = "#232322";
+//     c.font = "1rem Inter, sans-serif";
+//     c.fillText(line.name, x + 30, y + 5);
+
+//     y += lineHeight;
+//   });
+// }
+
+// drawLegend();

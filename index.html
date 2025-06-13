@@ -39,9 +39,9 @@
 </section>
 
 <section id="controls">
-  <div>
+  <div id="header">
       <h1>Transit Map Maker</h1>
-      <p>v2.24.1 | <a href="https://bencebarens.nl/" target="_blank">Made by Bence</a></p>
+      <p><span onclick="showChangeLog()">v2.24.2</span> | <a href="https://bencebarens.nl/" target="_blank">Made by Bence</a></p>
   </div>
 
   <!-- Tutorial popup -->
@@ -50,8 +50,9 @@
       <h2>Welcome to Transit Map Maker</h2>
       <p>Start by creating a new map or importing an existing one.</p>
       <ul id="intro-options">
-        <li><button class="intro-option" id="intro-option-1">Blank slate</button></li>
-        <li><button class="intro-option" id="intro-option-2"><img src="img/ams.png" alt="">Amsterdam Metro system</button></li>
+        <li><button class="intro-option" id="intro-option-1">New map<br>(empty canvas)</button></li>
+        <li><button class="intro-option" id="intro-option-2"><img src="img/ams.png" alt="">The Amsterdam Metro system (2025)</button></li>
+        <li><button class="intro-option" id="intro-option-3"><img src="img/bud.png" alt="">Budapest Metro and Suburban Rail (2014)</button></li>
         <li>
           <label class="intro-option" for="import-json-2">
             <input type="file" accept=".json" class="import-json" id="import-json-2">
@@ -60,10 +61,20 @@
         </li>
       </ul>
 
-      <button>Show tutorial</button>
+      <!-- <button>Show tutorial</button> -->
       <button class="closepopup" id="btn-closetutorial">×</button>
       <button id="dont-show-again">Don't show again</button>
     </div>
+  </div>
+
+  <!-- Change log -->
+  <div class="popup hidden" id="change-log-popup">
+    <h2>Change log</h2>
+    <ul>
+      <li>v2.24.2<br>Added a change log (yay!)<br>Fixed AMS metro import on welcome screen<br>Added (a part of) Budapest metro</li>
+      <li>v2.24.1<br>Added a welcome screen<br>Better hover effects</li>
+    </ul>
+    <button class="closepopup" id="btn-closechangelog">×</button>
   </div>
 
 

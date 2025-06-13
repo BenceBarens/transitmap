@@ -155,6 +155,13 @@ label input{
   height: fit-content;
 }
 
+.toggle-content:hover{
+  background-color: #232322;
+  color:#F7F4ED;
+  border: #232322 solid 0.1rem;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.5);
+}
+
 .toggle-content {
   padding: 0.5rem;
   border: 0.1rem solid #232322;
@@ -250,11 +257,15 @@ canvas {
   overflow-y: scroll;
 }
 
-#controls > div {
+#header span{
+  text-decoration: underline;
+}
+
+#header{
   text-align: right;
 }
 
-#controls div h1 {
+#header h1 {
   line-height: 2.1rem;
 }
 
@@ -296,7 +307,7 @@ ul{
   width: 100%;
 }
 
-#line-popup button, #station-popup button, #tutorial-popup button{
+#line-popup button, #station-popup button, #tutorial-popup button, #change-log-popup button {
   width: auto;
 }
 
@@ -331,19 +342,22 @@ ul{
   overflow-y: scroll;
 }
 
-#tutorial-popup h2 {
+#tutorial-popup h2, #change-log-popup h2{
   text-align: left;
 }
 
-#tutorial-popup p{
+#tutorial-popup p, #change-log-popup li{
   text-align: left;
+}
+
+#change-log-popup ul{
+  list-style: square;
 }
 
 #tutorial-popup ul{
   display: flex;
   padding: 0;
   margin: 0;
-  list-style: none;
   gap: 1rem;
 }
 

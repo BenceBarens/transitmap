@@ -373,18 +373,19 @@
     },
     {
       "type": 2,
-      "name": "Treinstation"
+      "name": "Train station"
     },
     {
       "type": 3,
-      "name": "Overstapstation"
+      "name": "Transfer station"
     },
     {
       "type": 4,
-      "name": "Overstap treinstation"
+      "name": "Large station"
     }
   ],
   "cellSize": 25,
   "gridCols": 36,
-  "gridRows": 40
+  "gridRows": 40,
+  "version": "2.24.1"
 }
