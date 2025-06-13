@@ -157,6 +157,7 @@ label input{
 
 .toggle-content:hover{
   background-color: #232322;
+  cursor: pointer;
   color:#F7F4ED;
   border: #232322 solid 0.1rem;
   box-shadow: 0 4px 12px rgba(0,0,0,0.5);
@@ -389,6 +390,10 @@ ul{
   justify-content: space-between;
   align-items: center;
   background: #F7F4ED;
+}
+
+#station-x-input, #station-y-input {
+  width: 3rem;
 }
 
 #zoomButtonsUl li{

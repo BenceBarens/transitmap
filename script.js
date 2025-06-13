@@ -1,4 +1,5 @@
-const version = "2.24.2";
+const version = "2.25.1";
+document.querySelector("#version-text").innerHTML = "Version " + version;
 
 const canvas = document.querySelector("#canvas");
 const c = canvas.getContext("2d");
@@ -170,16 +171,18 @@ function drawStations() {
       c.fill();
     }
     
-    c.beginPath();
-    c.fillStyle = "#232322";
-    c.strokeStyle = "#F7F4ED";
-    c.save();
-    c.translate(x, y);
-    c.rotate(-45 * Math.PI / 180);
-    c.font = "1rem Inter, sans-serif";
-    c.strokeText(station.name, 15, 15);
-    c.fillText(station.name, 15, 15);
-    c.restore();
+    if (toggleShowStationNames.checked) {
+      c.beginPath();
+      c.fillStyle = "#232322";
+      c.strokeStyle = "#F7F4ED";
+      c.save();
+      c.translate(x, y);
+      c.rotate(-45 * Math.PI / 180);
+      c.font = "1rem Inter, sans-serif";
+      c.strokeText(station.name, 15, 15);
+      c.fillText(station.name, 15, 15);
+      c.restore();
+    }
   });
 }
 
@@ -520,9 +523,10 @@ function editStation(index) {
   const station = stations[index];
 
   document.querySelector('#station-name-input').value = station.name;
-  document.querySelector('#station-type-input').value = station.type || 'regular'; // 'regular' als fallback
+  document.querySelector('#station-type-input').value = station.type;
+  document.querySelector('#station-x-input').value = station.x;
+  document.querySelector('#station-y-input').value = station.y;
   document.querySelector('#station-popup').classList.remove('hidden');
-  draw();
 }
 
 document.querySelector("#btn-savestationedits").addEventListener("click", saveStationEdits);
@@ -530,7 +534,9 @@ document.querySelector("#btn-savestationedits").addEventListener("click", saveSt
 function saveStationEdits() {
   if (selectedStationIndex !== null) {
     stations[selectedStationIndex].name = document.querySelector('#station-name-input').value;
-    stations[selectedStationIndex].type = parseInt(document.querySelector('#station-type-input').value, 10); // parse int
+    stations[selectedStationIndex].x = document.querySelector('#station-x-input').value;
+    stations[selectedStationIndex].y = document.querySelector('#station-y-input').value;
+    stations[selectedStationIndex].type = parseInt(document.querySelector('#station-type-input').value, 10);
     renderStationList();
     draw();
     closePopup();
@@ -642,6 +648,11 @@ toggleShowGridLines.addEventListener('change', function() {
 toggleShowTrueGridLines.addEventListener('change', function() {
   draw();
 });
+
+const toggleShowStationNames = document.querySelector('#toggleShowStationNames');
+toggleShowStationNames.addEventListener('change', function(){
+  draw();
+})
 
 //Clear map \\\\\\\\\\\\\\\\\\\\\\\\\\\\\
 document.querySelector("#btn-clearall").addEventListener("click", clearAll);

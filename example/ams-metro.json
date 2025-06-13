@@ -384,7 +384,7 @@
       "name": "Large station"
     }
   ],
-  "cellSize": 25,
+  "cellSize": 30,
   "gridCols": 36,
   "gridRows": 40,
   "version": "2.24.1"

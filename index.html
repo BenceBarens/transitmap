@@ -41,7 +41,7 @@
 <section id="controls">
   <div id="header">
       <h1>Transit Map Maker</h1>
-      <p><span onclick="showChangeLog()">v2.24.2</span> | <a href="https://bencebarens.nl/" target="_blank">Made by Bence</a></p>
+      <p><span onclick="showChangeLog()" id="version-text"></span> | <a href="https://bencebarens.nl/" target="_blank">Made by Bence</a></p>
   </div>
 
   <!-- Tutorial popup -->
@@ -71,6 +71,7 @@
   <div class="popup hidden" id="change-log-popup">
     <h2>Change log</h2>
     <ul>
+      <li>v2.25.1<br>Added ability to edit station coordinates<br>Finished Budapest metro on welcome screen<br>Added ability to hide station names</li>
       <li>v2.24.2<br>Added a change log (yay!)<br>Fixed AMS metro import on welcome screen<br>Added (a part of) Budapest metro</li>
       <li>v2.24.1<br>Added a welcome screen<br>Better hover effects</li>
     </ul>
@@ -116,6 +117,7 @@
         <h3>Edit station</h3>
         <ul>
           <li>Name: <input type="text" id="station-name-input"></li>
+          <li>x: <input type="number" id="station-x-input"> y: <input type="number" id="station-y-input"></li>
           <li>Type: 
           <select id="station-type-input">
             <option value="1">Filled square</option>
@@ -178,6 +180,12 @@
         <label class="switch-wrapper">
           <span class="switch-label">Show true grid lines</span>
           <span class="switch"><input type="checkbox" id="toggleShowTrueGridLines"><span class="slider"></span></span>
+        </label>
+      </li>
+      <li>
+        <label class="switch-wrapper">
+          <span class="switch-label">Show station names</span>
+          <span class="switch"><input type="checkbox" id="toggleShowStationNames" checked><span class="slider"></span></span>
         </label>
       </li>
     </ul>
