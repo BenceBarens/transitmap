@@ -50,20 +50,21 @@
       <h2>Welcome to Transit Map Maker</h2>
       <p>Start by creating a new map or importing an existing one.</p>
       <ul id="intro-options">
-        <li><button class="intro-option" id="intro-option-1">New map<br>(empty canvas)</button></li>
-        <li><button class="intro-option" id="intro-option-2"><img src="img/ams.png" alt="">The Amsterdam Metro system (2025)</button></li>
-        <li><button class="intro-option" id="intro-option-3"><img src="img/bud.png" alt="">Budapest Metro and Suburban Rail (2014)</button></li>
         <li>
+          <button class="intro-option hidden" id="intro-option-4">💾<br>Pick up where you left off (saved map data)</button>
+          <button class="intro-option" id="intro-option-1">➕<br>Create a new map<br>(empty canvas)</button>
           <label class="intro-option" for="import-json-2">
             <input type="file" accept=".json" class="import-json" id="import-json-2">
-            <span class="toggle-content">⬆️<br>Import JSON file</span>
+            <span class="toggle-content">⬆️<br>Import a JSON file</span>
           </label>
         </li>
+        <li><button class="intro-option" id="intro-option-2"><img src="img/ams.png" alt="">The Amsterdam Metro system (2025)</button></li>
+        <li><button class="intro-option" id="intro-option-3"><img src="img/bud.png" alt="">Budapest Metro and Suburban Rail (2014)</button></li>
       </ul>
 
       <!-- <button>Show tutorial</button> -->
       <button class="closepopup" id="btn-closetutorial">×</button>
-      <button id="dont-show-again">Don't show again</button>
+      <button id="dont-show-again">Don't show again</button> (Will default to use saved map data every time.)
     </div>
   </div>
 
@@ -71,6 +72,7 @@
   <div class="popup hidden" id="change-log-popup">
     <h2>Change log</h2>
     <ul>
+      <li>v3.01.1<br>Added autosave on close<br>Added data validation for JSON imports<br>System now removes deleted stations from line arrays<br>Changed export format from PNG to JPG</li>
       <li>v2.25.1<br>Added ability to edit station coordinates<br>Finished Budapest metro on welcome screen<br>Added ability to hide station names</li>
       <li>v2.24.2<br>Added a change log (yay!)<br>Fixed AMS metro import on welcome screen<br>Added (a part of) Budapest metro</li>
       <li>v2.24.1<br>Added a welcome screen<br>Better hover effects</li>
@@ -157,7 +159,7 @@
   <details>
     <summary>Export & import</summary>
     <ul>
-      <li><button id="export-btn">⬇️ Export as PNG</button></li>
+      <li><button id="export-btn">⬇️ Export as JPG</button></li>
       <li><button id="export-json-btn">⬇️ Export as JSON</button></li>
       <li>
         <label class="toggle-wrapper" for="import-json-1">

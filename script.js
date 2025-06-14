@@ -1,4 +1,4 @@
-const version = "2.25.1";
+const version = "3.01.1";
 document.querySelector("#version-text").innerHTML = "Version " + version;
 
 const canvas = document.querySelector("#canvas");
@@ -547,7 +547,14 @@ document.querySelector("#btn-deletestation").addEventListener("click", deleteSta
 
 function deleteStation() {
   if (selectedStationIndex !== null) {
+    const deletedStation = stations[selectedStationIndex];
+
+    lines.forEach(line => {
+      line.stations = line.stations.filter(id => id !== deletedStation.id);
+    });
+
     stations.splice(selectedStationIndex, 1);
+
     renderStationList();
     draw();
     closePopup();
@@ -561,14 +568,14 @@ function closePopup() {
   selectedStationIndex = null;
 }
 
-//Export as PNG \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
+//Export as JPG \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
 document.querySelector("#export-btn").addEventListener("click", () => {
   cellSizeBefore = cellSize;
   cellSize = 50;
   draw();
   const link = document.createElement("a");
-  link.download = "My Transit Map.png";
-  link.href = canvas.toDataURL("image/png");
+  link.download = "My Transit Map.jpg";
+  link.href = canvas.toDataURL("image/jpeg");
   link.click();
   cellSize = cellSizeBefore;
   draw();
@@ -580,14 +587,18 @@ document.querySelector("#export-json-btn").addEventListener("click", () => {
 });
 
 function exportMapData() {
+  const info = "Transit Map Maker version " + version + ", Made by Bence (bencebarens.nl)";
+  const date = Date.now();
   const data = {
+    info,
+    date,
+    version,
     stations,
     lines,
     stationTypes,
     cellSize,
     gridCols,
-    gridRows,
-    version
+    gridRows
   };
 
   const json = JSON.stringify(data, null, 2);
@@ -615,24 +626,32 @@ function importMapData(event) {
 
   const reader = new FileReader();
   reader.onload = function(e) {
-    const data = JSON.parse(e.target.result);
+    try {
+      const data = JSON.parse(e.target.result);
 
-    stations.length = 0;
-    lines.length = 0;
-    stationTypes.length = 0;
+      if (!data.info || !data.info.startsWith("Transit Map Maker")) {
+        alert("This JSON file doens't seem to originate from Transit Map Maker. Please make sure you selected the right file.");
+        return;
+      }
 
-    data.stations?.forEach(station => stations.push(station));
-    data.lines?.forEach(line => lines.push(line));
-    data.stationTypes?.forEach(type => stationTypes.push(type));
+      stations.length = 0;
+      lines.length = 0;
+      stationTypes.length = 0;
 
-    cellSize = data.cellSize;
-    gridCols = data.gridCols;
-    gridRows = data.gridRows;
+      data.stations?.forEach(station => stations.push(station));
+      data.lines?.forEach(line => lines.push(line));
+      data.stationTypes?.forEach(type => stationTypes.push(type));
 
-    draw();
-    renderStationList();
-    renderLineList();
-    closeTutorialPopup();
+      gridCols = data.gridCols;
+      gridRows = data.gridRows;
+
+      draw();
+      renderStationList();
+      renderLineList();
+      closeTutorialPopup();
+    } catch (err) {
+      alert("This file seems to be corrupt. Please make sure that no changes where made to the file directly.");
+    }
   };
 
   reader.readAsText(file);
@@ -658,12 +677,14 @@ toggleShowStationNames.addEventListener('change', function(){
 document.querySelector("#btn-clearall").addEventListener("click", clearAll);
 
 function clearAll() {
-  if (confirm("Are you sure you want to clear the whole map? All stations and lines will be erased.")) {
+  if (confirm("Are you sure you want to start over? All existing stations and lines will be erased and saved data will be deleted.")) {
     stations.length = 0;
     lines.length = 0;
     draw();
     renderStationList();
     renderLineList();
+    localStorage.removeItem("savedMapData");
+    closeTutorialPopup();
   }
 }
 
@@ -673,7 +694,8 @@ function showTutorialPopup() {
   if (popup) popup.classList.remove('hidden');
 }
 
-document.querySelector("#intro-option-1").addEventListener("click", closeTutorialPopup);
+document.querySelector("#intro-option-1").addEventListener("click", clearAll);
+document.querySelector("#intro-option-4").addEventListener("click", closeTutorialPopup);
 document.querySelector("#btn-closetutorial").addEventListener("click", closeTutorialPopup);
 function closeTutorialPopup() {
   const popup = document.getElementById('tutorial-popup');
@@ -715,8 +737,21 @@ function loadMetroData(path) {
     })
 }
 
+//Autosave data ------------------------------------------------------------------------
 
-
+window.addEventListener("beforeunload", (e) => {
+  const date = Date.now();
+  const data = {
+    stations,
+    lines,
+    stationTypes,
+    cellSize,
+    gridCols,
+    gridRows,
+    date
+  };
+  localStorage.setItem("savedMapData", JSON.stringify(data));
+});
 
 //Change log ------------------------------------------------------------------------
 
@@ -749,6 +784,28 @@ document.addEventListener('DOMContentLoaded', () => {
       closeTutorialPopup();
     });
   }
+
+  const savedData = localStorage.getItem("savedMapData");
+  if (savedData) {
+    const data = JSON.parse(savedData);
+    stations.length = 0;
+    lines.length = 0;
+    stationTypes.length = 0;
+
+    document.querySelector("#intro-option-4").classList.remove("hidden");
+
+    data.stations?.forEach(station => stations.push(station));
+    data.lines?.forEach(line => lines.push(line));
+    data.stationTypes?.forEach(type => stationTypes.push(type));
+
+    cellSize = data.cellSize;
+    gridCols = data.gridCols;
+    gridRows = data.gridRows;
+    draw();
+    renderStationList();
+    renderLineList();
+  }
+
 });
 
 // function drawLegend() {
