@@ -1,4 +1,4 @@
-const version = "3.01.1";
+const version = "3.02.1";
 document.querySelector("#version-text").innerHTML = "Version " + version;
 
 const canvas = document.querySelector("#canvas");
@@ -73,23 +73,20 @@ function drawGrid() {
     c.stroke();
   }
 
-  if (toggleShowTrueGridLines.checked) {
-    c.strokeStyle = "rgba(255, 100, 100, 0.2)";
-    c.beginPath();
+  if (toggleShowCoordinates.checked) {
+    c.fillStyle = "rgba(0, 0, 0, 0.5)";
+    c.font = "1rem Inter, sans-serif";
+    c.textAlign = "center";
+    c.textBaseline = "middle";
 
-    for (let x = 0; x <= gridCols; x++) {
-      const pos = x * cellSize;
-      c.moveTo(pos, 0);
-      c.lineTo(pos, canvas.height);
+    for (let x = 1; x <= gridCols; x++) {
+      const xPos = x * cellSize + (cellSize / 2);
+      c.fillText(x, xPos, cellSize/2);
     }
-
-    for (let y = 0; y <= gridRows; y++) {
-      const pos = y * cellSize;
-      c.moveTo(0, pos);
-      c.lineTo(canvas.width, pos);
+    for (let y = 1; y <= gridRows; y++) {
+      const yPos = y * cellSize + (cellSize / 2);
+      c.fillText(y, cellSize/2, yPos);
     }
-
-    c.stroke();
   }
 }
 
@@ -179,6 +176,8 @@ function drawStations() {
       c.translate(x, y);
       c.rotate(-45 * Math.PI / 180);
       c.font = "1rem Inter, sans-serif";
+      c.textAlign = "left";
+      c.textBaseline = "middle";
       c.strokeText(station.name, 15, 15);
       c.fillText(station.name, 15, 15);
       c.restore();
@@ -613,6 +612,41 @@ function exportMapData() {
   document.body.removeChild(a);
 }
 
+//Export as URL \\\\\\\\\\\\\\\\\\\\\
+
+function toBase64Url(uint8Array) {
+  return btoa(String.fromCharCode(...uint8Array))
+    .replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/, "");
+}
+
+function fromBase64Url(str) {
+  str = str.replace(/-/g, "+").replace(/_/g, "/");
+  while (str.length % 4 !== 0) str += "=";
+  return Uint8Array.from(atob(str), c => c.charCodeAt(0));
+}
+
+document.querySelector("#share-btn").addEventListener("click", () => {
+  const data = {
+    s: stations,
+    l: lines,
+    t: stationTypes,
+    w: gridCols,
+    h: gridRows,
+    c: cellSize
+  };
+
+  const compressed = pako.deflateRaw(JSON.stringify(data));
+  const encoded = toBase64Url(compressed);
+  const url = `${location.origin}${location.pathname}?data=${encoded}`;
+
+  if (url.length > 2000) {
+    alert("This map is too large to share via a link (max URL-size is 2000 characters). Please exporting the map as a JSON file or image instead.");
+    return;
+  }
+
+  prompt("To share this map online, copy this URL:", url);
+});
+
 
 //Import JSON \\\\\\\\\\\\\\\\\\\\\\\\
 document.querySelectorAll(".import-json").forEach(input => {
@@ -659,17 +693,17 @@ function importMapData(event) {
 
 //Show grid lines \\\\\\\\\\\\\\\\\\\\\\\
 const toggleShowGridLines = document.querySelector('#toggleShowGridLines');
-const toggleShowTrueGridLines = document.querySelector('#toggleShowTrueGridLines');
-
 toggleShowGridLines.addEventListener('change', function() {
-  draw();
-});
-toggleShowTrueGridLines.addEventListener('change', function() {
   draw();
 });
 
 const toggleShowStationNames = document.querySelector('#toggleShowStationNames');
 toggleShowStationNames.addEventListener('change', function(){
+  draw();
+})
+
+const toggleShowCoordinates = document.querySelector('#toggleShowCoordinates');
+toggleShowCoordinates.addEventListener('change', function(){
   draw();
 })
 
@@ -772,10 +806,44 @@ document.addEventListener('DOMContentLoaded', () => {
   draw();
   renderStationList();
   renderLineList();
-  
-  if (localStorage.getItem('hideTutorial') !== 'true') {
-    showTutorialPopup();
+
+  const urlParams = new URLSearchParams(window.location.search);
+  if (urlParams.has("data")) {
+    try {
+      const encoded = urlParams.get("data");
+      const compressed = fromBase64Url(encoded);
+      const json = pako.inflateRaw(compressed, { to: "string" });
+      const data = JSON.parse(json);
+
+      stations.length = 0;
+      lines.length = 0;
+      stationTypes.length = 0;
+
+      data.s?.forEach(station => stations.push(station));
+      data.l?.forEach(line => lines.push(line));
+      data.t?.forEach(type => stationTypes.push(type));
+      gridCols = data.w;
+      gridRows = data.h;
+      cellSize = data.c;
+
+      draw();
+      renderStationList();
+      renderLineList();
+      closeTutorialPopup();
+    } catch (err) {
+      alert("Sorry, something went wrong when loading this map.");
+      initator();
+    }
   }
+  else{
+    initator();
+  }
+});
+
+function initator(){
+if (localStorage.getItem('hideTutorial') !== 'true') {
+  showTutorialPopup();
+}
 
   const dontShowAgainBtn = document.querySelector('#dont-show-again');
   if (dontShowAgainBtn) {
@@ -805,34 +873,4 @@ document.addEventListener('DOMContentLoaded', () => {
     renderStationList();
     renderLineList();
   }
-
-});
-
-// function drawLegend() {
-//   const padding = 10;
-//   const lineHeight = 24;
-//   let x = canvas.width - 250 + padding;
-//   let y = 20;
-
-//   c.font = "14px sans-serif";
-//   c.textBaseline = "middle";
-
-//   // Achtergrond
-//   c.fillStyle = "#f7f4ed";
-//   c.fillRect(x - padding, y - padding, 240, lines.length * lineHeight + padding * 2);
-
-//   lines.forEach(line => {
-//     // Lijnkleur tekenen
-//     c.fillStyle = line.color;
-//     c.fillRect(x, y, 20, 10);
-
-//     // Lijnnaam tekenen
-//     c.fillStyle = "#232322";
-//     c.font = "1rem Inter, sans-serif";
-//     c.fillText(line.name, x + 30, y + 5);
-
-//     y += lineHeight;
-//   });
-// }
-
-// drawLegend();
+}
