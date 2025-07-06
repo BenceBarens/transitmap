@@ -1,4 +1,4 @@
-const version = "3.02.1";
+const version = "3.02.2";
 document.querySelector("#version-text").innerHTML = "Version " + version;
 
 const canvas = document.querySelector("#canvas");
