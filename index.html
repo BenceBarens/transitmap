@@ -72,6 +72,7 @@
   <div class="popup hidden" id="change-log-popup">
     <h2>Change log</h2>
     <ul>
+      <li>v3.10.1 (09-07-2025)<br>New feature: line styles and width can now be changed (backwards compatible)</li>
       <li>v3.02.2<br>Slight correction to v3.02.1</li>
       <li>v3.02.1<br>Added a toggle for showing coordinates<br>Removed "show true grid lines" function<br>Added ability to create map URL<br>Made popup backdrop darker</li>
       <li>v3.01.1<br>Added autosave on close<br>Added data validation for JSON imports<br>System now removes deleted stations from line arrays<br>Changed export format from PNG to JPG</li>
@@ -96,8 +97,24 @@
     <div id="line-popup" class="popup hidden">
       <h3>Edit line</h3>
       <ul>
-        <li>Name: <input type="text" id="line-name-input"></li>
-        <li>Color: <input type="color" id="line-color-input"></li>
+        <li><label for="line-name-input">Name:</label> <input type="text" id="line-name-input"></li>
+        <li><label for="line-color-input">Color:</label> <input type="color" id="line-color-input"></li>
+        <li>
+          <label for="line-style-input">Style:</label>
+          <select id="line-style-input">
+            <option value="solid">Solid</option>
+            <option value="dashed">Dashed</option>
+            <option value="dotted">Dotted</option>
+          </select>
+        </li>
+        <li>
+          <label for="line-width-input">Width:</label>
+          <select id="line-width-input">
+            <option value="thin">Thin</option>
+            <option value="normal" selected>Normal</option>
+            <option value="thick">Thick</option>
+          </select>
+        </li>
         <li><button id="btn-savelineedits">Save changes</button> <button id="btn-deleteline">Delete line</button></li>
       </ul>
       <h3>Edit line stations</h3>
@@ -120,9 +137,9 @@
     <div id="station-popup" class="popup hidden">
         <h3>Edit station</h3>
         <ul>
-          <li>Name: <input type="text" id="station-name-input"></li>
-          <li>x: <input type="number" id="station-x-input"> y: <input type="number" id="station-y-input"></li>
-          <li>Type: 
+          <li><label for="station-name-input">Name:</label> <input type="text" id="station-name-input"></li>
+          <li><label for="station-x-input">x:</label> <input type="number" id="station-x-input"> <label for="station-y-input">y:</label> <input type="number" id="station-y-input"></li>
+          <li><label for="station-type-input">Type:</label>
           <select id="station-type-input">
             <option value="1">Filled square</option>
             <option value="2">Outlined square</option>
@@ -159,7 +176,7 @@
     <ul id="controls-legend-list"></ul>
   </details>
   <details>
-    <summary>Export, import & share</summary>
+    <summary>Export & import</summary>
     <ul>
       <li><button id="export-btn">🖼️ Export as JPG</button></li>
       <li><button id="export-json-btn">⬇️ Export as JSON</button></li>
@@ -174,6 +191,16 @@
   </details>
   <details>
     <summary>Map</summary>
+    <ul id="zoomButtonsUl">
+      <li><button id="mapWidthMin">-</button> Map width <button id="mapWidthPlus">+</button></li>
+      <li><button id="mapHeightMin">-</button> Map height <button id="mapHeightPlus">+</button></li>
+    </ul>
+    <ul>
+      <li><button id="btn-clearall">Clear whole map</button></li>
+    </ul>
+  </details>
+  <details>
+    <summary>View</summary>
     <ul>
       <li>
         <label class="switch-wrapper">
@@ -193,13 +220,6 @@
           <span class="switch"><input type="checkbox" id="toggleShowCoordinates"><span class="slider"></span></span>
         </label>
       </li>
-    </ul>
-    <ul id="zoomButtonsUl">
-      <li><button id="mapWidthMin">-</button> Map width <button id="mapWidthPlus">+</button></li>
-      <li><button id="mapHeightMin">-</button> Map height <button id="mapHeightPlus">+</button></li>
-    </ul>
-    <ul>
-      <li><button id="btn-clearall">Clear whole map</button></li>
     </ul>
   </details>
 </section>

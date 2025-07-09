@@ -1,4 +1,4 @@
-const version = "3.02.2";
+const version = "3.10.0";
 document.querySelector("#version-text").innerHTML = "Version " + version;
 
 const canvas = document.querySelector("#canvas");
@@ -88,12 +88,27 @@ function drawGrid() {
       c.fillText(y, cellSize/2, yPos);
     }
   }
+  c.stroke;
 }
 
 function drawLines() {
   lines.forEach(line => {
     c.strokeStyle = line.color;
-    c.lineWidth = 10;
+    if (line.width === "thin") {
+      c.lineWidth = 4;
+    } else if (line.width === "thick") {
+      c.lineWidth = 14;
+    } else {
+      c.lineWidth = 8;
+    }
+
+    if (line.style === "dashed") {
+      c.setLineDash([10, 5]);
+    } else if (line.style === "dotted") {
+      c.setLineDash([2, 4]);
+    } else {
+      c.setLineDash([]);
+    }
     c.beginPath();
 
     let prevX = null;
@@ -127,6 +142,7 @@ function drawLines() {
     });
 
     c.stroke();
+    c.setLineDash([]);
   });
 }
 
@@ -183,6 +199,7 @@ function drawStations() {
       c.restore();
     }
   });
+  c.stroke;
 }
 
 
@@ -355,6 +372,8 @@ function openLinePopup(index) {
   document.querySelector("#line-name-input").value = line.name;
   document.querySelector("#line-color-input").value = line.color;
   document.querySelector("#line-popup").classList.remove("hidden");
+  document.querySelector("#line-style-input").value = line.style || "solid";
+  document.querySelector("#line-width-input").value = line.width || "normal";
 
   renderEditStationSelectOptions();
   renderEditableStationList();
@@ -373,9 +392,13 @@ function saveLineEdits() {
   if (selectedLineIndex === null) return;
   const name = document.querySelector("#line-name-input").value;
   const color = document.querySelector("#line-color-input").value;
+  const style = document.querySelector("#line-style-input").value;
+  const width = document.querySelector("#line-width-input").value;
 
   lines[selectedLineIndex].name = name;
   lines[selectedLineIndex].color = color;
+  lines[selectedLineIndex].style = style;
+  lines[selectedLineIndex].width = width;
 
   renderLineList();
   closeLinePopup();
@@ -465,6 +488,8 @@ document.querySelector("#btn-addline").addEventListener("click", () => {
   const newLine = {
       name: `Line ${lineNumber}`,
       color: color,
+      style: "solid",
+      width: "normal",
       stations: []
   };
 
@@ -640,7 +665,7 @@ document.querySelector("#share-btn").addEventListener("click", () => {
   const url = `${location.origin}${location.pathname}?data=${encoded}`;
 
   if (url.length > 2000) {
-    alert("This map is too large to share via a link (max URL-size is 2000 characters). Please exporting the map as a JSON file or image instead.");
+    alert("Sorry, this map is too large to share via a link (max URL-size is 2000 characters). Please exporting the map as a JSON file or image instead.");
     return;
   }
 
