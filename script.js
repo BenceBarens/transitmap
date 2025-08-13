@@ -1,14 +1,11 @@
-const version = "3.10.0";
+const version = "3.20.0";
 document.querySelector("#version-text").innerHTML = "Version " + version;
 
 const canvas = document.querySelector("#canvas");
 const c = canvas.getContext("2d");
 
 const stations = [];
-
-
 const lines = [];
-
 const stationTypes = [
   {type: 1, name: "Station"},
   {type: 2, name: "Transfer station"},
@@ -20,34 +17,89 @@ let cellSize = 50;
 let gridCols = 30;
 let gridRows = 30;
 
-function resizeCanvas() { 
+/* ---- Size thresholds (pas aan indien nodig) ---- */
+const MAX_CELLS_WARNING = 3000;       // waarschuwing op basis van aantal cellen (cols * rows)
+const MAX_EXPORT_JSON_SIZE = 500000;  // bytes = ~500KB, waarschuwing bij export/import
+const MAX_SHARE_URL_LENGTH = 2000;    // al gebruikt voor share URL
+
+/* ---- helpers ---- */
+function resizeCanvas() {
   canvas.width = gridCols * cellSize;
   canvas.height = gridRows * cellSize;
 }
 
+function estimateMapJsonSize(obj) {
+  // Snelste betrouwbare schatting: Blob size van stringify
+  try {
+    const str = JSON.stringify(obj);
+    return new Blob([str]).size;
+  } catch (e) {
+    return Infinity;
+  }
+}
+
+function checkMapSize({cols = gridCols, rows = gridRows, csize = cellSize, st = stations, ln = lines, tt = stationTypes} = {}) {
+  const cellCount = cols * rows;
+  const sampleData = {
+    stations: st,
+    lines: ln,
+    stationTypes: tt,
+    cellSize: csize,
+    gridCols: cols,
+    gridRows: rows
+  };
+  const byteSize = estimateMapJsonSize(sampleData);
+  return {
+    cellCount,
+    byteSize,
+    tooManyCells: cellCount > MAX_CELLS_WARNING,
+    tooBigJSON: byteSize > MAX_EXPORT_JSON_SIZE
+  };
+}
+
+/* ---- map size guards on user actions ---- */
+
+function warnAndProceedIfLarge(newCols, newRows) {
+  const info = checkMapSize({cols: newCols, rows: newRows});
+  if (info.tooManyCells || info.tooBigJSON) {
+    const kb = (info.byteSize / 1024).toFixed(1);
+    const msg = `Warning — this map will be large:\n` +
+      `Dimensions: ${newCols} × ${newRows} (cells: ${info.cellCount})\n` +
+      `Estimated JSON size: ${kb} KB\n\n` +
+      `Working with very large maps can be slow and may fail to export/share.\nContinue anyway?`;
+    return confirm(msg);
+  }
+  return true;
+}
+
+/* ---- controls for changing map size ---- */
 document.querySelector("#mapWidthMin").addEventListener("click", widthMin);
 document.querySelector("#mapWidthPlus").addEventListener("click", widthPlus);
 document.querySelector("#mapHeightMin").addEventListener("click", heightMin);
 document.querySelector("#mapHeightPlus").addEventListener("click", heightPlus);
 
 function widthPlus(){
-  gridCols += 2;
+  const newCols = gridCols + 2;
+  if (!warnAndProceedIfLarge(newCols, gridRows)) return;
+  gridCols = newCols;
   draw();
 }
 function widthMin(){
-  gridCols -= 2;
+  gridCols = Math.max(2, gridCols - 2);
   draw();
 }
 function heightPlus(){
-  gridRows += 2;
+  const newRows = gridRows + 2;
+  if (!warnAndProceedIfLarge(gridCols, newRows)) return;
+  gridRows = newRows;
   draw();
 }
 function heightMin(){
-  gridRows -= 2;
+  gridRows = Math.max(2, gridRows - 2);
   draw();
 }
 
-//Drawing  -------------------------------------------------------------------
+/* ---- Drawing  ------------------------------------------------------------------- */
 
 function drawGrid() {
   c.beginPath();
@@ -73,7 +125,7 @@ function drawGrid() {
     c.stroke();
   }
 
-  if (toggleShowCoordinates.checked) {
+  if (toggleShowCoordinates && toggleShowCoordinates.checked) {
     c.fillStyle = "rgba(0, 0, 0, 0.5)";
     c.font = "1rem Inter, sans-serif";
     c.textAlign = "center";
@@ -88,7 +140,31 @@ function drawGrid() {
       c.fillText(y, cellSize/2, yPos);
     }
   }
-  c.stroke;
+}
+
+function buildSegmentMap() {
+  const segmentMap = new Map();
+
+  lines.forEach((line, li) => {
+    for (let i = 0; i < line.stations.length - 1; i++) {
+      const a = line.stations[i];
+      const b = line.stations[i + 1];
+      const key = a < b ? `${a}_${b}` : `${b}_${a}`;
+      if (!segmentMap.has(key)) segmentMap.set(key, []);
+      segmentMap.get(key).push({ lineIndex: li, segmentIndex: i });
+    }
+  });
+
+  return segmentMap;
+}
+
+function getOffsetForSegment(segmentMap, a, b, lineIndex) {
+  const key = a < b ? `${a}_${b}` : `${b}_${a}`;
+  const group = segmentMap.get(key) || [];
+  if (group.length <= 1) return 0; // geen offset nodig
+  const index = group.findIndex(item => item.lineIndex === lineIndex);
+  const offset = (index - (group.length - 1) / 2) * 6; // 6px afstand tussen lijnen
+  return offset;
 }
 
 function drawLines() {
@@ -151,7 +227,7 @@ function drawStations() {
     const x = station.x * cellSize;
     const y = station.y * cellSize;
     c.beginPath();
-    
+
     if(station.type == 1) {
       c.fillStyle = "#232322";
       c.rect(x + cellSize / 4, y + cellSize / 4, cellSize / 2, cellSize / 2);
@@ -183,8 +259,8 @@ function drawStations() {
       c.fillStyle = "#F7F4ED";
       c.fill();
     }
-    
-    if (toggleShowStationNames.checked) {
+
+    if (toggleShowStationNames && toggleShowStationNames.checked) {
       c.beginPath();
       c.fillStyle = "#232322";
       c.strokeStyle = "#F7F4ED";
@@ -199,9 +275,7 @@ function drawStations() {
       c.restore();
     }
   });
-  c.stroke;
 }
-
 
 function draw() {
   resizeCanvas();
@@ -211,7 +285,7 @@ function draw() {
   console.log("Draw executed");
 }
 
-//Rendering station and line lists ------------------------------------------------
+/* ---- Rendering station and line lists ------------------------------------------------ */
 
 function renderStationList() {
   const stationList = document.querySelector('#station-list');
@@ -220,7 +294,7 @@ function renderStationList() {
   stations.forEach((station, index) => {
     const stationItem = document.createElement('li');
     stationItem.className = 'station-item';
-    
+
     stationItem.innerHTML = `<button onclick="editStation(${index})">✏️ ${station.name} (${station.x}, ${station.y})</button>`;
     stationList.appendChild(stationItem);
     draw();
@@ -252,31 +326,30 @@ function renderLineList() {
     colorCircle.style.backgroundColor = line.color;
     colorCircle.title = line.color;
 
-
     button.appendChild(colorCircle);
     li.appendChild(button);
     list.appendChild(li);
   });
 
   lines.forEach((line, index) => {
-  const li = document.createElement("li");
-  li.classList.add("line-item");
-  li.style.display = "flex";
-  li.style.alignItems = "center";
+    const li = document.createElement("li");
+    li.classList.add("line-item");
+    li.style.display = "flex";
+    li.style.alignItems = "center";
 
-  const lineSample = document.createElement("span");
-  lineSample.style.display = "inline-block";
-  lineSample.style.width = "3rem";
-  lineSample.style.height = ".8rem";
-  lineSample.style.marginRight = "8px";
-  lineSample.style.backgroundColor = line.color;
-  lineSample.title = line.color;
+    const lineSample = document.createElement("span");
+    lineSample.style.display = "inline-block";
+    lineSample.style.width = "3rem";
+    lineSample.style.height = ".8rem";
+    lineSample.style.marginRight = "8px";
+    lineSample.style.backgroundColor = line.color;
+    lineSample.title = line.color;
 
-  const text = document.createTextNode(line.name);
+    const text = document.createTextNode(line.name);
 
-  li.appendChild(lineSample);
-  li.appendChild(text);
-  legend.appendChild(li);
+    li.appendChild(lineSample);
+    li.appendChild(text);
+    legend.appendChild(li);
   });
 }
 
@@ -341,7 +414,7 @@ function renderUsedStationTypes() {
   }
 }
 
-//In- en uitzoomen ----------------------------------------------------------------
+/* ---- In- en uitzoomen ---------------------------------------------------------------- */
 
 function zoomIn() {
   if (cellSize < 80) {
@@ -360,9 +433,8 @@ function zoomOut() {
 document.querySelector("#zoomIn").addEventListener("click", zoomIn);
 document.querySelector("#zoomOut").addEventListener("click", zoomOut);
 
-// Controls ------------------------------------------------------------------------
+/* ---- Controls (lines / stations) ------------------------------------------------------------------------ */
 
-//Edit lines \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
 let selectedLineIndex = null;
 
 function openLinePopup(index) {
@@ -380,14 +452,12 @@ function openLinePopup(index) {
 }
 
 document.querySelector("#btn-closelinepopup").addEventListener("click", closeLinePopup);
-
 function closeLinePopup() {
   document.querySelector("#line-popup").classList.add("hidden");
   selectedLineIndex = null;
 }
 
 document.querySelector("#btn-savelineedits").addEventListener("click", saveLineEdits);
-
 function saveLineEdits() {
   if (selectedLineIndex === null) return;
   const name = document.querySelector("#line-name-input").value;
@@ -406,7 +476,6 @@ function saveLineEdits() {
 }
 
 document.querySelector("#btn-deleteline").addEventListener("click", deleteLine);
-
 function deleteLine() {
   if (selectedLineIndex === null) return;
   lines.splice(selectedLineIndex, 1);
@@ -415,7 +484,8 @@ function deleteLine() {
   draw();
 }
 
-//Edit line stations
+/* ---- Edit line stations ---- */
+
 function renderEditStationSelectOptions() {
   const select = document.querySelector("#stationSelect");
   select.innerHTML = "";
@@ -447,7 +517,6 @@ function renderEditableStationList() {
 }
 
 document.querySelector("#btn-addstationtoline").addEventListener("click", addStationToLine);
-
 function addStationToLine() {
   const id = parseInt(document.querySelector("#stationSelect").value);
   if (selectedLineIndex === null) return;
@@ -476,7 +545,8 @@ function moveStationInLine(index, direction) {
   draw();
 }
 
-//Add line \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
+/* ---- Add / remove lines ---- */
+
 document.querySelector("#btn-addline").addEventListener("click", () => {
   const letters = '0123456789ABCDEF';
   let color = '#';
@@ -497,7 +567,8 @@ document.querySelector("#btn-addline").addEventListener("click", () => {
   renderLineList();
 });
 
-//Add station \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
+/* ---- Add station via canvas click ---- */
+
 const toggleAddStation = document.querySelector('#toggleAddStation');
 
 canvas.addEventListener("click", function (event) {
@@ -526,9 +597,9 @@ canvas.addEventListener("click", function (event) {
   }
 });
 
-//Toggle legenda \\\\\\\\\\\\\\\\\\\\\\\\\\\\\
-const toggleShowLegend = document.querySelector('#toggleShowLegend');
+/* ---- Legend toggle ---- */
 
+const toggleShowLegend = document.querySelector('#toggleShowLegend');
 toggleShowLegend.addEventListener('change', function() {
   if (toggleShowLegend.checked) {
     document.querySelector("#legend").style.display = "block";
@@ -539,7 +610,8 @@ toggleShowLegend.addEventListener('change', function() {
   }
 });
 
-//Edit stations \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
+/* ---- Edit stations ---- */
+
 let selectedStationIndex = null;
 
 function editStation(index) {
@@ -554,12 +626,11 @@ function editStation(index) {
 }
 
 document.querySelector("#btn-savestationedits").addEventListener("click", saveStationEdits);
-
 function saveStationEdits() {
   if (selectedStationIndex !== null) {
     stations[selectedStationIndex].name = document.querySelector('#station-name-input').value;
-    stations[selectedStationIndex].x = document.querySelector('#station-x-input').value;
-    stations[selectedStationIndex].y = document.querySelector('#station-y-input').value;
+    stations[selectedStationIndex].x = Number(document.querySelector('#station-x-input').value);
+    stations[selectedStationIndex].y = Number(document.querySelector('#station-y-input').value);
     stations[selectedStationIndex].type = parseInt(document.querySelector('#station-type-input').value, 10);
     renderStationList();
     draw();
@@ -568,11 +639,11 @@ function saveStationEdits() {
 }
 
 document.querySelector("#btn-deletestation").addEventListener("click", deleteStation);
-
 function deleteStation() {
   if (selectedStationIndex !== null) {
     const deletedStation = stations[selectedStationIndex];
 
+    // verwijder uit alle lijnen
     lines.forEach(line => {
       line.stations = line.stations.filter(id => id !== deletedStation.id);
     });
@@ -586,15 +657,24 @@ function deleteStation() {
 }
 
 document.querySelector("#btn-closepopup").addEventListener("click", closePopup);
-
 function closePopup() {
   document.querySelector('#station-popup').classList.add('hidden');
   selectedStationIndex = null;
 }
 
-//Export as JPG \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
+/* ---- Export as JPG ---- */
+
 document.querySelector("#export-btn").addEventListener("click", () => {
-  cellSizeBefore = cellSize;
+  // kleine check: als JSON te groot -> warn
+  const sizeInfo = checkMapSize();
+  if (sizeInfo.tooManyCells || sizeInfo.tooBigJSON) {
+    const kb = (sizeInfo.byteSize / 1024).toFixed(1);
+    if (!confirm(`Export warning:\nMap size ${sizeInfo.cellCount} cells, estimated JSON ${kb} KB. Exporting a very large map may take long or fail. Continue?`)) {
+      return;
+    }
+  }
+
+  const cellSizeBefore = cellSize;
   cellSize = 50;
   draw();
   const link = document.createElement("a");
@@ -605,7 +685,8 @@ document.querySelector("#export-btn").addEventListener("click", () => {
   draw();
 });
 
-//Export as JSON \\\\\\\\\\\\\\\\\\\\\\\\
+/* ---- Export as JSON ---- */
+
 document.querySelector("#export-json-btn").addEventListener("click", () => {
   exportMapData();
 });
@@ -625,6 +706,12 @@ function exportMapData() {
     gridRows
   };
 
+  const byteSize = estimateMapJsonSize(data);
+  if (byteSize > MAX_EXPORT_JSON_SIZE) {
+    const kb = (byteSize / 1024).toFixed(1);
+    if (!confirm(`Export warning:\nThis map JSON is large (~${kb} KB). Exporting may be slow or the file may be large. Continue?`)) return;
+  }
+
   const json = JSON.stringify(data, null, 2);
   const blob = new Blob([json], { type: 'application/json' });
   const url = URL.createObjectURL(blob);
@@ -637,13 +724,12 @@ function exportMapData() {
   document.body.removeChild(a);
 }
 
-//Export as URL \\\\\\\\\\\\\\\\\\\\\
+/* ---- Export as URL (share) ---- */
 
 function toBase64Url(uint8Array) {
   return btoa(String.fromCharCode(...uint8Array))
     .replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/, "");
 }
-
 function fromBase64Url(str) {
   str = str.replace(/-/g, "+").replace(/_/g, "/");
   while (str.length % 4 !== 0) str += "=";
@@ -664,20 +750,19 @@ document.querySelector("#share-btn").addEventListener("click", () => {
   const encoded = toBase64Url(compressed);
   const url = `${location.origin}${location.pathname}?data=${encoded}`;
 
-  if (url.length > 2000) {
-    alert("Sorry, this map is too large to share via a link (max URL-size is 2000 characters). Please exporting the map as a JSON file or image instead.");
+  if (url.length > MAX_SHARE_URL_LENGTH) {
+    alert("Sorry, this map is too large to share via a link (max URL-size is " + MAX_SHARE_URL_LENGTH + " characters). Please try exporting it as a JSON file or image instead.");
     return;
   }
 
   prompt("To share this map online, copy this URL:", url);
 });
 
+/* ---- Import JSON (file input) ---- */
 
-//Import JSON \\\\\\\\\\\\\\\\\\\\\\\\
 document.querySelectorAll(".import-json").forEach(input => {
   input.addEventListener("change", importMapData);
 });
-
 
 function importMapData(event) {
   const file = event.target.files[0];
@@ -689,8 +774,18 @@ function importMapData(event) {
       const data = JSON.parse(e.target.result);
 
       if (!data.info || !data.info.startsWith("Transit Map Maker")) {
-        alert("This JSON file doens't seem to originate from Transit Map Maker. Please make sure you selected the right file.");
+        alert("This JSON file doesn't seem to originate from Transit Map Maker. Please make sure you selected the right file.");
         return;
+      }
+
+      // check sizes
+      const fileSize = estimateMapJsonSize(data); // this is size of parsed object, similar to blob
+      const cellCount = data.gridCols * data.gridRows;
+      if (cellCount > MAX_CELLS_WARNING || fileSize > MAX_EXPORT_JSON_SIZE) {
+        const kb = (fileSize / 1024).toFixed(1);
+        if (!confirm(`Warning: This file contains a large map (${cellCount} cells, ~${kb} KB). Loading may be slow. Load anyway?`)) {
+          return;
+        }
       }
 
       stations.length = 0;
@@ -709,66 +804,14 @@ function importMapData(event) {
       renderLineList();
       closeTutorialPopup();
     } catch (err) {
-      alert("This file seems to be corrupt. Please make sure that no changes where made to the file directly.");
+      alert("This file seems to be corrupt. Please make sure that no changes were made to the file directly.");
     }
   };
 
   reader.readAsText(file);
 }
 
-//Show grid lines \\\\\\\\\\\\\\\\\\\\\\\
-const toggleShowGridLines = document.querySelector('#toggleShowGridLines');
-toggleShowGridLines.addEventListener('change', function() {
-  draw();
-});
-
-const toggleShowStationNames = document.querySelector('#toggleShowStationNames');
-toggleShowStationNames.addEventListener('change', function(){
-  draw();
-})
-
-const toggleShowCoordinates = document.querySelector('#toggleShowCoordinates');
-toggleShowCoordinates.addEventListener('change', function(){
-  draw();
-})
-
-//Clear map \\\\\\\\\\\\\\\\\\\\\\\\\\\\\
-document.querySelector("#btn-clearall").addEventListener("click", clearAll);
-
-function clearAll() {
-  if (confirm("Are you sure you want to start over? All existing stations and lines will be erased and saved data will be deleted.")) {
-    stations.length = 0;
-    lines.length = 0;
-    draw();
-    renderStationList();
-    renderLineList();
-    localStorage.removeItem("savedMapData");
-    closeTutorialPopup();
-  }
-}
-
-// Tutorial ------------------------------------------------------------------------
-function showTutorialPopup() {
-  const popup = document.getElementById('tutorial-popup');
-  if (popup) popup.classList.remove('hidden');
-}
-
-document.querySelector("#intro-option-1").addEventListener("click", clearAll);
-document.querySelector("#intro-option-4").addEventListener("click", closeTutorialPopup);
-document.querySelector("#btn-closetutorial").addEventListener("click", closeTutorialPopup);
-function closeTutorialPopup() {
-  const popup = document.getElementById('tutorial-popup');
-  if (popup) popup.classList.add('hidden');
-}
-
-document.querySelector("#intro-option-2").addEventListener("click", () => {
-  loadMetroData("example/ams-metro.json");
-});
-
-document.querySelector("#intro-option-3").addEventListener("click", () => {
-  loadMetroData("example/bud-metro.json");
-});
-
+/* ---- loadMetroData (voor welcome examples) ---- */
 
 function loadMetroData(path) {
   fetch(path)
@@ -777,6 +820,16 @@ function loadMetroData(path) {
       return res.json();
     })
     .then(data => {
+      // check size prior to applying
+      const jsonSize = estimateMapJsonSize(data);
+      const cellCount = (data.gridCols || 0) * (data.gridRows || 0);
+      if (cellCount > MAX_CELLS_WARNING || jsonSize > MAX_EXPORT_JSON_SIZE) {
+        const kb = (jsonSize / 1024).toFixed(1);
+        if (!confirm(`Warning: this example map is large (${cellCount} cells, ~${kb} KB). Load anyway?`)) {
+          return;
+        }
+      }
+
       stations.length = 0;
       lines.length = 0;
       stationTypes.length = 0;
@@ -794,9 +847,13 @@ function loadMetroData(path) {
       renderLineList();
       closeTutorialPopup();
     })
+    .catch(err => {
+      console.error("Fout bij laden voorbeeldmap:", err);
+      alert("Kon de voorbeeldmap niet laden.");
+    });
 }
 
-//Autosave data ------------------------------------------------------------------------
+/* ---- rest of UI toggles and helpers (autosave, changelog, init) ---- */
 
 window.addEventListener("beforeunload", (e) => {
   const date = Date.now();
@@ -812,20 +869,17 @@ window.addEventListener("beforeunload", (e) => {
   localStorage.setItem("savedMapData", JSON.stringify(data));
 });
 
-//Change log ------------------------------------------------------------------------
-
 function showChangeLog(){
   const changeLogPopup = document.querySelector("#change-log-popup");
   changeLogPopup.classList.remove('hidden');
 }
-
 document.querySelector("#btn-closechangelog").addEventListener("click", closeChangeLog);
 function closeChangeLog(){
   const changeLogPopup = document.querySelector("#change-log-popup");
   changeLogPopup.classList.add('hidden');
 }
 
-//Initiatie ------------------------------------------------------------------------
+/* ---- init / tutorial / load from URL or localStorage ---- */
 
 document.addEventListener('DOMContentLoaded', () => {
   draw();
@@ -839,6 +893,17 @@ document.addEventListener('DOMContentLoaded', () => {
       const compressed = fromBase64Url(encoded);
       const json = pako.inflateRaw(compressed, { to: "string" });
       const data = JSON.parse(json);
+
+      // quick size check
+      const cellCount = (data.w || 0) * (data.h || 0);
+      const byteSize = estimateMapJsonSize(data);
+      if (cellCount > MAX_CELLS_WARNING || byteSize > MAX_EXPORT_JSON_SIZE) {
+        const kb = (byteSize / 1024).toFixed(1);
+        if (!confirm(`Warning: the shared map is large (${cellCount} cells, ~${kb} KB). Load anyway?`)) {
+          initator();
+          return;
+        }
+      }
 
       stations.length = 0;
       lines.length = 0;
@@ -859,16 +924,15 @@ document.addEventListener('DOMContentLoaded', () => {
       alert("Sorry, something went wrong when loading this map.");
       initator();
     }
-  }
-  else{
+  } else {
     initator();
   }
 });
 
 function initator(){
-if (localStorage.getItem('hideTutorial') !== 'true') {
-  showTutorialPopup();
-}
+  if (localStorage.getItem('hideTutorial') !== 'true') {
+    showTutorialPopup();
+  }
 
   const dontShowAgainBtn = document.querySelector('#dont-show-again');
   if (dontShowAgainBtn) {
@@ -897,5 +961,37 @@ if (localStorage.getItem('hideTutorial') !== 'true') {
     draw();
     renderStationList();
     renderLineList();
+  }
+}
+
+/* ---- remaining UI hooks used earlier in your code (tutorial/clear/load examples) ---- */
+
+function showTutorialPopup() {
+  const popup = document.getElementById('tutorial-popup');
+  if (popup) popup.classList.remove('hidden');
+}
+document.querySelector("#intro-option-1").addEventListener("click", clearAll);
+document.querySelector("#intro-option-4").addEventListener("click", closeTutorialPopup);
+document.querySelector("#btn-closetutorial").addEventListener("click", closeTutorialPopup);
+function closeTutorialPopup() {
+  const popup = document.getElementById('tutorial-popup');
+  if (popup) popup.classList.add('hidden');
+}
+document.querySelector("#intro-option-2").addEventListener("click", () => {
+  loadMetroData("example/ams-metro.json");
+});
+document.querySelector("#intro-option-3").addEventListener("click", () => {
+  loadMetroData("example/bud-metro.json");
+});
+
+function clearAll() {
+  if (confirm("Are you sure you want to start over? All existing stations and lines will be erased and saved data will be deleted.")) {
+    stations.length = 0;
+    lines.length = 0;
+    draw();
+    renderStationList();
+    renderLineList();
+    localStorage.removeItem("savedMapData");
+    closeTutorialPopup();
   }
 }
