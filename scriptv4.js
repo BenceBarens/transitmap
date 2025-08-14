@@ -1,5 +1,5 @@
 // ===== Version & basic elements =====
-const version = "4.00.0";
+const version = "4.00.1";
 document.querySelector("#version-text").textContent = "Version " + version;
 
 // ===== State =====
@@ -284,7 +284,7 @@ function renderLineList() {
   // legend
   lines.forEach(line => {
     const li = document.createElement("li");
-    li.style.display = "flex"; li.style.alignItems = "center"; li.style.gap = "8px";
+    li.style.display = "flex"; li.style.alignItems = "center"; li.style.gap = "1rem";
     const bar = document.createElement("span");
     bar.style.display = "inline-block";
     bar.style.width = "3rem";
@@ -299,7 +299,7 @@ function renderLineList() {
     legend.appendChild(li);
   });
 
-  document.body.classList.toggle("legend-hidden", !toggleShowLegend.checked);
+  document.querySelector("#legend").classList.toggle("hidden", !toggleShowLegend.checked);
 }
 
 function renderUsedStationTypes() {

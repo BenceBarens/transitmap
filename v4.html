@@ -22,8 +22,8 @@
 <body>
     <header class="topbar">
         <div class="brand">
-            <h1>Transit Map Maker</h1>BETA
-            <span id="version-text"></span>
+            <h1>Transit Map Maker</h1>
+            <button id="btn-changelog"><span id="version-text"></span> BETA</button>
         </div>
 
         <div class="controls">
@@ -35,26 +35,22 @@
             <label><input type="checkbox" id="toggleShowStationNames" checked> Station names</label>
             <label><input type="checkbox" id="toggleShowLegend" checked> Legend</label>
 
-            <button id="mapWidthMin">- width</button>
-            <button id="mapWidthPlus">+ width</button>
-            <button id="mapHeightMin">- height</button>
-            <button id="mapHeightPlus">+ height</button>
-
             <label><input type="checkbox" id="toggleAddStation"> Add station (click on map)</label>
 
             <button id="export-json-btn">Export JSON</button>
             <button id="export-png-btn">Export PNG</button>
+            <button id="share-btn">Share</button>
             <label class="import-label">
                 Import JSON
                 <input type="file" class="import-json" accept="application/json" hidden>
             </label>
             <button id="btn-clearall">Clear</button>
-            <button id="btn-changelog">Changelog</button>
+            
         </div>
     </header>
 
   <main>
-        <aside class="sidebar">
+        <aside>
         <section>
             <details>
                 <summary>Lines</summary>
@@ -62,28 +58,32 @@
                 <button id="btn-addline">+ Add line</button>
             </details>
         </section>
-
         <section>
             <details>
                 <summary>Stations</summary>
                 <ul id="station-list"></ul>
             </details>
         </section>
-
         <section>
             <details>
                 <summary>Legend</summary>
-                <ul id="legend-list"></ul>
-                <h4>Station types in use</h4>
-                <ul id="legend-station-list"></ul>
                 <ul id="controls-legend-list"></ul>
             </details>
         </section>
-
+        <section>
+            <details>
+                <summary>Map</summary>
+                <button id="mapWidthMin">-</button> width <button id="mapWidthPlus">+</button><br>
+                <button id="mapHeightMin">-</button> height <button id="mapHeightPlus">+</button>
+            </details>
+        </section>
         <section>
             <h3>Examples</h3>
             <button id="intro-option-2">Load Amsterdam</button>
             <button id="intro-option-3">Load Budapest</button>
+        </section>
+        <section style="padding: 2rem; text-align: center">
+          This is a beta version of TMM. <a href="index.html" style="color:white;">Return to stable version here.</a>
         </section>
         </aside>
 
@@ -99,8 +99,9 @@
         </div>
         </section>
 
-        <section class="legend">
-            
+        <section id="legend">
+            <ul id="legend-list"></ul>
+            <ul id="legend-station-list"></ul>
         </section>
   </main>
 
@@ -122,7 +123,7 @@
       <div class="popup-actions">
         <button id="btn-savestationedits">Save</button>
         <button id="btn-deletestation" class="danger">Delete</button>
-        <button id="btn-closepopup">Close</button>
+        <button id="btn-closepopup" class="closepopup">×</button>
       </div>
     </div>
   </div>
@@ -161,7 +162,7 @@
       <div class="popup-actions">
         <button id="btn-savelineedits">Save</button>
         <button id="btn-deleteline" class="danger">Delete line</button>
-        <button id="btn-closelinepopup">Close</button>
+        <button id="btn-closelinepopup" class="closepopup">×</button>
       </div>
     </div>
   </div>
@@ -171,8 +172,9 @@
     <div class="popup-inner">
       <h3>Changelog</h3>
       <ul>
-        <li>[BETA] v4.00.1 (13-08-2025)<br>Completely new UI</li>
-        <li>v3.20.0 (13-08-2025)<br>Complete restructuring of the codebase<br>(shouldn't be any visible changes)</li>
+        <li>[BETA] v4.00.1 (14-08-2025)<br>UI fixes</li>
+        <li>[BETA] v4.00.0 (13-08-2025)<br>Complete fundamental update to make maps vector-based</li>
+        <li>v3.20.0 (13-08-2025)<br>Complete restructuring of the codebase (shouldn't be any visible changes)</li>
         <li>v3.10.1 (09-07-2025)<br>New feature: line styles and width can now be changed (backwards compatible)</li>
         <li>v3.02.2<br>Slight correction to v3.02.1</li>
         <li>v3.02.1<br>Added a toggle for showing coordinates<br>Removed "show true grid lines" function<br>Added ability to create map URL<br>Made popup backdrop darker</li>
@@ -182,7 +184,7 @@
         <li>v2.24.1<br>Added a welcome screen<br>Better hover effects</li>
         </ul>
       <div class="popup-actions">
-        <button id="btn-closechangelog">Close</button>
+        <button id="btn-closechangelog" class="closepopup">×</button>
       </div>
     </div>
   </div>
