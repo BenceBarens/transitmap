@@ -1,5 +1,5 @@
 // ===== Version & basic elements =====
-const version = "4.00.1";
+const version = "4.00.2";
 document.querySelector("#version-text").textContent = "Version " + version;
 
 // ===== State =====
@@ -251,7 +251,7 @@ function renderStationList() {
   stations.forEach((station, index) => {
     const li = document.createElement('li');
     const btn = document.createElement("button");
-    btn.textContent = `✏️ ${station.name} (${station.x}, ${station.y})`;
+    btn.textContent = `${station.name} (${station.x}, ${station.y})`;
     btn.addEventListener("click", () => editStation(index));
     li.appendChild(btn);
     stationList.appendChild(li);
@@ -269,7 +269,7 @@ function renderLineList() {
   lines.forEach((line, index) => {
     const li = document.createElement("li");
     const btn = document.createElement("button");
-    btn.textContent = `✏️ ${line.name}`;
+    btn.textContent = `${line.name}`;
     btn.addEventListener("click", () => openLinePopup(index));
 
     const dot = document.createElement("span");
@@ -666,6 +666,42 @@ function importMapData(ev){
   };
   reader.readAsText(file);
 }
+
+// === Share ====
+
+// Zorg dat pako beschikbaar is
+// <script src="https://cdnjs.cloudflare.com/ajax/libs/pako/2.1.0/pako.min.js"></script>
+
+// Base64 URL helper
+function toBase64Url(uint8Array) {
+  let str = btoa(String.fromCharCode(...uint8Array));
+  return str.replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/, "");
+}
+
+const MAX_SHARE_URL_LENGTH = 2000; // bijv.
+
+document.querySelector("#share-btn").addEventListener("click", () => {
+  const data = {
+    s: stations,
+    l: lines,
+    t: stationTypes,
+    w: gridCols,
+    h: gridRows,
+    c: cellSize
+  };
+
+  const compressed = pako.deflateRaw(JSON.stringify(data));
+  const encoded = toBase64Url(compressed);
+  const url = `${location.origin}${location.pathname}?data=${encoded}`;
+
+  if (url.length > MAX_SHARE_URL_LENGTH) {
+    alert("Sorry, this map is too large to share via a link (max URL-size is " + MAX_SHARE_URL_LENGTH + " characters). Please try exporting it and sharing the file instead.");
+    return;
+  }
+
+  prompt("To share this map online, copy this URL:", url);
+});
+
 
 // ===== Clear / Changelog =====
 document.querySelector("#btn-clearall").addEventListener("click", () => {

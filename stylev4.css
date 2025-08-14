@@ -4,10 +4,7 @@
     --color-secondary:#F7F4ED;
     --color-on-secondary: #232322;
     --color-primary-weak: rgba(35,35,34,.5);
-    --accent:#0066ff;
     --danger:#c62828;
-    --panel:#ffffff;
-    --shadow:0 2px 12px rgba(0,0,0,.06);
     color: var(--color-primary);
 }
 
@@ -43,31 +40,30 @@ body{
 header{
     display: flex; 
     width: 100vw;
-    height: 5rem;
     align-items: center; 
-    gap: 1rem;
-    padding: .75rem 1rem;
+    justify-content: space-between;
+    padding: 1rem;
     color: var(--color-secondary);
     background-color: var(--color-primary);
     z-index:100;
+    height: 4rem;
 }
 
 header .brand{
-    display:flex; 
-    align-items:baseline; 
-    gap:.5rem;
+    display: flex; 
+    align-items: center;
+    gap: 1rem;
 }
 
 #version-text{
-    opacity: .6; 
-    font-size: .9rem;
+    opacity: 0.7;
+    font-size: .8rem;
 }
 
 header .controls{
     display: flex; 
     flex-wrap: wrap; 
     gap: .5rem 1rem; 
-    margin-left: auto; 
     align-items: center;
 }
 
@@ -86,7 +82,7 @@ button:hover, .import-label:hover{
 
 main{
     display:flex;
-    max-height: calc(100vh - 5rem);
+    max-height: calc(100vh - 4rem);
 }
 
 aside{
@@ -101,14 +97,18 @@ aside h3{
     margin: .5rem 0;
 }
 
-aside ul{
+ul{
     list-style: none; 
     padding: 0; 
     margin: 0;
 }
 
-aside li{
-    margin: .35rem 0;
+aside ul{
+    padding: 0.5rem;
+}
+
+aside ul li{
+    padding: .1rem 0;
 }
 
 aside details summary{
@@ -181,7 +181,6 @@ details button:hover{
     color: var(--color-on-secondary);
     padding: 1rem; 
     width: min(600px, 92vw);
-    box-shadow: var(--shadow);
     max-height: 80vh;
     max-width: 60vw;
     overflow-y: scroll;
@@ -212,7 +211,7 @@ details button:hover{
     top: 0;
     right: 0;
     border: none;
-    font-size: 2rem;
+    font-size: 3rem;
     background: none;
     color: var(--color-on-secondary);
 }
@@ -261,9 +260,10 @@ svg [data-role="line"]{
 
 #legend{
     position: absolute;
+    max-width: 30rem;
     bottom: 2rem;
     right: 2rem;
-    padding: 0.5rem 2rem;
+    padding: 1rem 2rem;
     background-color: var(--color-secondary);
     border: solid 0.1rem var(--color-on-secondary);
 }
