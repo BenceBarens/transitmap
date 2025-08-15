@@ -30,7 +30,7 @@
             <button id="zoomOut" title="Zoom out">−</button>
             <button id="zoomIn" title="Zoom in">+</button>
             
-            <label><input type="checkbox" id="toggleShowLegend" checked> Legend</label>
+            <label class="toggle-label"><input type="checkbox" id="toggleShowLegend" checked> Legend</label>
 
             <label class="import-label">
                 Import JSON
@@ -38,6 +38,7 @@
             </label>
             <button id="export-json-btn">Export JSON</button>
             <button id="export-png-btn">Export PNG</button>
+            <button id="export-svg-btn">Export SVG</button>
             <button id="share-btn">Share</button>
         </div>
     </header>
@@ -45,7 +46,7 @@
     <main>
           <aside>
           <section>
-            <label><input type="checkbox" id="toggleAddStation"> Add station (click on map)</label>
+            <label class="toggle-label"><input type="checkbox" id="toggleAddStation"> Add station (click on map)</label>
             <button id="btn-addline">+ Add line</button>
           </section>
           <section>
@@ -78,9 +79,9 @@
           <section>
             <details>
               <summary>View settings</summary>
-                <label><input type="checkbox" id="toggleShowGridLines" checked> Show Grid</label><br>
-                <label><input type="checkbox" id="toggleShowCoordinates"> Show coordinates</label><br>
-                <label><input type="checkbox" id="toggleShowStationNames" checked> Show station names</label>
+                <label class="toggle-label"><input type="checkbox" id="toggleShowGridLines" checked> Show Grid</label><br>
+                <label class="toggle-label"><input type="checkbox" id="toggleShowCoordinates"> Show coordinates</label><br>
+                <label class="toggle-label"><input type="checkbox" id="toggleShowStationNames" checked> Show station names</label>
             </details>
           </section>
           <section>
@@ -94,15 +95,14 @@
           </aside>
 
           <section class="stage-wrap">
-          <!-- Dynamisch SVG canvas -->
-          <div class="svg-wrap">
-              <svg id="map" xmlns="http://www.w3.org/2000/svg" aria-label="Transit map">
-              <g id="layer-grid"></g>
-              <g id="layer-lines"></g>
-              <g id="layer-stations"></g>
-              <g id="layer-labels"></g>
-              </svg>
-          </div>
+              <div class="svg-wrap">
+                  <svg id="map" xmlns="http://www.w3.org/2000/svg" aria-label="Transit map">
+                  <g id="layer-grid"></g>
+                  <g id="layer-lines"></g>
+                  <g id="layer-stations"></g>
+                  <g id="layer-labels"></g>
+                  </svg>
+              </div>
           </section>
 
           <section id="legend">
@@ -178,7 +178,8 @@
         <div class="popup-inner">
             <h3>Changelog</h3>
             <ul>
-                <li>[BETA] v4.00.2 (14-08-2025)<br>UI fixes</li>
+                <li>[BETA] v4.00.3 (15-08-2025)<br>UI fixes<br>Added SVG export</li>
+                <li>[BETA] v4.00.2 (14-08-2025)<br>UI fixes<br>Re-added link share functionality</li>
                 <li>[BETA] v4.00.1 (14-08-2025)<br>UI fixes</li>
                 <li>[BETA] v4.00.0 (13-08-2025)<br>Complete fundamental update to make maps vector-based</li>
                 <li>v3.20.0 (13-08-2025)<br>Complete restructuring of the codebase (shouldn't be any visible changes)</li>

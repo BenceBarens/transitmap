@@ -1,5 +1,5 @@
 // ===== Version & basic elements =====
-const version = "4.00.2";
+const version = "4.00.3";
 document.querySelector("#version-text").textContent = "Version " + version;
 
 // ===== State =====
@@ -30,7 +30,7 @@ const toggleShowStationNames = document.querySelector("#toggleShowStationNames")
 const toggleShowLegend = document.querySelector("#toggleShowLegend");
 
 // ===== Helpers =====
-const lineWidthMap = { thin: 6, normal: 10, thick: 16 };
+const lineWidthMap = { thin: 6, normal: 8, thick: 12 };
 const lineStyleMap = {
   solid: "",
   dash: "20 14",
@@ -376,7 +376,7 @@ function draw(){
 
 // ===== Zoom & map size =====
 function zoomIn(){
-  if (cellSize < 100){ cellSize += 5; draw(); }
+  if (cellSize < 50){ cellSize += 5; draw(); }
 }
 function zoomOut(){
   if (cellSize > Math.ceil(2100/(gridCols+gridRows))) { cellSize -= 5; draw(); }
@@ -612,16 +612,116 @@ document.querySelector("#export-json-btn").addEventListener("click", () => {
   URL.revokeObjectURL(url);
 });
 
-document.querySelector("#export-png-btn").addEventListener("click", async () => {
-  // SVG → PNG
-  const w = gridCols * cellSize;
-  const h = gridRows * cellSize;
-  const xml = new XMLSerializer().serializeToString(svg);
+// Variabele voor legenda-hoek
+let legendPosition = "top-right"; // opties: "top-left", "top-right", "bottom-left", "bottom-right"
+
+// Genereert een volledige SVG voor export
+function generateExportSVG() {
+  const exportSVG = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+  exportSVG.setAttribute("xmlns", "http://www.w3.org/2000/svg");
+  exportSVG.setAttribute("width", gridCols * cellSize);
+  exportSVG.setAttribute("height", gridRows * cellSize);
+  exportSVG.setAttribute("viewBox", `0 0 ${gridCols * cellSize} ${gridRows * cellSize}`);
+
+  // Groep voor lijnen
+  const linesGroup = document.createElementNS("http://www.w3.org/2000/svg", "g");
+  lines.forEach(line => {
+    const path = document.createElementNS("http://www.w3.org/2000/svg", "polyline");
+    const coords = line.stations.map(id => {
+      const st = stations.find(s => s.id === id);
+      return `${st.x * cellSize + cellSize / 2},${st.y * cellSize + cellSize / 2}`;
+    }).join(" ");
+    path.setAttribute("points", coords);
+    path.setAttribute("stroke", line.color);
+    path.setAttribute("stroke-width", 4);
+    path.setAttribute("fill", "none");
+    linesGroup.appendChild(path);
+  });
+  exportSVG.appendChild(linesGroup);
+
+  // Groep voor stations
+  const stationsGroup = document.createElementNS("http://www.w3.org/2000/svg", "g");
+  stations.forEach(st => {
+    const circle = document.createElementNS("http://www.w3.org/2000/svg", "circle");
+    circle.setAttribute("cx", st.x * cellSize + cellSize / 2);
+    circle.setAttribute("cy", st.y * cellSize + cellSize / 2);
+    circle.setAttribute("r", 6);
+    circle.setAttribute("fill", stationTypes[st.type]?.color || "#000");
+    stationsGroup.appendChild(circle);
+  });
+  exportSVG.appendChild(stationsGroup);
+
+  // Legenda toevoegen
+  const legendGroup = document.createElementNS("http://www.w3.org/2000/svg", "g");
+  const legendPadding = 20;
+  const legendWidth = 150;
+  const legendHeight = (lines.length * 20) + 20;
+
+  let legendX, legendY;
+  if (legendPosition.includes("top")) legendY = legendPadding;
+  else legendY = gridRows * cellSize - legendHeight - legendPadding;
+
+  if (legendPosition.includes("left")) legendX = legendPadding;
+  else legendX = gridCols * cellSize - legendWidth - legendPadding;
+
+  const legendBg = document.createElementNS("http://www.w3.org/2000/svg", "rect");
+  legendBg.setAttribute("x", legendX);
+  legendBg.setAttribute("y", legendY);
+  legendBg.setAttribute("width", legendWidth);
+  legendBg.setAttribute("height", legendHeight);
+  legendBg.setAttribute("fill", "#fff");
+  legendBg.setAttribute("stroke", "#000");
+  legendGroup.appendChild(legendBg);
+
+  lines.forEach((line, i) => {
+    const yPos = legendY + 15 + i * 20;
+
+    const swatch = document.createElementNS("http://www.w3.org/2000/svg", "rect");
+    swatch.setAttribute("x", legendX + 10);
+    swatch.setAttribute("y", yPos);
+    swatch.setAttribute("width", 20);
+    swatch.setAttribute("height", 10);
+    swatch.setAttribute("fill", line.color);
+    legendGroup.appendChild(swatch);
+
+    const text = document.createElementNS("http://www.w3.org/2000/svg", "text");
+    text.setAttribute("x", legendX + 40);
+    text.setAttribute("y", yPos + 9);
+    text.setAttribute("font-size", "12");
+    text.textContent = line.name || `Lijn ${i + 1}`;
+    legendGroup.appendChild(text);
+  });
+  exportSVG.appendChild(legendGroup);
+
+  return exportSVG;
+}
+
+// Export SVG knop
+document.querySelector("#export-svg-btn").addEventListener("click", () => {
+  const exportSVG = generateExportSVG();
+  const xml = new XMLSerializer().serializeToString(exportSVG);
+  const blob = new Blob([xml], { type: "image/svg+xml" });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = "My Transit Map.svg";
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+  URL.revokeObjectURL(url);
+});
+
+// Export PNG knop
+document.querySelector("#export-png-btn").addEventListener("click", () => {
+  const exportSVG = generateExportSVG();
+  const xml = new XMLSerializer().serializeToString(exportSVG);
   const svg64 = 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(xml);
+
   const img = new Image();
   img.onload = () => {
     const canvas = document.createElement("canvas");
-    canvas.width = w; canvas.height = h;
+    canvas.width = gridCols * cellSize;
+    canvas.height = gridRows * cellSize;
     const ctx = canvas.getContext("2d");
     ctx.drawImage(img, 0, 0);
     const link = document.createElement("a");
@@ -631,6 +731,7 @@ document.querySelector("#export-png-btn").addEventListener("click", async () => 
   };
   img.src = svg64;
 });
+
 
 // import (file)
 document.querySelectorAll(".import-json").forEach(input => {
