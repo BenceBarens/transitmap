@@ -1,303 +1,260 @@
-const version = "3.20.0";
-document.querySelector("#version-text").innerHTML = "Version " + version;
+// ===== Version & basic elements =====
+const version = "4.00.4";
+document.querySelector("#version-text").textContent = "Version " + version;
 
-const canvas = document.querySelector("#canvas");
-const c = canvas.getContext("2d");
-
-const stations = [];
-const lines = [];
-const stationTypes = [
-  {type: 1, name: "Station"},
-  {type: 2, name: "Transfer station"},
-  {type: 3, name: "Train station"},
-  {type: 4, name: "Large train station"}
-];
-
+// ===== State =====
 let cellSize = 50;
 let gridCols = 30;
 let gridRows = 30;
 
-/* ---- Size thresholds (pas aan indien nodig) ---- */
-const MAX_CELLS_WARNING = 3000;       // waarschuwing op basis van aantal cellen (cols * rows)
-const MAX_EXPORT_JSON_SIZE = 500000;  // bytes = ~500KB, waarschuwing bij export/import
-const MAX_SHARE_URL_LENGTH = 2000;    // al gebruikt voor share URL
+const stations = [];
+const lines = [];
+const stationTypes = [
+  { type: 1, name: "Station" },
+  { type: 2, name: "Transfer station" },
+  { type: 3, name: "Train station" },
+  { type: 4, name: "Large train station" }
+];
 
-/* ---- helpers ---- */
-function resizeCanvas() {
-  canvas.width = gridCols * cellSize;
-  canvas.height = gridRows * cellSize;
+// ===== DOM =====
+const svg = document.querySelector("#map");
+const gGrid = document.querySelector("#layer-grid");
+const gLines = document.querySelector("#layer-lines");
+const gStations = document.querySelector("#layer-stations");
+const gLabels = document.querySelector("#layer-labels");
+
+const toggleAddStation = document.querySelector("#toggleAddStation");
+const toggleShowGridLines = document.querySelector("#toggleShowGridLines");
+const toggleShowCoordinates = document.querySelector("#toggleShowCoordinates");
+const toggleShowStationNames = document.querySelector("#toggleShowStationNames");
+const toggleShowLegend = document.querySelector("#toggleShowLegend");
+
+// ===== Helpers =====
+const lineWidthMap = { thin: 6, normal: 8, thick: 12 };
+const lineStyleMap = {
+  solid: "",
+  dash: "20 14",
+  dot: "3 10",
+};
+
+function clamp(v,min,max){ return Math.max(min, Math.min(max, v)); }
+
+function setSvgSize(){
+  const w = gridCols * cellSize;
+  const h = gridRows * cellSize;
+  svg.setAttribute("width", w);
+  svg.setAttribute("height", h);
+  svg.setAttribute("viewBox", `0 0 ${w} ${h}`);
 }
 
-function estimateMapJsonSize(obj) {
-  // Snelste betrouwbare schatting: Blob size van stringify
-  try {
-    const str = JSON.stringify(obj);
-    return new Blob([str]).size;
-  } catch (e) {
-    return Infinity;
-  }
-}
+function gridToPxX(x){ return x * cellSize; }
+function gridToPxY(y){ return y * cellSize; }
+function gridCenterX(x){ return x * cellSize + cellSize/2; }
+function gridCenterY(y){ return y * cellSize + cellSize/2; }
 
-function checkMapSize({cols = gridCols, rows = gridRows, csize = cellSize, st = stations, ln = lines, tt = stationTypes} = {}) {
-  const cellCount = cols * rows;
-  const sampleData = {
-    stations: st,
-    lines: ln,
-    stationTypes: tt,
-    cellSize: csize,
-    gridCols: cols,
-    gridRows: rows
-  };
-  const byteSize = estimateMapJsonSize(sampleData);
-  return {
-    cellCount,
-    byteSize,
-    tooManyCells: cellCount > MAX_CELLS_WARNING,
-    tooBigJSON: byteSize > MAX_EXPORT_JSON_SIZE
-  };
-}
+function clearNode(node){ while(node.firstChild) node.removeChild(node.firstChild); }
 
-/* ---- map size guards on user actions ---- */
+// ===== Render: Grid & Coords =====
+function drawGrid(){
+  clearNode(gGrid);
+  const w = gridCols * cellSize;
+  const h = gridRows * cellSize;
 
-function warnAndProceedIfLarge(newCols, newRows) {
-  const info = checkMapSize({cols: newCols, rows: newRows});
-  if (info.tooManyCells || info.tooBigJSON) {
-    const kb = (info.byteSize / 1024).toFixed(1);
-    const msg = `Warning — this map will be large:\n` +
-      `Dimensions: ${newCols} × ${newRows} (cells: ${info.cellCount})\n` +
-      `Estimated JSON size: ${kb} KB\n\n` +
-      `Working with very large maps can be slow and may fail to export/share.\nContinue anyway?`;
-    return confirm(msg);
-  }
-  return true;
-}
+  // background
+  const bg = document.createElementNS("http://www.w3.org/2000/svg", "rect");
+  bg.setAttribute("x", 0); bg.setAttribute("y", 0);
+  bg.setAttribute("width", w); bg.setAttribute("height", h);
+  bg.setAttribute("fill", "#F7F4ED");
+  gGrid.appendChild(bg);
 
-/* ---- controls for changing map size ---- */
-document.querySelector("#mapWidthMin").addEventListener("click", widthMin);
-document.querySelector("#mapWidthPlus").addEventListener("click", widthPlus);
-document.querySelector("#mapHeightMin").addEventListener("click", heightMin);
-document.querySelector("#mapHeightPlus").addEventListener("click", heightPlus);
+  if (toggleShowGridLines.checked){
+    const gridGroup = document.createElementNS("http://www.w3.org/2000/svg", "g");
+    gridGroup.setAttribute("stroke", "rgba(35,35,34,.2)");
+    gridGroup.setAttribute("stroke-width", "1");
 
-function widthPlus(){
-  const newCols = gridCols + 2;
-  if (!warnAndProceedIfLarge(newCols, gridRows)) return;
-  gridCols = newCols;
-  draw();
-}
-function widthMin(){
-  gridCols = Math.max(2, gridCols - 2);
-  draw();
-}
-function heightPlus(){
-  const newRows = gridRows + 2;
-  if (!warnAndProceedIfLarge(gridCols, newRows)) return;
-  gridRows = newRows;
-  draw();
-}
-function heightMin(){
-  gridRows = Math.max(2, gridRows - 2);
-  draw();
-}
-
-/* ---- Drawing  ------------------------------------------------------------------- */
-
-function drawGrid() {
-  c.beginPath();
-  c.fillStyle = "#F7F4ED";
-  c.fillRect(0, 0, canvas.width, canvas.height);
-
-  if (toggleShowGridLines.checked) {
-    c.strokeStyle = "rgba(35, 35, 34, 0.2)";
-    c.beginPath();
-
-    for (let x = 0; x <= gridCols; x++) {
-      const pos = x * cellSize + (cellSize / 2);
-      c.moveTo(pos, 0);
-      c.lineTo(pos, canvas.height);
+    // verticals
+    for (let x=0; x<=gridCols; x++){
+      const pos = gridToPxX(x) + (cellSize/2);
+      const line = document.createElementNS("http://www.w3.org/2000/svg","line");
+      line.setAttribute("x1", pos);
+      line.setAttribute("x2", pos);
+      line.setAttribute("y1", 0);
+      line.setAttribute("y2", h);
+      gridGroup.appendChild(line);
     }
 
-    for (let y = 0; y <= gridRows; y++) {
-      const pos = y * cellSize + (cellSize / 2);
-      c.moveTo(0, pos);
-      c.lineTo(canvas.width, pos);
+    // horizontals
+    for (let y=0; y<=gridRows; y++){
+      const pos = gridToPxY(y) + (cellSize/2);
+      const line = document.createElementNS("http://www.w3.org/2000/svg","line");
+      line.setAttribute("x1", 0);
+      line.setAttribute("x2", w);
+      line.setAttribute("y1", pos);
+      line.setAttribute("y2", pos);
+      gridGroup.appendChild(line);
     }
 
-    c.stroke();
+    gGrid.appendChild(gridGroup);
   }
 
-  if (toggleShowCoordinates && toggleShowCoordinates.checked) {
-    c.fillStyle = "rgba(0, 0, 0, 0.5)";
-    c.font = "1rem Inter, sans-serif";
-    c.textAlign = "center";
-    c.textBaseline = "middle";
-
-    for (let x = 1; x <= gridCols; x++) {
-      const xPos = x * cellSize + (cellSize / 2);
-      c.fillText(x, xPos, cellSize/2);
+  if (toggleShowCoordinates.checked){
+    // top row numbers
+    for (let x=1; x<=gridCols; x++){
+      const tx = document.createElementNS("http://www.w3.org/2000/svg", "text");
+      tx.setAttribute("x", gridToPxX(x) + cellSize/2);
+      tx.setAttribute("y", cellSize/2);
+      tx.setAttribute("text-anchor", "middle");
+      tx.setAttribute("dominant-baseline", "middle");
+      tx.setAttribute("class", "coord-label");
+      tx.textContent = x;
+      gGrid.appendChild(tx);
     }
-    for (let y = 1; y <= gridRows; y++) {
-      const yPos = y * cellSize + (cellSize / 2);
-      c.fillText(y, cellSize/2, yPos);
+    // left col numbers
+    for (let y=1; y<=gridRows; y++){
+      const ty = document.createElementNS("http://www.w3.org/2000/svg", "text");
+      ty.setAttribute("x", cellSize/2);
+      ty.setAttribute("y", gridToPxY(y) + cellSize/2);
+      ty.setAttribute("text-anchor", "middle");
+      ty.setAttribute("dominant-baseline", "middle");
+      ty.setAttribute("class", "coord-label");
+      ty.textContent = y;
+      gGrid.appendChild(ty);
     }
   }
 }
 
-function buildSegmentMap() {
-  const segmentMap = new Map();
+// ===== Render: Lines =====
+function drawLines(){
+  clearNode(gLines);
 
-  lines.forEach((line, li) => {
-    for (let i = 0; i < line.stations.length - 1; i++) {
-      const a = line.stations[i];
-      const b = line.stations[i + 1];
-      const key = a < b ? `${a}_${b}` : `${b}_${a}`;
-      if (!segmentMap.has(key)) segmentMap.set(key, []);
-      segmentMap.get(key).push({ lineIndex: li, segmentIndex: i });
-    }
-  });
-
-  return segmentMap;
-}
-
-function getOffsetForSegment(segmentMap, a, b, lineIndex) {
-  const key = a < b ? `${a}_${b}` : `${b}_${a}`;
-  const group = segmentMap.get(key) || [];
-  if (group.length <= 1) return 0; // geen offset nodig
-  const index = group.findIndex(item => item.lineIndex === lineIndex);
-  const offset = (index - (group.length - 1) / 2) * 6; // 6px afstand tussen lijnen
-  return offset;
-}
-
-function drawLines() {
   lines.forEach(line => {
-    c.strokeStyle = line.color;
-    if (line.width === "thin") {
-      c.lineWidth = 4;
-    } else if (line.width === "thick") {
-      c.lineWidth = 14;
-    } else {
-      c.lineWidth = 8;
-    }
+    // bouw polyline in grid-center-punten (met "45-correctie" zoals je had)
+    let points = [];
+    let prev = null;
 
-    if (line.style === "dashed") {
-      c.setLineDash([10, 5]);
-    } else if (line.style === "dotted") {
-      c.setLineDash([2, 4]);
-    } else {
-      c.setLineDash([]);
-    }
-    c.beginPath();
-
-    let prevX = null;
-    let prevY = null;
-
-    line.stations.forEach((stationId) => {
+    line.stations.forEach(stationId => {
       const station = stations.find(s => s.id === stationId);
-      if (station) {
-        const x = station.x * cellSize + cellSize / 2;
-        const y = station.y * cellSize + cellSize / 2;
+      if (!station) return;
 
-        if (prevX !== null && prevY !== null) {
-          const deltax = x - prevX;
-          const deltay = y - prevY;
+      const x = gridCenterX(station.x);
+      const y = gridCenterY(station.y);
 
-          const absDeltaX = Math.abs(deltax);
-          const absDeltaY = Math.abs(deltay);
-
-          if (absDeltaX !== absDeltaY && deltax !== 0 && deltay !== 0) {
-            const correction = Math.min(absDeltaX, absDeltaY);
-            const midX = prevX + correction * Math.sign(deltax);
-            const midY = prevY + correction * Math.sign(deltay);
-            c.lineTo(midX, midY);
-          }
+      if (prev){
+        const dx = x - prev.x;
+        const dy = y - prev.y;
+        const ax = Math.abs(dx);
+        const ay = Math.abs(dy);
+        if (ax !== ay && dx !== 0 && dy !== 0){
+          const corr = Math.min(ax, ay);
+          const midX = prev.x + corr * Math.sign(dx);
+          const midY = prev.y + corr * Math.sign(dy);
+          points.push([midX, midY]);
         }
-
-        c.lineTo(x, y);
-        prevX = x;
-        prevY = y;
       }
+      points.push([x,y]);
+      prev = {x,y};
     });
 
-    c.stroke();
-    c.setLineDash([]);
+    if (points.length < 2) return;
+
+    const poly = document.createElementNS("http://www.w3.org/2000/svg","polyline");
+    poly.setAttribute("data-role","line");
+    poly.setAttribute("fill","none");
+    poly.setAttribute("stroke", line.color || "#000");
+
+    const style = lineStyleMap[line.style || "solid"] || "";
+    if (style) poly.setAttribute("stroke-dasharray", style);
+
+    const widthPx = lineWidthMap[line.width || "normal"] || 10;
+    poly.setAttribute("stroke-width", widthPx);
+
+    poly.setAttribute("points", points.map(p => p.join(",")).join(" "));
+    gLines.appendChild(poly);
   });
 }
 
-function drawStations() {
-  stations.forEach(station => {
-    const x = station.x * cellSize;
-    const y = station.y * cellSize;
-    c.beginPath();
+// ===== Render: Stations & Labels =====
+function drawStations(){
+  clearNode(gStations);
+  clearNode(gLabels);
 
-    if(station.type == 1) {
-      c.fillStyle = "#232322";
-      c.rect(x + cellSize / 4, y + cellSize / 4, cellSize / 2, cellSize / 2);
-      c.fill();
+  stations.forEach((st, idx) => {
+    const cx = gridCenterX(st.x);
+    const cy = gridCenterY(st.y);
+
+    const group = document.createElementNS("http://www.w3.org/2000/svg","g");
+    group.setAttribute("transform", `translate(${gridToPxX(st.x)}, ${gridToPxY(st.y)})`);
+    group.setAttribute("data-role","station");
+    group.setAttribute("data-index", idx);
+    group.style.cursor = "pointer";
+
+    // shape
+    if (st.type == 1){
+      const r = document.createElementNS("http://www.w3.org/2000/svg","rect");
+      r.setAttribute("x", cellSize/4);
+      r.setAttribute("y", cellSize/4);
+      r.setAttribute("width", cellSize/2);
+      r.setAttribute("height", cellSize/2);
+      r.setAttribute("fill", "#232322");
+      group.appendChild(r);
+    } else if (st.type == 2){
+      const r = document.createElementNS("http://www.w3.org/2000/svg","rect");
+      r.setAttribute("x", cellSize/4);
+      r.setAttribute("y", cellSize/4);
+      r.setAttribute("width", cellSize/2);
+      r.setAttribute("height", cellSize/2);
+      r.setAttribute("fill", "#F7F4ED");
+      r.setAttribute("stroke", "#232322");
+      r.setAttribute("stroke-width", 10);
+      group.appendChild(r);
+    } else if (st.type == 3){
+      const c = document.createElementNS("http://www.w3.org/2000/svg","circle");
+      c.setAttribute("cx", cellSize/2);
+      c.setAttribute("cy", cellSize/2);
+      c.setAttribute("r", cellSize/4);
+      c.setAttribute("fill", "#232322");
+      group.appendChild(c);
+    } else if (st.type == 4){
+      const c = document.createElementNS("http://www.w3.org/2000/svg","circle");
+      c.setAttribute("cx", cellSize/2);
+      c.setAttribute("cy", cellSize/2);
+      c.setAttribute("r", cellSize/4);
+      c.setAttribute("fill", "#F7F4ED");
+      c.setAttribute("stroke", "#232322");
+      c.setAttribute("stroke-width", 10);
+      group.appendChild(c);
     }
 
-    if(station.type == 2) {
-      c.strokeStyle = "#232322";
-      c.rect(x + cellSize / 4, y + cellSize / 4, cellSize / 2, cellSize / 2);
-      c.lineWidth = 10;
-      c.stroke();
-      c.fillStyle = "#F7F4ED";
-      c.fill();
-    }
+    group.addEventListener("click", () => editStation(idx));
+    gStations.appendChild(group);
 
-    if (station.type == 3) {
-      c.fillStyle = "#232322";
-      c.beginPath();
-      c.arc(x + cellSize / 2, y + cellSize / 2, cellSize / 4, 0, Math.PI * 2);
-      c.fill();
-    }
-
-    if (station.type == 4) {
-      c.strokeStyle = "#232322";
-      c.lineWidth = 10;
-      c.beginPath();
-      c.arc(x + cellSize / 2, y + cellSize / 2, cellSize / 4, 0, Math.PI * 2);
-      c.stroke();
-      c.fillStyle = "#F7F4ED";
-      c.fill();
-    }
-
-    if (toggleShowStationNames && toggleShowStationNames.checked) {
-      c.beginPath();
-      c.fillStyle = "#232322";
-      c.strokeStyle = "#F7F4ED";
-      c.save();
-      c.translate(x, y);
-      c.rotate(-45 * Math.PI / 180);
-      c.font = "1rem Inter, sans-serif";
-      c.textAlign = "left";
-      c.textBaseline = "middle";
-      c.strokeText(station.name, 15, 15);
-      c.fillText(station.name, 15, 15);
-      c.restore();
+    // label
+    if (toggleShowStationNames.checked){
+      const text = document.createElementNS("http://www.w3.org/2000/svg","text");
+      text.setAttribute("x", gridToPxX(st.x));
+      text.setAttribute("y", gridToPxY(st.y));
+      text.setAttribute("transform", `translate(35,5) rotate(-45 ${gridToPxX(st.x)} ${gridToPxY(st.y)})`);
+      text.setAttribute("class","station-label");
+      text.setAttribute("text-anchor","start");
+      text.setAttribute("dominant-baseline","middle");
+      text.textContent = st.name;
+      gLabels.appendChild(text);
     }
   });
 }
 
-function draw() {
-  resizeCanvas();
-  drawGrid();
-  drawLines();
-  drawStations();
-  console.log("Draw executed");
-}
-
-/* ---- Rendering station and line lists ------------------------------------------------ */
-
+// ===== Render lists / legend =====
 function renderStationList() {
   const stationList = document.querySelector('#station-list');
   stationList.innerHTML = '';
 
   stations.forEach((station, index) => {
-    const stationItem = document.createElement('li');
-    stationItem.className = 'station-item';
-
-    stationItem.innerHTML = `<button onclick="editStation(${index})">✏️ ${station.name} (${station.x}, ${station.y})</button>`;
-    stationList.appendChild(stationItem);
-    draw();
+    const li = document.createElement('li');
+    const btn = document.createElement("button");
+    btn.textContent = `${station.name} (${station.x}, ${station.y})`;
+    btn.addEventListener("click", () => editStation(index));
+    li.appendChild(btn);
+    stationList.appendChild(li);
   });
 
   renderUsedStationTypes();
@@ -311,46 +268,38 @@ function renderLineList() {
 
   lines.forEach((line, index) => {
     const li = document.createElement("li");
-    li.classList.add("line-item");
+    const btn = document.createElement("button");
+    btn.textContent = `${line.name}`;
+    btn.addEventListener("click", () => openLinePopup(index));
 
-    const button = document.createElement("button");
-    button.textContent = `✏️ ${line.name}`;
-    button.onclick = () => openLinePopup(index);
+    const dot = document.createElement("span");
+    dot.style.cssText = "display:inline-block;width:.8rem;height:.8rem;border-radius:50%;margin-left:.5rem";
+    dot.style.backgroundColor = line.color;
+    btn.appendChild(dot);
 
-    const colorCircle = document.createElement("span");
-    colorCircle.style.display = "inline-block";
-    colorCircle.style.width = ".8rem";
-    colorCircle.style.height = ".8rem";
-    colorCircle.style.borderRadius = "50%";
-    colorCircle.style.marginLeft = ".5rem";
-    colorCircle.style.backgroundColor = line.color;
-    colorCircle.title = line.color;
-
-    button.appendChild(colorCircle);
-    li.appendChild(button);
+    li.appendChild(btn);
     list.appendChild(li);
   });
 
-  lines.forEach((line, index) => {
+  // legend
+  lines.forEach(line => {
     const li = document.createElement("li");
-    li.classList.add("line-item");
-    li.style.display = "flex";
-    li.style.alignItems = "center";
-
-    const lineSample = document.createElement("span");
-    lineSample.style.display = "inline-block";
-    lineSample.style.width = "3rem";
-    lineSample.style.height = ".8rem";
-    lineSample.style.marginRight = "8px";
-    lineSample.style.backgroundColor = line.color;
-    lineSample.title = line.color;
-
-    const text = document.createTextNode(line.name);
-
-    li.appendChild(lineSample);
-    li.appendChild(text);
+    li.style.display = "flex"; li.style.alignItems = "center"; li.style.gap = "1rem";
+    const bar = document.createElement("span");
+    bar.style.display = "inline-block";
+    bar.style.width = "3rem";
+    bar.style.height = ".8rem";
+    bar.style.backgroundColor = line.color;
+    if ((lineStyleMap[line.style||"solid"]||"") !== "") {
+      bar.style.backgroundImage = "linear-gradient(90deg, rgba(255,255,255,.0) 0, rgba(255,255,255,.0) 50%, rgba(255,255,255,.0) 50%)";
+      // (we laten alleen kleur zien; precieze dash in legend is optioneel)
+    }
+    li.appendChild(bar);
+    li.appendChild(document.createTextNode(line.name));
     legend.appendChild(li);
   });
+
+  document.querySelector("#legend").classList.toggle("hidden", !toggleShowLegend.checked);
 }
 
 function renderUsedStationTypes() {
@@ -366,17 +315,21 @@ function renderUsedStationTypes() {
     if (!isUsed) return;
 
     const shape = document.createElement("span");
-    shape.style.cssText = "display:inline-block;width:1rem;height:1rem;margin-right:.5rem";
+    shape.style.cssText = "display:inline-block;width:1rem;height:1rem;margin-right:.5rem;vertical-align:-2px;";
 
     if (type === 1) {
       shape.style.backgroundColor = "#232322";
     } else if (type === 2) {
-      shape.style.cssText += ";width:.7rem;height:.7rem;border:.2rem solid #232322";
+      shape.style.width = ".7rem"; shape.style.height = ".7rem";
+      shape.style.border = ".2rem solid #232322";
+      shape.style.backgroundColor = "#F7F4ED";
     } else if (type === 3) {
       shape.style.borderRadius = "50%";
       shape.style.backgroundColor = "#232322";
     } else if (type === 4) {
-      shape.style.cssText += ";width:.7rem;height:.7rem;border:.2rem solid #232322;border-radius:50%";
+      shape.style.width = ".7rem"; shape.style.height = ".7rem";
+      shape.style.border = ".2rem solid #232322"; shape.style.borderRadius = "50%";
+      shape.style.backgroundColor = "#F7F4ED";
     }
 
     const legendItem = document.createElement("li");
@@ -401,340 +354,432 @@ function renderUsedStationTypes() {
     const saveBtn = document.createElement("button");
     saveBtn.textContent = "Save changes";
     saveBtn.style.marginTop = "1rem";
-
-    saveBtn.onclick = () => {
+    saveBtn.addEventListener("click", () => {
       inputMap.forEach((input, type) => {
         const foundType = stationTypes.find(t => t.type === type);
         if (foundType) foundType.name = input.value;
       });
       renderUsedStationTypes();
-    };
-
+    });
     controls.appendChild(saveBtn);
   }
 }
 
-/* ---- In- en uitzoomen ---------------------------------------------------------------- */
-
-function zoomIn() {
-  if (cellSize < 80) {
-    cellSize += 5;
-    draw();
-  }
+// ===== Master draw =====
+function draw(){
+  setSvgSize();
+  drawGrid();
+  drawLines();
+  drawStations();
+  renderLineList();
 }
 
-function zoomOut() {
-  if (cellSize > (2100/(gridCols+gridRows))) {
-    cellSize -= 5;
-    draw();
-  }
+// ===== Zoom & map size =====
+function zoomIn(){
+  if (cellSize < 50){ cellSize += 5; draw(); }
+}
+function zoomOut(){
+  if (cellSize > Math.ceil(2100/(gridCols+gridRows))) { cellSize -= 5; draw(); }
 }
 
 document.querySelector("#zoomIn").addEventListener("click", zoomIn);
 document.querySelector("#zoomOut").addEventListener("click", zoomOut);
 
-/* ---- Controls (lines / stations) ------------------------------------------------------------------------ */
+document.querySelector("#mapWidthMin").addEventListener("click", () => { gridCols = Math.max(2, gridCols - 2); draw(); });
+document.querySelector("#mapWidthPlus").addEventListener("click", () => { gridCols += 2; draw(); });
+document.querySelector("#mapHeightMin").addEventListener("click", () => { gridRows = Math.max(2, gridRows - 2); draw(); });
+document.querySelector("#mapHeightPlus").addEventListener("click", () => { gridRows += 2; draw(); });
 
+// ===== Map click: add station =====
+svg.addEventListener("click", (e) => {
+  if (!toggleAddStation.checked) return;
+
+  const pt = svg.createSVGPoint();
+  pt.x = e.clientX; pt.y = e.clientY;
+  const ctm = svg.getScreenCTM().inverse();
+  const loc = pt.matrixTransform(ctm);
+
+  const col = Math.floor(loc.x / cellSize);
+  const row = Math.floor(loc.y / cellSize);
+
+  if (col < 0 || row < 0 || col >= gridCols || row >= gridRows) return;
+
+  const exists = stations.some(s => s.x == col && s.y == row);
+  if (!exists){
+    stations.push({
+      id: Date.now(),
+      name: `Station ${stations.length + 1}`,
+      x: col, y: row, lines: [], type: 1,
+    });
+    renderStationList();
+    draw();
+  }
+});
+
+// ===== Station editing =====
+let selectedStationIndex = null;
+
+function editStation(index){
+  selectedStationIndex = index;
+  const s = stations[index];
+  document.querySelector('#station-name-input').value = s.name;
+  document.querySelector('#station-type-input').value = s.type;
+  document.querySelector('#station-x-input').value = s.x;
+  document.querySelector('#station-y-input').value = s.y;
+  document.querySelector('#station-popup').classList.remove('hidden');
+}
+
+document.querySelector("#btn-savestationedits").addEventListener("click", () => {
+  if (selectedStationIndex === null) return;
+  const s = stations[selectedStationIndex];
+  s.name = document.querySelector('#station-name-input').value;
+  s.type = parseInt(document.querySelector('#station-type-input').value,10);
+  s.x = parseInt(document.querySelector('#station-x-input').value,10);
+  s.y = parseInt(document.querySelector('#station-y-input').value,10);
+  renderStationList();
+  draw();
+  closeStationPopup();
+});
+
+document.querySelector("#btn-deletestation").addEventListener("click", () => {
+  if (selectedStationIndex === null) return;
+  const deleted = stations[selectedStationIndex];
+  // verwijder station id uit alle lijnen
+  lines.forEach(line => {
+    line.stations = line.stations.filter(id => id !== deleted.id);
+  });
+  stations.splice(selectedStationIndex, 1);
+  renderStationList();
+  draw();
+  closeStationPopup();
+});
+
+document.querySelector("#btn-closepopup").addEventListener("click", closeStationPopup);
+function closeStationPopup(){
+  document.querySelector('#station-popup').classList.add('hidden');
+  selectedStationIndex = null;
+}
+
+// ===== Lines editing =====
 let selectedLineIndex = null;
 
-function openLinePopup(index) {
+function openLinePopup(index){
   selectedLineIndex = index;
   const line = lines[index];
-
-  document.querySelector("#line-name-input").value = line.name;
-  document.querySelector("#line-color-input").value = line.color;
-  document.querySelector("#line-popup").classList.remove("hidden");
+  document.querySelector("#line-name-input").value = line.name || "";
+  document.querySelector("#line-color-input").value = line.color || "#000000";
   document.querySelector("#line-style-input").value = line.style || "solid";
   document.querySelector("#line-width-input").value = line.width || "normal";
+  document.querySelector("#line-popup").classList.remove("hidden");
 
   renderEditStationSelectOptions();
   renderEditableStationList();
 }
 
 document.querySelector("#btn-closelinepopup").addEventListener("click", closeLinePopup);
-function closeLinePopup() {
+function closeLinePopup(){
   document.querySelector("#line-popup").classList.add("hidden");
   selectedLineIndex = null;
 }
 
-document.querySelector("#btn-savelineedits").addEventListener("click", saveLineEdits);
-function saveLineEdits() {
+document.querySelector("#btn-savelineedits").addEventListener("click", () => {
   if (selectedLineIndex === null) return;
-  const name = document.querySelector("#line-name-input").value;
-  const color = document.querySelector("#line-color-input").value;
-  const style = document.querySelector("#line-style-input").value;
-  const width = document.querySelector("#line-width-input").value;
-
-  lines[selectedLineIndex].name = name;
-  lines[selectedLineIndex].color = color;
-  lines[selectedLineIndex].style = style;
-  lines[selectedLineIndex].width = width;
+  const line = lines[selectedLineIndex];
+  line.name = document.querySelector("#line-name-input").value;
+  line.color = document.querySelector("#line-color-input").value;
+  line.style = document.querySelector("#line-style-input").value;
+  line.width = document.querySelector("#line-width-input").value;
 
   renderLineList();
-  closeLinePopup();
   draw();
-}
+  closeLinePopup();
+});
 
-document.querySelector("#btn-deleteline").addEventListener("click", deleteLine);
-function deleteLine() {
+document.querySelector("#btn-deleteline").addEventListener("click", () => {
   if (selectedLineIndex === null) return;
   lines.splice(selectedLineIndex, 1);
   renderLineList();
-  closeLinePopup();
   draw();
-}
+  closeLinePopup();
+});
 
-/* ---- Edit line stations ---- */
-
-function renderEditStationSelectOptions() {
+function renderEditStationSelectOptions(){
   const select = document.querySelector("#stationSelect");
   select.innerHTML = "";
   stations.forEach(s => {
-    const option = document.createElement("option");
-    option.value = s.id;
-    option.textContent = s.name;
-    select.appendChild(option);
+    const opt = document.createElement("option");
+    opt.value = s.id;
+    opt.textContent = s.name;
+    select.appendChild(opt);
   });
 }
 
-function renderEditableStationList() {
-  const stationList = document.querySelector("#stationList");
-  stationList.innerHTML = "";
+function renderEditableStationList(){
+  const tbody = document.querySelector("#stationList");
+  tbody.innerHTML = "";
   if (selectedLineIndex === null) return;
   const line = lines[selectedLineIndex];
 
   line.stations.forEach((stationId, index) => {
-    const station = stations.find(s => s.id === stationId);
+    const st = stations.find(s => s.id === stationId);
     const tr = document.createElement("tr");
     tr.innerHTML = `
-      <th>${station.name}</th>
-      <th><button onclick="moveStationInLine(${index}, -1)">⬆️</button>
-      <button onclick="moveStationInLine(${index}, 1)">⬇️</button>
-      <button onclick="removeStationFromLine(${index})">❌</button></th>
+      <th>${st ? st.name : "(missing station)"}</th>
+      <td>
+        <button data-act="up" data-idx="${index}">⬆️</button>
+        <button data-act="down" data-idx="${index}">⬇️</button>
+        <button data-act="del" data-idx="${index}">❌</button>
+      </td>
     `;
-    stationList.appendChild(tr);
+    tbody.appendChild(tr);
+  });
+
+  tbody.querySelectorAll("button").forEach(btn => {
+    btn.addEventListener("click", (e) => {
+      const act = e.currentTarget.getAttribute("data-act");
+      const idx = parseInt(e.currentTarget.getAttribute("data-idx"),10);
+      if (act === "del") removeStationFromLine(idx);
+      if (act === "up") moveStationInLine(idx, -1);
+      if (act === "down") moveStationInLine(idx, +1);
+    });
   });
 }
 
-document.querySelector("#btn-addstationtoline").addEventListener("click", addStationToLine);
-function addStationToLine() {
-  const id = parseInt(document.querySelector("#stationSelect").value);
+document.querySelector("#btn-addstationtoline").addEventListener("click", () => {
+  const id = parseInt(document.querySelector("#stationSelect").value,10);
   if (selectedLineIndex === null) return;
   const line = lines[selectedLineIndex];
-  if (!line.stations.includes(id)) {
+  if (!line.stations.includes(id)){
     line.stations.push(id);
     renderEditableStationList();
     draw();
   }
-}
+});
 
-function removeStationFromLine(index) {
-  if (selectedLineIndex === null) return;
-  lines[selectedLineIndex].stations.splice(index, 1);
-  renderEditableStationList();
-  draw();
-}
-
-function moveStationInLine(index, direction) {
+function removeStationFromLine(index){
   if (selectedLineIndex === null) return;
   const line = lines[selectedLineIndex];
-  const newIndex = index + direction;
-  if (newIndex < 0 || newIndex >= line.stations.length) return;
-  [line.stations[index], line.stations[newIndex]] = [line.stations[newIndex], line.stations[index]];
+  line.stations.splice(index,1);
   renderEditableStationList();
   draw();
 }
 
-/* ---- Add / remove lines ---- */
+function moveStationInLine(index, dir){
+  if (selectedLineIndex === null) return;
+  const line = lines[selectedLineIndex];
+  const ni = index + dir;
+  if (ni < 0 || ni >= line.stations.length) return;
+  [line.stations[index], line.stations[ni]] = [line.stations[ni], line.stations[index]];
+  renderEditableStationList();
+  draw();
+}
 
+// Add line
 document.querySelector("#btn-addline").addEventListener("click", () => {
-  const letters = '0123456789ABCDEF';
-  let color = '#';
-  for (let i = 0; i < 6; i++) {
-      color += letters[Math.floor(Math.random() * 16)];
-  }
-
+  const color = "#"+Math.floor(Math.random()*0xFFFFFF).toString(16).padStart(6,"0");
   const lineNumber = lines.length + 1;
-  const newLine = {
-      name: `Line ${lineNumber}`,
-      color: color,
-      style: "solid",
-      width: "normal",
-      stations: []
-  };
-
-  lines.push(newLine);
+  lines.push({
+    name: `Line ${lineNumber}`,
+    color,
+    style: "solid",
+    width: "normal",
+    stations: [],
+  });
   renderLineList();
-});
-
-/* ---- Add station via canvas click ---- */
-
-const toggleAddStation = document.querySelector('#toggleAddStation');
-
-canvas.addEventListener("click", function (event) {
-  if (toggleAddStation.checked) {
-    const rect = canvas.getBoundingClientRect();
-    const x = event.clientX - rect.left;
-    const y = event.clientY - rect.top;
-
-    const col = Math.floor(x / cellSize);
-    const row = Math.floor(y / cellSize);
-
-    const exists = stations.some(station => station.x === col && station.y === row);
-    if (!exists) {
-      const station = {
-        id: Date.now(),
-        name: `Station ${stations.length + 1}`,
-        x: col,
-        y: row,
-        lines: [],
-        type: 1,
-      };
-      stations.push(station);
-      draw();
-      renderStationList();
-    }
-  }
-});
-
-/* ---- Legend toggle ---- */
-
-const toggleShowLegend = document.querySelector('#toggleShowLegend');
-toggleShowLegend.addEventListener('change', function() {
-  if (toggleShowLegend.checked) {
-    document.querySelector("#legend").style.display = "block";
-    document.querySelector("#controls-legend-list").style.display = "block";
-  } else {
-    document.querySelector("#legend").style.display = "none";
-    document.querySelector("#controls-legend-list").style.display = "none";
-  }
-});
-
-/* ---- Edit stations ---- */
-
-let selectedStationIndex = null;
-
-function editStation(index) {
-  selectedStationIndex = index;
-  const station = stations[index];
-
-  document.querySelector('#station-name-input').value = station.name;
-  document.querySelector('#station-type-input').value = station.type;
-  document.querySelector('#station-x-input').value = station.x;
-  document.querySelector('#station-y-input').value = station.y;
-  document.querySelector('#station-popup').classList.remove('hidden');
-}
-
-document.querySelector("#btn-savestationedits").addEventListener("click", saveStationEdits);
-function saveStationEdits() {
-  if (selectedStationIndex !== null) {
-    stations[selectedStationIndex].name = document.querySelector('#station-name-input').value;
-    stations[selectedStationIndex].x = Number(document.querySelector('#station-x-input').value);
-    stations[selectedStationIndex].y = Number(document.querySelector('#station-y-input').value);
-    stations[selectedStationIndex].type = parseInt(document.querySelector('#station-type-input').value, 10);
-    renderStationList();
-    draw();
-    closePopup();
-  }
-}
-
-document.querySelector("#btn-deletestation").addEventListener("click", deleteStation);
-function deleteStation() {
-  if (selectedStationIndex !== null) {
-    const deletedStation = stations[selectedStationIndex];
-
-    // verwijder uit alle lijnen
-    lines.forEach(line => {
-      line.stations = line.stations.filter(id => id !== deletedStation.id);
-    });
-
-    stations.splice(selectedStationIndex, 1);
-
-    renderStationList();
-    draw();
-    closePopup();
-  }
-}
-
-document.querySelector("#btn-closepopup").addEventListener("click", closePopup);
-function closePopup() {
-  document.querySelector('#station-popup').classList.add('hidden');
-  selectedStationIndex = null;
-}
-
-/* ---- Export as JPG ---- */
-
-document.querySelector("#export-btn").addEventListener("click", () => {
-  // kleine check: als JSON te groot -> warn
-  const sizeInfo = checkMapSize();
-  if (sizeInfo.tooManyCells || sizeInfo.tooBigJSON) {
-    const kb = (sizeInfo.byteSize / 1024).toFixed(1);
-    if (!confirm(`Export warning:\nMap size ${sizeInfo.cellCount} cells, estimated JSON ${kb} KB. Exporting a very large map may take long or fail. Continue?`)) {
-      return;
-    }
-  }
-
-  const cellSizeBefore = cellSize;
-  cellSize = 50;
-  draw();
-  const link = document.createElement("a");
-  link.download = "My Transit Map.jpg";
-  link.href = canvas.toDataURL("image/jpeg");
-  link.click();
-  cellSize = cellSizeBefore;
   draw();
 });
 
-/* ---- Export as JSON ---- */
+// ===== Toggles =====
+toggleShowGridLines.addEventListener("change", draw);
+toggleShowCoordinates.addEventListener("change", draw);
+toggleShowLegend.addEventListener("change", renderLineList);
+toggleShowStationNames.addEventListener("change", draw);
 
+// ===== Export / Import =====
 document.querySelector("#export-json-btn").addEventListener("click", () => {
-  exportMapData();
-});
-
-function exportMapData() {
   const info = "Transit Map Maker version " + version + ", Made by Bence (bencebarens.nl)";
   const date = Date.now();
   const data = {
-    info,
-    date,
-    version,
-    stations,
-    lines,
-    stationTypes,
-    cellSize,
-    gridCols,
-    gridRows
+    info, date, version, stations, lines, stationTypes,
+    cellSize, gridCols, gridRows
   };
-
-  const byteSize = estimateMapJsonSize(data);
-  if (byteSize > MAX_EXPORT_JSON_SIZE) {
-    const kb = (byteSize / 1024).toFixed(1);
-    if (!confirm(`Export warning:\nThis map JSON is large (~${kb} KB). Exporting may be slow or the file may be large. Continue?`)) return;
-  }
-
   const json = JSON.stringify(data, null, 2);
-  const blob = new Blob([json], { type: 'application/json' });
+  const blob = new Blob([json], { type:"application/json" });
   const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url; a.download = "My Transit Map.json";
+  document.body.appendChild(a); a.click(); a.remove();
+  URL.revokeObjectURL(url);
+});
 
-  const a = document.createElement('a');
+// Variabele voor legenda-hoek
+let legendPosition = "top-right"; // opties: "top-left", "top-right", "bottom-left", "bottom-right"
+
+// Genereert een volledige SVG voor export
+function generateExportSVG() {
+  const exportSVG = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+  exportSVG.setAttribute("xmlns", "http://www.w3.org/2000/svg");
+  exportSVG.setAttribute("width", gridCols * cellSize);
+  exportSVG.setAttribute("height", gridRows * cellSize);
+  exportSVG.setAttribute("viewBox", `0 0 ${gridCols * cellSize} ${gridRows * cellSize}`);
+
+  // Groep voor lijnen
+  const linesGroup = document.createElementNS("http://www.w3.org/2000/svg", "g");
+  lines.forEach(line => {
+    const path = document.createElementNS("http://www.w3.org/2000/svg", "polyline");
+    const coords = line.stations.map(id => {
+      const st = stations.find(s => s.id === id);
+      return `${st.x * cellSize + cellSize / 2},${st.y * cellSize + cellSize / 2}`;
+    }).join(" ");
+    path.setAttribute("points", coords);
+    path.setAttribute("stroke", line.color);
+    path.setAttribute("stroke-width", 4);
+    path.setAttribute("fill", "none");
+    linesGroup.appendChild(path);
+  });
+  exportSVG.appendChild(linesGroup);
+
+  // Groep voor stations
+  const stationsGroup = document.createElementNS("http://www.w3.org/2000/svg", "g");
+  stations.forEach(st => {
+    const circle = document.createElementNS("http://www.w3.org/2000/svg", "circle");
+    circle.setAttribute("cx", st.x * cellSize + cellSize / 2);
+    circle.setAttribute("cy", st.y * cellSize + cellSize / 2);
+    circle.setAttribute("r", 6);
+    circle.setAttribute("fill", stationTypes[st.type]?.color || "#000");
+    stationsGroup.appendChild(circle);
+  });
+  exportSVG.appendChild(stationsGroup);
+
+  // Legenda toevoegen
+  const legendGroup = document.createElementNS("http://www.w3.org/2000/svg", "g");
+  const legendPadding = 20;
+  const legendWidth = 150;
+  const legendHeight = (lines.length * 20) + 20;
+
+  let legendX, legendY;
+  if (legendPosition.includes("top")) legendY = legendPadding;
+  else legendY = gridRows * cellSize - legendHeight - legendPadding;
+
+  if (legendPosition.includes("left")) legendX = legendPadding;
+  else legendX = gridCols * cellSize - legendWidth - legendPadding;
+
+  const legendBg = document.createElementNS("http://www.w3.org/2000/svg", "rect");
+  legendBg.setAttribute("x", legendX);
+  legendBg.setAttribute("y", legendY);
+  legendBg.setAttribute("width", legendWidth);
+  legendBg.setAttribute("height", legendHeight);
+  legendBg.setAttribute("fill", "#fff");
+  legendBg.setAttribute("stroke", "#000");
+  legendGroup.appendChild(legendBg);
+
+  lines.forEach((line, i) => {
+    const yPos = legendY + 15 + i * 20;
+
+    const swatch = document.createElementNS("http://www.w3.org/2000/svg", "rect");
+    swatch.setAttribute("x", legendX + 10);
+    swatch.setAttribute("y", yPos);
+    swatch.setAttribute("width", 20);
+    swatch.setAttribute("height", 10);
+    swatch.setAttribute("fill", line.color);
+    legendGroup.appendChild(swatch);
+
+    const text = document.createElementNS("http://www.w3.org/2000/svg", "text");
+    text.setAttribute("x", legendX + 40);
+    text.setAttribute("y", yPos + 9);
+    text.setAttribute("font-size", "12");
+    text.textContent = line.name || `Lijn ${i + 1}`;
+    legendGroup.appendChild(text);
+  });
+  exportSVG.appendChild(legendGroup);
+
+  return exportSVG;
+}
+
+// Export SVG knop
+document.querySelector("#export-svg-btn").addEventListener("click", () => {
+  const exportSVG = generateExportSVG();
+  const xml = new XMLSerializer().serializeToString(exportSVG);
+  const blob = new Blob([xml], { type: "image/svg+xml" });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
   a.href = url;
-  a.download = 'My Transit Map.json';
+  a.download = "My Transit Map.svg";
   document.body.appendChild(a);
   a.click();
-  document.body.removeChild(a);
+  a.remove();
+  URL.revokeObjectURL(url);
+});
+
+// Export PNG knop
+document.querySelector("#export-png-btn").addEventListener("click", () => {
+  const exportSVG = generateExportSVG();
+  const xml = new XMLSerializer().serializeToString(exportSVG);
+  const svg64 = 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(xml);
+
+  const img = new Image();
+  img.onload = () => {
+    const canvas = document.createElement("canvas");
+    canvas.width = gridCols * cellSize;
+    canvas.height = gridRows * cellSize;
+    const ctx = canvas.getContext("2d");
+    ctx.drawImage(img, 0, 0);
+    const link = document.createElement("a");
+    link.download = "My Transit Map.png";
+    link.href = canvas.toDataURL("image/png");
+    link.click();
+  };
+  img.src = svg64;
+});
+
+
+// import (file)
+document.querySelectorAll(".import-json").forEach(input => {
+  input.addEventListener("change", importMapData);
+});
+
+function importMapData(ev){
+  const file = ev.target.files[0];
+  if(!file) return;
+  const reader = new FileReader();
+  reader.onload = (e) => {
+    try{
+      const data = JSON.parse(e.target.result);
+      if (!data.info || !data.info.startsWith("Transit Map Maker")){
+        alert("This JSON file doesn't seem to originate from Transit Map Maker.");
+        return;
+      }
+      stations.length = 0; lines.length = 0; stationTypes.length = 0;
+
+      data.stations?.forEach(st => stations.push(st));
+      data.lines?.forEach(ln => lines.push(ln));
+      data.stationTypes?.forEach(t => stationTypes.push(t));
+
+      cellSize = data.cellSize ?? cellSize;
+      gridCols = data.gridCols ?? gridCols;
+      gridRows = data.gridRows ?? gridRows;
+
+      renderStationList();
+      draw();
+    }catch(err){
+      alert("This file seems to be corrupt.");
+    }
+  };
+  reader.readAsText(file);
 }
 
-/* ---- Export as URL (share) ---- */
+// === Share ====
 
+// Zorg dat pako beschikbaar is
+// <script src="https://cdnjs.cloudflare.com/ajax/libs/pako/2.1.0/pako.min.js"></script>
+
+// Base64 URL helper
 function toBase64Url(uint8Array) {
-  return btoa(String.fromCharCode(...uint8Array))
-    .replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/, "");
+  let str = btoa(String.fromCharCode(...uint8Array));
+  return str.replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/, "");
 }
-function fromBase64Url(str) {
-  str = str.replace(/-/g, "+").replace(/_/g, "/");
-  while (str.length % 4 !== 0) str += "=";
-  return Uint8Array.from(atob(str), c => c.charCodeAt(0));
-}
+
+const MAX_SHARE_URL_LENGTH = 2000; // bijv.
 
 document.querySelector("#share-btn").addEventListener("click", () => {
   const data = {
@@ -751,232 +796,32 @@ document.querySelector("#share-btn").addEventListener("click", () => {
   const url = `${location.origin}${location.pathname}?data=${encoded}`;
 
   if (url.length > MAX_SHARE_URL_LENGTH) {
-    alert("Sorry, this map is too large to share via a link (max URL-size is " + MAX_SHARE_URL_LENGTH + " characters). Please try exporting it as a JSON file or image instead.");
+    alert("Sorry, this map is too large to share via a link (max URL-size is " + MAX_SHARE_URL_LENGTH + " characters). Please try exporting it and sharing the file instead.");
     return;
   }
 
   prompt("To share this map online, copy this URL:", url);
 });
 
-/* ---- Import JSON (file input) ---- */
 
-document.querySelectorAll(".import-json").forEach(input => {
-  input.addEventListener("change", importMapData);
-});
-
-function importMapData(event) {
-  const file = event.target.files[0];
-  if (!file) return;
-
-  const reader = new FileReader();
-  reader.onload = function(e) {
-    try {
-      const data = JSON.parse(e.target.result);
-
-      if (!data.info || !data.info.startsWith("Transit Map Maker")) {
-        alert("This JSON file doesn't seem to originate from Transit Map Maker. Please make sure you selected the right file.");
-        return;
-      }
-
-      // check sizes
-      const fileSize = estimateMapJsonSize(data); // this is size of parsed object, similar to blob
-      const cellCount = data.gridCols * data.gridRows;
-      if (cellCount > MAX_CELLS_WARNING || fileSize > MAX_EXPORT_JSON_SIZE) {
-        const kb = (fileSize / 1024).toFixed(1);
-        if (!confirm(`Warning: This file contains a large map (${cellCount} cells, ~${kb} KB). Loading may be slow. Load anyway?`)) {
-          return;
-        }
-      }
-
-      stations.length = 0;
-      lines.length = 0;
-      stationTypes.length = 0;
-
-      data.stations?.forEach(station => stations.push(station));
-      data.lines?.forEach(line => lines.push(line));
-      data.stationTypes?.forEach(type => stationTypes.push(type));
-
-      gridCols = data.gridCols;
-      gridRows = data.gridRows;
-
-      draw();
-      renderStationList();
-      renderLineList();
-      closeTutorialPopup();
-    } catch (err) {
-      alert("This file seems to be corrupt. Please make sure that no changes were made to the file directly.");
-    }
-  };
-
-  reader.readAsText(file);
-}
-
-/* ---- loadMetroData (voor welcome examples) ---- */
-
-function loadMetroData(path) {
-  fetch(path)
-    .then(res => {
-      if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
-      return res.json();
-    })
-    .then(data => {
-      // check size prior to applying
-      const jsonSize = estimateMapJsonSize(data);
-      const cellCount = (data.gridCols || 0) * (data.gridRows || 0);
-      if (cellCount > MAX_CELLS_WARNING || jsonSize > MAX_EXPORT_JSON_SIZE) {
-        const kb = (jsonSize / 1024).toFixed(1);
-        if (!confirm(`Warning: this example map is large (${cellCount} cells, ~${kb} KB). Load anyway?`)) {
-          return;
-        }
-      }
-
-      stations.length = 0;
-      lines.length = 0;
-      stationTypes.length = 0;
-
-      data.stations?.forEach(station => stations.push(station));
-      data.lines?.forEach(line => lines.push(line));
-      data.stationTypes?.forEach(type => stationTypes.push(type));
-
-      cellSize = data.cellSize;
-      gridCols = data.gridCols;
-      gridRows = data.gridRows;
-
-      draw();
-      renderStationList();
-      renderLineList();
-      closeTutorialPopup();
-    })
-    .catch(err => {
-      console.error("Fout bij laden voorbeeldmap:", err);
-      alert("Kon de voorbeeldmap niet laden.");
-    });
-}
-
-/* ---- rest of UI toggles and helpers (autosave, changelog, init) ---- */
-
-window.addEventListener("beforeunload", (e) => {
-  const date = Date.now();
-  const data = {
-    stations,
-    lines,
-    stationTypes,
-    cellSize,
-    gridCols,
-    gridRows,
-    date
-  };
-  localStorage.setItem("savedMapData", JSON.stringify(data));
-});
-
-function showChangeLog(){
-  const changeLogPopup = document.querySelector("#change-log-popup");
-  changeLogPopup.classList.remove('hidden');
-}
-document.querySelector("#btn-closechangelog").addEventListener("click", closeChangeLog);
-function closeChangeLog(){
-  const changeLogPopup = document.querySelector("#change-log-popup");
-  changeLogPopup.classList.add('hidden');
-}
-
-/* ---- init / tutorial / load from URL or localStorage ---- */
-
-document.addEventListener('DOMContentLoaded', () => {
-  draw();
-  renderStationList();
-  renderLineList();
-
-  const urlParams = new URLSearchParams(window.location.search);
-  if (urlParams.has("data")) {
-    try {
-      const encoded = urlParams.get("data");
-      const compressed = fromBase64Url(encoded);
-      const json = pako.inflateRaw(compressed, { to: "string" });
-      const data = JSON.parse(json);
-
-      // quick size check
-      const cellCount = (data.w || 0) * (data.h || 0);
-      const byteSize = estimateMapJsonSize(data);
-      if (cellCount > MAX_CELLS_WARNING || byteSize > MAX_EXPORT_JSON_SIZE) {
-        const kb = (byteSize / 1024).toFixed(1);
-        if (!confirm(`Warning: the shared map is large (${cellCount} cells, ~${kb} KB). Load anyway?`)) {
-          initator();
-          return;
-        }
-      }
-
-      stations.length = 0;
-      lines.length = 0;
-      stationTypes.length = 0;
-
-      data.s?.forEach(station => stations.push(station));
-      data.l?.forEach(line => lines.push(line));
-      data.t?.forEach(type => stationTypes.push(type));
-      gridCols = data.w;
-      gridRows = data.h;
-      cellSize = data.c;
-
-      draw();
-      renderStationList();
-      renderLineList();
-      closeTutorialPopup();
-    } catch (err) {
-      alert("Sorry, something went wrong when loading this map.");
-      initator();
-    }
-  } else {
-    initator();
-  }
-});
-
-function initator(){
-  if (localStorage.getItem('hideTutorial') !== 'true') {
-    showTutorialPopup();
-  }
-
-  const dontShowAgainBtn = document.querySelector('#dont-show-again');
-  if (dontShowAgainBtn) {
-    dontShowAgainBtn.addEventListener('click', () => {
-      localStorage.setItem('hideTutorial', 'true');
-      closeTutorialPopup();
-    });
-  }
-
-  const savedData = localStorage.getItem("savedMapData");
-  if (savedData) {
-    const data = JSON.parse(savedData);
-    stations.length = 0;
-    lines.length = 0;
-    stationTypes.length = 0;
-
-    document.querySelector("#intro-option-4").classList.remove("hidden");
-
-    data.stations?.forEach(station => stations.push(station));
-    data.lines?.forEach(line => lines.push(line));
-    data.stationTypes?.forEach(type => stationTypes.push(type));
-
-    cellSize = data.cellSize;
-    gridCols = data.gridCols;
-    gridRows = data.gridRows;
-    draw();
+// ===== Clear / Changelog =====
+document.querySelector("#btn-clearall").addEventListener("click", () => {
+  if (confirm("Are you sure you want to start over? All existing stations and lines will be erased and saved data will be deleted.")){
+    stations.length = 0; lines.length = 0;
+    localStorage.removeItem("savedMapData");
     renderStationList();
-    renderLineList();
+    draw();
   }
-}
+});
 
-/* ---- remaining UI hooks used earlier in your code (tutorial/clear/load examples) ---- */
+document.querySelector("#btn-changelog").addEventListener("click", () => {
+  document.querySelector("#change-log-popup").classList.remove("hidden");
+});
+document.querySelector("#btn-closechangelog").addEventListener("click", () => {
+  document.querySelector("#change-log-popup").classList.add("hidden");
+});
 
-function showTutorialPopup() {
-  const popup = document.getElementById('tutorial-popup');
-  if (popup) popup.classList.remove('hidden');
-}
-document.querySelector("#intro-option-1").addEventListener("click", clearAll);
-document.querySelector("#intro-option-4").addEventListener("click", closeTutorialPopup);
-document.querySelector("#btn-closetutorial").addEventListener("click", closeTutorialPopup);
-function closeTutorialPopup() {
-  const popup = document.getElementById('tutorial-popup');
-  if (popup) popup.classList.add('hidden');
-}
+// ===== Load examples (paths moeten bestaan) =====
 document.querySelector("#intro-option-2").addEventListener("click", () => {
   loadMetroData("example/ams-metro.json");
 });
@@ -984,14 +829,58 @@ document.querySelector("#intro-option-3").addEventListener("click", () => {
   loadMetroData("example/bud-metro.json");
 });
 
-function clearAll() {
-  if (confirm("Are you sure you want to start over? All existing stations and lines will be erased and saved data will be deleted.")) {
-    stations.length = 0;
-    lines.length = 0;
-    draw();
-    renderStationList();
-    renderLineList();
-    localStorage.removeItem("savedMapData");
-    closeTutorialPopup();
-  }
+function loadMetroData(path){
+  fetch(path)
+    .then(res => {
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+      return res.json();
+    })
+    .then(data => {
+      stations.length = 0; lines.length = 0; stationTypes.length = 0;
+
+      data.stations?.forEach(st => stations.push(st));
+      data.lines?.forEach(ln => lines.push(ln));
+      data.stationTypes?.forEach(t => stationTypes.push(t));
+
+      cellSize = data.cellSize ?? cellSize;
+      gridCols = data.gridCols ?? gridCols;
+      gridRows = data.gridRows ?? gridRows;
+
+      renderStationList();
+      draw();
+    })
+    .catch(err => alert("Error loading example: " + err.message));
 }
+
+// ===== Autosave on unload & restore on load =====
+window.addEventListener("beforeunload", () => {
+  const date = Date.now();
+  const data = {
+    stations, lines, stationTypes, cellSize, gridCols, gridRows, date
+  };
+  localStorage.setItem("savedMapData", JSON.stringify(data));
+});
+
+// ===== Init =====
+document.addEventListener("DOMContentLoaded", () => {
+  draw();
+  renderStationList();
+
+  const saved = localStorage.getItem("savedMapData");
+  if (saved){
+    try{
+      const data = JSON.parse(saved);
+      stations.length = 0; lines.length = 0; stationTypes.length = 0;
+      data.stations?.forEach(st => stations.push(st));
+      data.lines?.forEach(ln => lines.push(ln));
+      data.stationTypes?.forEach(t => stationTypes.push(t));
+
+      cellSize = data.cellSize ?? cellSize;
+      gridCols = data.gridCols ?? gridCols;
+      gridRows = data.gridRows ?? gridRows;
+
+      renderStationList();
+      draw();
+    }catch{}
+  }
+});

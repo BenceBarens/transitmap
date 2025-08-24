@@ -1,0 +1,477 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,500&family=Noto+Serif:ital,wght@0,500;1,500&display=swap');
+
+.material-symbols-outlined {
+  font-variation-settings:
+  'FILL' 0,
+  'wght' 400,
+  'GRAD' 0,
+  'opsz' 20
+}
+
+*{
+  font-family: "Inter", sans-serif;
+  font-weight: 500;
+  font-style: normal;
+}
+
+h1, h2, h3, h4, h5, h6{
+  font-family: "Noto Serif", serif;
+  font-weight: 500;
+  font-style: normal;
+  font-variation-settings: "wdth" 100;
+  margin:0;
+}
+
+h1{
+  font-size: 2rem;
+}
+
+h3{
+  border-bottom: 0.1rem #232322 solid;
+}
+
+html{
+  height: 100%;
+  width: 100%;
+  overflow: hidden;
+  margin: 0;
+  background-color: #232322;
+}
+
+body {
+  margin: 0;
+  height: 100vh;
+  display: flex;
+}
+
+a{
+  color: #232322;
+}
+
+#controls a{
+  color: #F7F4ED;
+}
+
+*::-webkit-scrollbar {
+    width: 1rem;
+    height: 1rem;
+  }
+
+*::-webkit-scrollbar-track {
+  display: none;
+}
+
+*::-webkit-scrollbar-thumb {
+  background-color: #232322;
+  border: #F7F4ED solid 0.3rem;
+}
+
+*::-webkit-scrollbar-thumb:hover {
+  background-color: #232322;
+}
+
+*::-webkit-scrollbar-thumb:active {
+  background-color: #232322;
+}
+
+
+#controls::-webkit-scrollbar-thumb {
+  display: none;
+}
+
+button{
+  cursor: pointer;
+  background-color: #F7F4ED;
+  border: #232322 solid 0.1rem;
+  transition: all 0.1s ease;
+}
+
+button:hover{
+  background-color: #232322;
+  color:#F7F4ED;
+  border: #232322 solid 0.1rem;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.5);
+}
+
+.switch-wrapper {
+  cursor: pointer;
+  padding: .5rem 0;
+  display: flex;
+  justify-content: space-between;
+}
+
+.switch {
+  position: relative;
+  display: inline-block;
+  width: 2.5rem;
+  height: 1.5rem;
+}
+
+.switch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0; 
+  left: 0;
+  right: 0; 
+  bottom: 0;
+  background-color: rgba(35, 35, 34, 0.2);
+  transition: 0.2s ease-out;
+  border-radius: 5rem;
+}
+
+.slider::before {
+  content: "";
+  position: absolute;
+  height: 1rem;
+  width: 1rem;
+  left: 0.25rem;
+  bottom: 0.25rem;
+  background-color: #F7F4ED;
+  transition: 0.2s;
+  border-radius: 50%;
+}
+
+.switch input:checked + .slider {
+  background-color: #232322;
+}
+
+.switch input:checked + .slider::before {
+  transform: translateX(1rem);
+}
+
+
+label input{
+   display: none;
+}
+
+.toggle-wrapper {
+  cursor: pointer;
+  height: fit-content;
+}
+
+.toggle-content:hover{
+  background-color: #232322;
+  cursor: pointer;
+  color:#F7F4ED;
+  border: #232322 solid 0.1rem;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.5);
+}
+
+.toggle-content {
+  padding: 0.5rem;
+  border: 0.1rem solid #232322;
+  transition: background-color 0.3s, border-color 0.3s;
+  display: block;
+}
+
+.toggle-description {
+  display: none;
+  margin-top: 0.25rem;
+  color: #F7F4ED;
+}
+
+/* Wanneer de checkbox is aangevinkt: kleur en beschrijving tonen */
+.toggle-wrapper input:checked + .toggle-content {
+  background-color: #232322;
+  color: #F7F4ED;
+}
+
+.toggle-wrapper input:checked + .toggle-content .toggle-description {
+  display: block;
+}
+
+/* MAP -------------------------------------------------------------------- */
+
+#map {
+  width: 80%;
+  height: 100vh;
+  overflow: scroll;
+  background-color: #F7F4ED;
+  color: #232322;
+}
+
+#canvas-wrapper {
+  width: max-content;
+  height: max-content;
+}
+
+canvas {
+  display: block;
+  background-color: #F7F4ED;
+}
+
+#legend{
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  max-width: 15rem;
+  height: auto;
+  background-color: #F7F4ED;
+  border: #232322 solid 0.1rem;
+  padding: 1rem;
+  padding-right: 4rem;
+  margin: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+#legend ul{
+  list-style: none;
+  padding: 0;
+}
+
+#zoom-controls{
+  position: absolute;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  width: 3rem;
+  top: 0;
+  left: 0;
+  height: auto;
+  margin: 1rem;
+}
+
+#zoom-controls button{
+  width: 3rem;
+  height: 3rem;
+  border-radius: 50%;
+  font-size: 1.2rem;
+  font-weight: bold;
+}
+
+/* CONTROLS -------------------------------------------------------------------- */
+
+#controls {
+  color: #F7F4ED;
+  width: 20%;
+  min-width: 15rem;
+  height: 100vh;
+  background-color: #232322;
+  flex-direction: column;
+  padding: 1rem;
+  overflow-y: scroll;
+}
+
+#header span{
+  text-decoration: underline;
+}
+
+#header{
+  text-align: right;
+}
+
+#header h1 {
+  line-height: 2.1rem;
+}
+
+#controls button,
+#controls .toggle-wrapper,
+#controls #import-json-btn {
+  width: 100%;
+  font-size: 1rem;
+  text-align: left;
+  padding: 0.5rem;
+}
+
+#controls summary {
+  font-family: "Noto Serif", serif;
+  font-weight: 500;
+  font-style: normal;
+  font-variation-settings: "wdth" 100;
+  font-size: 1.2rem;
+  cursor: pointer;
+  background-color: #232322;
+  color: #F7F4ED;
+  padding: 0.5rem 0;
+}
+
+#controls details {
+  margin: 1rem 0;
+  padding-bottom: .1rem;
+  background-color: #F7F4ED;
+  color: #232322;
+}
+
+ul{
+  list-style: none;
+  padding: 0 1rem;
+}
+
+#controls details ul li {
+  padding: 0.2rem 0;
+  width: 100%;
+}
+
+#line-popup button, #station-popup button, #tutorial-popup button, #change-log-popup button {
+  width: auto;
+}
+
+#line-popup button, #station-popup li{
+  margin-bottom: .5rem;
+}
+
+#line-popup table{
+  margin-top: 1rem;
+  text-align: left;
+}
+
+.closepopup{
+  position: absolute;
+  top: 0;
+  right: 0;
+  border: none;
+  font-size: 2rem;
+}
+
+.popup {
+  color: #232322;
+  position: absolute;
+  top: 50%;
+  right: 50%;
+  transform: translate(50%, -50%);
+  background: #F7F4ED;
+  padding: 1em;
+  z-index: 1000;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.5), 0 0 0 100vw rgba(0,0,0,0.2);
+  max-height: 90vh;
+  overflow-y: scroll;
+}
+
+#tutorial-popup h2, #change-log-popup h2{
+  text-align: left;
+}
+
+#tutorial-popup p, #change-log-popup li{
+  text-align: left;
+}
+
+#change-log-popup ul{
+  list-style: square;
+}
+
+#tutorial-popup ul{
+  display: flex;
+  padding: 0;
+  margin: 0;
+  gap: 1rem;
+}
+
+#tutorial-popup ul li{
+  flex: 1;
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+#tutorial-popup ul li button{
+  width: 100%;
+  text-align: center;
+}
+
+#tutorial-popup #intro-option-2, #tutorial-popup #intro-option-3{
+  height: 100%;
+}
+
+#tutorial-popup ul li img{
+  width: 100%;
+  height: auto;
+  max-width: 10rem;
+  max-height: 10rem;
+}
+
+.hidden {
+  display: none;
+}
+
+#station-list .station-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: #F7F4ED;
+}
+
+#station-x-input, #station-y-input {
+  width: 3rem;
+}
+
+#zoomButtonsUl li{
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+#zoomButtonsUl button{
+  width: 2rem;
+  height: 2rem;
+  text-align: center;
+  line-height: .8rem;
+  border-radius: 50%;
+}
+
+/* MOBILE   ------------------------------------------------------------------- */
+
+@media only screen and (max-width: 768px) {
+  body {
+    flex-direction: column;
+    overflow: hidden;
+    height: 100vh;
+    justify-content: center;
+  }
+
+  #controls{
+    width: 95%;
+    margin: auto;
+    height: 40%;
+    padding-bottom: 2rem;
+  }
+
+  #map{
+    width: 95%;
+    height: 60%;
+    margin: auto;
+  }
+
+  #controls > div{
+    display: none;
+  }
+
+  #zoom-controls{
+    position: absolute;
+    top: 0;
+    right: .5rem;
+    left: auto;
+    margin: 1rem;
+    gap: .5rem;
+  }
+
+  #zoom-controls button{
+    width: 2.5rem;
+    height: 2.5rem;
+    font-size: 1rem;
+  }
+
+  #controls > div h1{
+    font-size: 1.7rem;
+    margin-bottom: -.8rem;    
+  }
+
+  #controls > div a{
+    color: #232322;
+    font-size: 1rem;
+  }
+
+  #legend{
+    bottom: calc(40% + 1.5rem);
+    padding: .5rem;
+    padding-right: 2rem;
+  }
+
+  #legend h2{
+    font-size: 1.2rem;
+  }
+}

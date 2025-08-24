@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Transit Map Maker</title>
+    <title>[BETA] Transit Map Maker</title>
     <link rel="stylesheet" href="style.css">
 
     <link rel="icon" type="image/png" href="/img/favicon/favicon-96x96.png" sizes="96x96">
@@ -12,7 +12,7 @@
     <link rel="apple-touch-icon" sizes="180x180" href="/img/favicon/apple-touch-icon.png">
     <meta name="apple-mobile-web-app-title" content="Transit Map Maker">
     <link rel="manifest" href="/img/favicon/site.webmanifest">
-    
+
     <meta property="og:title" content="Transit Map Maker">
     <meta property="og:type" content="website">
     <meta property="og:image" content="https://transitmap.madebybence.com/img/social.jpg">
@@ -20,213 +20,192 @@
     <meta property="og:site_name" content="Transit Map Maker">
 </head>
 <body>
-<section id="map">
-  <div id="canvas-wrapper">
-    <canvas id="canvas"></canvas>
-  </div>
+    <header>
+        <div class="brand">
+            <h1>Transit Map Maker</h1>
+            <button id="btn-changelog">BETA <span id="version-text"></span></button>
+        </div>
 
-  <section id="legend">
-    <h2>Legend</h2>
-    <ul id="legend-list"></ul>
-    <ul id="legend-station-list"></ul>
-  </section>
+        <div class="controls">
+            <button id="zoomOut" title="Zoom out">−</button>
+            <button id="zoomIn" title="Zoom in">+</button>
+            
+            <label class="toggle-label"><input type="checkbox" id="toggleShowLegend" checked> Legend</label>
 
-  <div id="zoom-controls">
-    <button id="zoomOut">-</button>
-    <button id="zoomIn">+</button>
-  </div>
+            <label class="import-label">
+                Import JSON
+                <input type="file" class="import-json" accept="application/json" hidden>
+            </label>
+            <button id="export-json-btn">Export JSON</button>
+            <button id="export-png-btn">Export PNG</button>
+            <button id="export-svg-btn">Export SVG</button>
+            <button id="share-btn">Share</button>
+        </div>
+    </header>
 
-</section>
+    <main>
+          <aside>
+          <section>
+            <label id="toggleAddStationLabel"><input type="checkbox" id="toggleAddStation"><span>+ Add station</span></label>
+            <button id="btn-addline">+ Add line</button>
+          </section>
+          <section>
+              <details>
+                  <summary>Edit lines</summary>
+                  <ul id="line-list"></ul>
+                  
+              </details>
+          </section>
+          <section>
+              <details>
+                  <summary>Edit stations</summary>
+                  <ul id="station-list"></ul>
+              </details>
+          </section>
+          <section>
+              <details>
+                  <summary>Legend</summary>
+                  <ul id="controls-legend-list"></ul>
+              </details>
+          </section>
+          <section>
+              <details>
+                  <summary>Map</summary>
+                  <ul>
+                        <li><button id="mapWidthMin">-</button> width <button id="mapWidthPlus">+</button></li>
+                        <li><button id="mapHeightMin">-</button> height <button id="mapHeightPlus">+</button></li>
+                        <li><button id="btn-clearall">Clear whole map</button></li>
+                  </ul>
+              </details>
+          </section>
+          <section>
+            <details>
+              <summary>View settings</summary>
+                    <ul>
+                        <li><label class="toggle-label"><input type="checkbox" id="toggleShowGridLines" checked> Show Grid</label></li>
+                        <li><label class="toggle-label"><input type="checkbox" id="toggleShowCoordinates"> Show coordinates</label></li>
+                        <li><label class="toggle-label"><input type="checkbox" id="toggleShowStationNames" checked> Show station names</label></li>
+                    </ul>
+            </details>
+          </section>
+          <section>
+                <h3>Examples</h3>
+                <ul>
+                    <li><button id="intro-option-2">Load Amsterdam</button></li>
+                    <li><button id="intro-option-3">Load Budapest</button></li>
+                </ul>
+          </section>
+          <section style="padding: 2rem; text-align: center">
+            This is a beta version of TMM. <a href="/v3/" style="color:white;">Return to an older version here.</a><br><br>
+            Got any feedback? <a href="mailto:transitmap@bencebarens.nl" style="color:white;">Let me know!</a>
+          </section>
+          </aside>
 
-<section id="controls">
-  <div id="header">
-      <h1>Transit Map Maker</h1>
-      <p><span onclick="showChangeLog()" id="version-text"></span> | <a href="https://bencebarens.nl/" target="_blank">Made by Bence</a></p>
-  </div>
+          <section class="stage-wrap">
+              <div class="svg-wrap">
+                  <svg id="map" xmlns="http://www.w3.org/2000/svg" aria-label="Transit map">
+                  <g id="layer-grid"></g>
+                  <g id="layer-lines"></g>
+                  <g id="layer-stations"></g>
+                  <g id="layer-labels"></g>
+                  </svg>
+              </div>
+          </section>
 
-  <!-- Tutorial popup -->
-  <div id="tutorial-popup" class="popup hidden">
-    <div class="popup-content">
-      <h2>Welcome to Transit Map Maker</h2>
-      <p>Start by creating a new map or importing an existing one.</p>
-      <ul id="intro-options">
-        <li>
-          <button class="intro-option hidden" id="intro-option-4">💾<br>Pick up where you left off last time</button>
-          <button class="intro-option" id="intro-option-1">➕<br>Create a new map<br>(empty canvas)</button>
-          <label class="intro-option" for="import-json-2">
-            <input type="file" accept=".json" class="import-json" id="import-json-2">
-            <span class="toggle-content">⬆️<br>Import a JSON file</span>
-          </label>
-        </li>
-        <li><button class="intro-option" id="intro-option-2"><img src="img/ams.png" alt=""><br>The Amsterdam Metro system (2025)</button></li>
-        <li><button class="intro-option" id="intro-option-3"><img src="img/bud.png" alt=""><br>Budapest Metro and Suburban Rail (2014)</button></li>
-      </ul>
+          <section id="legend">
+              <ul id="legend-list"></ul><br>
+              <ul id="legend-station-list"></ul>
+          </section>
+    </main>
 
-      <!-- <button id="btn-showintro">Show tutorial</button> -->
-      <button class="closepopup" id="btn-closetutorial">×</button>
-      <button id="dont-show-again">Don't show popup again</button>
-      &nbsp;&nbsp;&nbsp;<a href="/v4.html" style="color: black; text-decoration: none;">Try TMM version 4.0 [BETA]</a>
-    </div>
-  </div>
-
-  <!-- Change log -->
-  <div class="popup hidden" id="change-log-popup">
-    <h2>Change log</h2>
-    <ul>
-      <li>v3.20.0 (13-08-2025)<br>Complete restructuring of the codebase<br>(shouldn't be any visible changes)</li>
-      <li>v3.10.1 (09-07-2025)<br>New feature: line styles and width can now be changed (backwards compatible)</li>
-      <li>v3.02.2<br>Slight correction to v3.02.1</li>
-      <li>v3.02.1<br>Added a toggle for showing coordinates<br>Removed "show true grid lines" function<br>Added ability to create map URL<br>Made popup backdrop darker</li>
-      <li>v3.01.1<br>Added autosave on close<br>Added data validation for JSON imports<br>System now removes deleted stations from line arrays<br>Changed export format from PNG to JPG</li>
-      <li>v2.25.1<br>Added ability to edit station coordinates<br>Finished Budapest metro on welcome screen<br>Added ability to hide station names</li>
-      <li>v2.24.2<br>Added a change log (yay!)<br>Fixed AMS metro import on welcome screen<br>Added (a part of) Budapest metro</li>
-      <li>v2.24.1<br>Added a welcome screen<br>Better hover effects</li>
-    </ul>
-    <button class="closepopup" id="btn-closechangelog">×</button>
-  </div>
-
-
-  <details>
-    <summary>Lines</summary>
-
-    <ul id="line-list"></ul>
-    <ul>
-      <li><button id="btn-addline">➕ Add new line</button></li>
-    </ul>
-
-
-    <!-- Popup voor lijn bewerken -->
-    <div id="line-popup" class="popup hidden">
-      <h3>Edit line</h3>
-      <ul>
-        <li><label for="line-name-input">Name:</label> <input type="text" id="line-name-input"></li>
-        <li><label for="line-color-input">Color:</label> <input type="color" id="line-color-input"></li>
-        <li>
-          <label for="line-style-input">Style:</label>
-          <select id="line-style-input">
-            <option value="solid">Solid</option>
-            <option value="dashed">Dashed</option>
-            <option value="dotted">Dotted</option>
-          </select>
-        </li>
-        <li>
-          <label for="line-width-input">Width:</label>
-          <select id="line-width-input">
-            <option value="thin">Thin</option>
-            <option value="normal" selected>Normal</option>
-            <option value="thick">Thick</option>
-          </select>
-        </li>
-        <li><button id="btn-savelineedits">Save changes</button> <button id="btn-deleteline">Delete line</button></li>
-      </ul>
-      <h3>Edit line stations</h3>
-      <table id="stationList"></table>
-      <select id="stationSelect"></select>
-      <button id="btn-addstationtoline">Add</button>
-      <button class="closepopup" id="btn-closelinepopup">×</button>
-    </div>
-
-
-  </details>
-  <details>
-    <summary>Stations</summary>
-
-    <div class="controls">
-      <ul id="station-list"></ul>
-    </div>
-
-    <!-- Popup voor station bewerken -->
+    <!-- Station popup -->
     <div id="station-popup" class="popup hidden">
+      <div class="popup-inner">
         <h3>Edit station</h3>
-        <ul>
-          <li><label for="station-name-input">Name:</label> <input type="text" id="station-name-input"></li>
-          <li><label for="station-x-input">x:</label> <input type="number" id="station-x-input"> <label for="station-y-input">y:</label> <input type="number" id="station-y-input"></li>
-          <li><label for="station-type-input">Type:</label>
+        <label>Name <input id="station-name-input" type="text"></label>
+        <label>Type
           <select id="station-type-input">
-            <option value="1">Filled square</option>
-            <option value="2">Outlined square</option>
-            <option value="3">Filled circle</option>
-            <option value="4">Outlined circle</option>
-          </select></li>
-        <li><button id="btn-savestationedits">Save changes</button> <button id="btn-deletestation">Delete station</button></li>
-      </ul>
-      <button class="closepopup" id="btn-closepopup">×</button>
+                <option value="1">Station</option>
+                <option value="2">Transfer station</option>
+                <option value="3">Train station</option>
+                <option value="4">Large train station</option>
+          </select>
+        </label>
+        <label>X <input id="station-x-input" type="number"></label>
+        <label>Y <input id="station-y-input" type="number"></label>
+        <div class="popup-actions">
+          <button id="btn-savestationedits">Save</button>
+          <button id="btn-deletestation" class="danger">Delete</button>
+          <button id="btn-closepopup" class="closepopup">×</button>
+        </div>
+      </div>
     </div>
 
-    <ul>
-      <li>
-        <label class="toggle-wrapper">
-          <input type="checkbox" id="toggleAddStation">
-          <span class="toggle-content">
-            <span class="toggle-label">➕ Add new station</span>
-            <span class="toggle-description">Click anywhere on the map to add a new station</span>
-          </span>
-        </label>
-      </li>
-    </ul>
-  </details>
-  <details>
-    <summary>Legend</summary>
-    <ul>
-      <li>
-        <label class="switch-wrapper">
-          <span class="switch-label">Show legend</span>
-          <span class="switch"><input type="checkbox" id="toggleShowLegend" checked><span class="slider"></span></span>
-        </label>
-      </li>
-    </ul>
-    <ul id="controls-legend-list"></ul>
-  </details>
-  <details>
-    <summary>Export & import</summary>
-    <ul>
-      <li><button id="export-btn">🖼️ Export as JPG</button></li>
-      <li><button id="export-json-btn">⬇️ Export as JSON</button></li>
-      <li><button id="share-btn">🔗 Copy map URL</button></li>
-      <li>
-        <label class="toggle-wrapper" for="import-json-1">
-          <input type="file" accept=".json" class="import-json" id="import-json-1">
-          <span class="toggle-content">⬆️ Import JSON file</span>
-        </label>
-      </li>
-    </ul>
-  </details>
-  <details>
-    <summary>Map</summary>
-    <ul id="zoomButtonsUl">
-      <li><button id="mapWidthMin">-</button> Map width <button id="mapWidthPlus">+</button></li>
-      <li><button id="mapHeightMin">-</button> Map height <button id="mapHeightPlus">+</button></li>
-    </ul>
-    <ul>
-      <li><button id="btn-clearall">Clear whole map</button></li>
-    </ul>
-  </details>
-  <details>
-    <summary>View</summary>
-    <ul>
-      <li>Note: controls currently not working because of work on version 4.0 of TMM.</li>
-      <li>
-        <label class="switch-wrapper">
-          <span class="switch-label">Show grid lines</span>
-          <span class="switch"><input type="checkbox" id="toggleShowGridLines" checked><span class="slider"></span></span>
-        </label>
-      </li>
-      <li>
-        <label class="switch-wrapper">
-          <span class="switch-label">Show station names</span>
-          <span class="switch"><input type="checkbox" id="toggleShowStationNames" checked><span class="slider"></span></span>
-        </label>
-      </li>
-      <li>
-        <label class="switch-wrapper">
-          <span class="switch-label">Show coordinates</span>
-          <span class="switch"><input type="checkbox" id="toggleShowCoordinates"><span class="slider"></span></span>
-        </label>
-      </li>
-    </ul>
-  </details>
-</section>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/pako/2.1.0/pako.min.js"></script>
-<script src="script.js"></script>
+    <!-- Line popup -->
+    <div id="line-popup" class="popup hidden">
+        <div class="popup-inner">
+            <h3>Edit line</h3>
+            <label>Name <input id="line-name-input" type="text"></label>
+            <label>Color <input id="line-color-input" type="color"></label>
+            <label>Style
+                <select id="line-style-input">
+                  <option value="solid">Solid</option>
+                  <option value="dash">Dash</option>
+                  <option value="dot">Dot</option>
+                </select>
+            </label>
+            <label>Width
+                <select id="line-width-input">
+                  <option value="thin">Thin</option>
+                  <option value="normal" selected>Normal</option>
+                  <option value="thick">Thick</option>
+                </select>
+            </label>
+
+            <h4>Stations in line</h4>
+            <table class="table-list">
+              <tbody id="stationList"></tbody>
+            </table>
+
+            <div class="row">
+              <select id="stationSelect"></select>
+              <button id="btn-addstationtoline">Add to line</button>
+            </div>
+
+            <div class="popup-actions">
+              <button id="btn-savelineedits">Save</button>
+              <button id="btn-deleteline" class="danger">Delete line</button>
+              <button id="btn-closelinepopup" class="closepopup">×</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Tutorial/Changelog mini-dialogs (optioneel zichtbaar) -->
+    <div id="change-log-popup" class="popup hidden">
+        <div class="popup-inner">
+            <h3>Changelog</h3>
+            <ul>
+                <li>[BETA] v4.00.4 (24-08-2025)<br>UI fixes<br>Made BETA the default version</li>
+                <li>[BETA] v4.00.3 (15-08-2025)<br>UI fixes<br>Added SVG export</li>
+                <li>[BETA] v4.00.2 (14-08-2025)<br>UI fixes<br>Re-added link share functionality</li>
+                <li>[BETA] v4.00.1 (14-08-2025)<br>UI fixes</li>
+                <li>[BETA] v4.00.0 (13-08-2025)<br>Complete fundamental update to make maps vector-based</li>
+                <li>v3.20.0 (13-08-2025)<br>Complete restructuring of the codebase (shouldn't be any visible changes)</li>
+                <li>v3.10.1 (09-07-2025)<br>New feature: line styles and width can now be changed (backwards compatible)</li>
+                <li>v3.02.2<br>Slight correction to v3.02.1</li>
+                <li>v3.02.1<br>Added a toggle for showing coordinates<br>Removed "show true grid lines" function<br>Added ability to create map URL<br>Made popup backdrop darker</li>
+                <li>v3.01.1<br>Added autosave on close<br>Added data validation for JSON imports<br>System now removes deleted stations from line arrays<br>Changed export format from PNG to JPG</li>
+                <li>v2.25.1<br>Added ability to edit station coordinates<br>Finished Budapest metro on welcome screen<br>Added ability to hide station names</li>
+                <li>v2.24.2<br>Added a change log (yay!)<br>Fixed AMS metro import on welcome screen<br>Added (a part of) Budapest metro</li>
+                <li>v2.24.1<br>Added a welcome screen<br>Better hover effects</li>
+            </ul>
+            <div class="popup-actions">
+                <button id="btn-closechangelog" class="closepopup">×</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pako/2.1.0/pako.min.js"></script>
+    <script src="script.js" defer></script>
 </body>
 </html>
