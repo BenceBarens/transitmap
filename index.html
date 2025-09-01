@@ -27,10 +27,8 @@
         </div>
 
         <div class="controls">
-            <button id="zoomOut" title="Zoom out">−</button>
-            <button id="zoomIn" title="Zoom in">+</button>
-            
-            <label class="toggle-label"><input type="checkbox" id="toggleShowLegend" checked> Legend</label>
+            <button id="zoomOut" title="Zoom out" class="round-button">−</button>
+            <button id="zoomIn" title="Zoom in" class="round-button">+</button>
 
             <label class="import-label">
                 Import JSON
@@ -46,7 +44,7 @@
     <main>
           <aside>
           <section>
-            <label id="toggleAddStationLabel"><input type="checkbox" id="toggleAddStation"><span>+ Add station</span></label>
+            <label id="toggleAddStationLabel"><input type="checkbox" id="toggleAddStation">+ Add station<span>Click anywhere on the map to add a station</span></label>
             <button id="btn-addline">+ Add line</button>
           </section>
           <section>
@@ -69,11 +67,11 @@
               </details>
           </section>
           <section>
-              <details>
+              <details id="details-map">
                   <summary>Map</summary>
                   <ul>
-                        <li><button id="mapWidthMin">-</button> width <button id="mapWidthPlus">+</button></li>
-                        <li><button id="mapHeightMin">-</button> height <button id="mapHeightPlus">+</button></li>
+                        <li>width <div><button id="mapWidthMin" class="round-button">-</button> <span id="map-width"></span> <button id="mapWidthPlus" class="round-button">+</button></div></li>
+                        <li>height <div><button id="mapHeightMin" class="round-button">-</button> <span id="map-height"></span> <button id="mapHeightPlus" class="round-button">+</button></div></li>
                         <li><button id="btn-clearall">Clear whole map</button></li>
                   </ul>
               </details>
@@ -85,6 +83,7 @@
                         <li><label class="toggle-label"><input type="checkbox" id="toggleShowGridLines" checked> Show Grid</label></li>
                         <li><label class="toggle-label"><input type="checkbox" id="toggleShowCoordinates"> Show coordinates</label></li>
                         <li><label class="toggle-label"><input type="checkbox" id="toggleShowStationNames" checked> Show station names</label></li>
+                        <li><label class="toggle-label"><input type="checkbox" id="toggleShowLegend" checked> Show legend</label></li>
                     </ul>
             </details>
           </section>
@@ -185,6 +184,7 @@
         <div class="popup-inner">
             <h3>Changelog</h3>
             <ul>
+                <li>[BETA] v4.00.5 (01-09-2025)<br>Minor cosmetic changes</li>
                 <li>[BETA] v4.00.4 (24-08-2025)<br>UI fixes<br>Made BETA the default version</li>
                 <li>[BETA] v4.00.3 (15-08-2025)<br>UI fixes<br>Added SVG export</li>
                 <li>[BETA] v4.00.2 (14-08-2025)<br>UI fixes<br>Re-added link share functionality</li>

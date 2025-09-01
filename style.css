@@ -4,6 +4,7 @@
     --colour-weak:#A2A09C;
     --colour-accent:#e4382f;
     --danger:#c62828;
+    --border-radius: 0.3rem;
     color: var(--colour-primary);
 }
 
@@ -80,11 +81,20 @@ button, .import-label{
     color: var(--colour-secondary);
     padding: 0.3rem 0.6rem;
     font-size: 1rem;
+    border-radius: var(--border-radius);
+    text-align: left;
 }
 
 button:hover, .import-label:hover{
     background-color: var(--colour-secondary);
     color: var(--colour-primary);
+}
+
+.round-button{
+    border-radius: 10rem;
+    height: 2rem;
+    width: 2rem;
+    text-align: center;
 }
 
 label{
@@ -137,6 +147,10 @@ aside details summary{
     cursor: pointer;
 }
 
+aside section:first-child{
+    margin-bottom: 3rem;
+}
+
 .stage-wrap{
     border-top-left-radius: 1rem;
     background-color: var(--colour-secondary);
@@ -187,6 +201,7 @@ aside details summary{
     max-width: 60vw;
     overflow-y: auto;
     position: relative;
+    border-radius: var(--border-radius);
 }
 
 .toggle-label input{
@@ -222,6 +237,16 @@ aside details summary{
 
 .toggle-label input:checked:after{
     margin-left: -0.9rem;
+}
+
+#details-map li{
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+}
+
+#details-map li div{
+    display: inline-block;
 }
 
 .popup-inner label{
@@ -303,12 +328,14 @@ svg [data-role="line"]{
     padding: 1rem;
     background-color: var(--colour-secondary);
     border: solid 0.1rem var(--colour-primary);
+    border-radius: var(--border-radius);
 }
 
 #toggleAddStationLabel{
     background-color: var(--colour-primary);
     border: 0.1rem solid var(--colour-secondary);
     color: var(--colour-secondary);
+    border-radius: var(--border-radius);
     padding: 0.3rem 0.6rem;
     font-size: 1rem;
 }
@@ -318,8 +345,15 @@ svg [data-role="line"]{
     color: var(--colour-primary);
 }
 
+#toggleAddStationLabel span{
+    display: none;
+}
+
 #toggleAddStationLabel input:checked + span{
-    background-color: red;
+    display: block;
+    position: absolute;
+    transform: translateX(-50%);
+    color: var(--colour-primary);
 }
 
 #toggleAddStation{

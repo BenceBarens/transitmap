@@ -1,5 +1,5 @@
 // ===== Version & basic elements =====
-const version = "4.00.4";
+const version = "4.00.5";
 document.querySelector("#version-text").textContent = "Version " + version;
 
 // ===== State =====
@@ -128,7 +128,6 @@ function drawLines(){
   clearNode(gLines);
 
   lines.forEach(line => {
-    // bouw polyline in grid-center-punten (met "45-correctie" zoals je had)
     let points = [];
     let prev = null;
 
@@ -382,13 +381,18 @@ function zoomOut(){
   if (cellSize > Math.ceil(2100/(gridCols+gridRows))) { cellSize -= 5; draw(); }
 }
 
+function updateMapInfo() {
+  document.querySelector("#map-width").textContent = gridCols;
+  document.querySelector("#map-height").textContent = gridRows;
+}
+
 document.querySelector("#zoomIn").addEventListener("click", zoomIn);
 document.querySelector("#zoomOut").addEventListener("click", zoomOut);
 
-document.querySelector("#mapWidthMin").addEventListener("click", () => { gridCols = Math.max(2, gridCols - 2); draw(); });
-document.querySelector("#mapWidthPlus").addEventListener("click", () => { gridCols += 2; draw(); });
-document.querySelector("#mapHeightMin").addEventListener("click", () => { gridRows = Math.max(2, gridRows - 2); draw(); });
-document.querySelector("#mapHeightPlus").addEventListener("click", () => { gridRows += 2; draw(); });
+document.querySelector("#mapWidthMin").addEventListener("click", () => { gridCols = Math.max(2, gridCols - 2); draw(); updateMapInfo();});
+document.querySelector("#mapWidthPlus").addEventListener("click", () => { gridCols += 2; draw(); updateMapInfo();});
+document.querySelector("#mapHeightMin").addEventListener("click", () => { gridRows = Math.max(2, gridRows - 2); draw(); updateMapInfo();});
+document.querySelector("#mapHeightPlus").addEventListener("click", () => { gridRows += 2; draw(); updateMapInfo();});
 
 // ===== Map click: add station =====
 svg.addEventListener("click", (e) => {
@@ -865,6 +869,7 @@ window.addEventListener("beforeunload", () => {
 document.addEventListener("DOMContentLoaded", () => {
   draw();
   renderStationList();
+  updateMapInfo();
 
   const saved = localStorage.getItem("savedMapData");
   if (saved){
