@@ -90,6 +90,10 @@ button:hover, .import-label:hover{
     color: var(--colour-primary);
 }
 
+a{
+    color: inherit;
+}
+
 .round-button{
     border-radius: 10rem;
     height: 2rem;
@@ -358,4 +362,74 @@ svg [data-role="line"]{
 
 #toggleAddStation{
     display: none;
+}
+
+@media print {
+  html, body {
+    background: var(--colour-secondary) !important;
+    height: auto !important;
+    width: auto !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    overflow: visible !important;
+  }
+
+  header, aside, .popup{
+    display: none !important;
+  }
+
+  .stage-wrap {
+    border-radius: 0 !important;
+    background: var(--colour-secondary) !important;
+    width: auto !important;
+    height: auto !important;
+  }
+
+  .svg-wrap {
+    overflow: visible !important;
+    background: var(--colour-secondary) !important;
+  }
+
+  #map {
+    display: block;
+    width: 100% !important;
+    height: auto !important;
+    max-width: 100% !important;
+    max-height: 100% !important;
+  }
+
+  #legend {
+    position: fixed !important;
+    transform: scale(0.8) !important;
+    bottom: 0 !important;
+    right: 0 !important;
+  }
+
+  @page {
+    size: auto;
+    margin: 0;
+  }
+}
+
+#mobile-message{
+    display: none;;
+}
+ 
+@media only screen and (max-width: 768px) {
+
+    header, main, .popup{
+        display: none !important;
+    }
+
+    #mobile-message{
+        display: flex !important;
+        flex-direction: column;
+        color: var(--colour-secondary);
+        height: 100vh;
+        width: 100vw;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+        padding: 2rem;
+    }
 }

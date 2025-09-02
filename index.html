@@ -36,7 +36,7 @@
             </label>
             <button id="export-json-btn">Export JSON</button>
             <button id="export-png-btn">Export PNG</button>
-            <button id="export-svg-btn">Export SVG</button>
+            <button id="export-pdf-btn">Export PDF (ctrl + P)</button>
             <button id="share-btn">Share</button>
         </div>
     </header>
@@ -88,6 +88,7 @@
             </details>
           </section>
           <section>
+            <br>
                 <h3>Examples</h3>
                 <ul>
                     <li><button id="intro-option-2">Load Amsterdam</button></li>
@@ -103,10 +104,10 @@
           <section class="stage-wrap">
               <div class="svg-wrap">
                   <svg id="map" xmlns="http://www.w3.org/2000/svg" aria-label="Transit map">
-                  <g id="layer-grid"></g>
-                  <g id="layer-lines"></g>
-                  <g id="layer-stations"></g>
-                  <g id="layer-labels"></g>
+                        <g id="layer-grid"></g>
+                        <g id="layer-lines"></g>
+                        <g id="layer-stations"></g>
+                        <g id="layer-labels"></g>
                   </svg>
               </div>
           </section>
@@ -179,11 +180,12 @@
         </div>
     </div>
 
-    <!-- Tutorial/Changelog mini-dialogs (optioneel zichtbaar) -->
+    <!-- Changelog popup -->
     <div id="change-log-popup" class="popup hidden">
         <div class="popup-inner">
             <h3>Changelog</h3>
             <ul>
+                <li>[BETA] v4.00.6 (02-09-2025)<br>Changed vector export to PDF through print page<br>Limited availablity on smaller devices</li>
                 <li>[BETA] v4.00.5 (01-09-2025)<br>Minor cosmetic changes</li>
                 <li>[BETA] v4.00.4 (24-08-2025)<br>UI fixes<br>Made BETA the default version</li>
                 <li>[BETA] v4.00.3 (15-08-2025)<br>UI fixes<br>Added SVG export</li>
@@ -203,6 +205,13 @@
                 <button id="btn-closechangelog" class="closepopup">×</button>
             </div>
         </div>
+    </div>
+
+    <div id="mobile-message">
+        <h1>Transit Map Maker</h1>
+        <p><button><span id="version-text2"></span> BETA</button></p>
+        <p>This version of Transit Map Maker is not available on smaller devices.<br><br>Support will be coming something in the future, but in the meantime, please visit TMM on a larger device.</p>
+        <p>Love, <a href="https://bencebarens.nl/">Bence</a> ✌️</p>
     </div>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pako/2.1.0/pako.min.js"></script>

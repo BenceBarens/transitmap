@@ -1,6 +1,7 @@
 // ===== Version & basic elements =====
-const version = "4.00.5";
+const version = "4.00.6";
 document.querySelector("#version-text").textContent = "Version " + version;
+document.querySelector("#version-text2").textContent = "Version " + version;
 
 // ===== State =====
 let cellSize = 50;
@@ -204,7 +205,7 @@ function drawStations(){
       r.setAttribute("height", cellSize/2);
       r.setAttribute("fill", "#F7F4ED");
       r.setAttribute("stroke", "#232322");
-      r.setAttribute("stroke-width", 10);
+      r.setAttribute("stroke-width", '0.3em');
       group.appendChild(r);
     } else if (st.type == 3){
       const c = document.createElementNS("http://www.w3.org/2000/svg","circle");
@@ -220,7 +221,7 @@ function drawStations(){
       c.setAttribute("r", cellSize/4);
       c.setAttribute("fill", "#F7F4ED");
       c.setAttribute("stroke", "#232322");
-      c.setAttribute("stroke-width", 10);
+      c.setAttribute("stroke-width", '0.3em');
       group.appendChild(c);
     }
 
@@ -700,19 +701,34 @@ function generateExportSVG() {
   return exportSVG;
 }
 
-// Export SVG knop
-document.querySelector("#export-svg-btn").addEventListener("click", () => {
-  const exportSVG = generateExportSVG();
-  const xml = new XMLSerializer().serializeToString(exportSVG);
-  const blob = new Blob([xml], { type: "image/svg+xml" });
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement("a");
-  a.href = url;
-  a.download = "My Transit Map.svg";
-  document.body.appendChild(a);
-  a.click();
-  a.remove();
-  URL.revokeObjectURL(url);
+// Export PDF knop
+document.querySelector("#export-pdf-btn").addEventListener("click", () => {
+  const oldTitle = document.title;
+  document.title = "My Transit Map";
+  window.print();
+  setTimeout(() => { document.title = oldTitle }, 10);
+});
+
+let _printBackup = null;
+
+window.addEventListener('beforeprint', () => {
+  _printBackup = {cellSize};
+  cellSize = 50;
+
+  setSvgSize();
+  drawGrid();
+  drawLines();
+  drawStations();
+
+  document.querySelector("#legend").classList.toggle("hidden", !toggleShowLegend.checked);
+});
+
+window.addEventListener('afterprint', () => {
+  if (_printBackup) {
+    cellSize = _printBackup.cellSize;
+  }
+  draw();
+  _printBackup = null;
 });
 
 // Export PNG knop
