@@ -1,10 +1,10 @@
 // ===== Version & basic elements =====
-const version = "4.00.6";
+const version = "4.00.7";
 document.querySelector("#version-text").textContent = "Version " + version;
 document.querySelector("#version-text2").textContent = "Version " + version;
 
 // ===== State =====
-let cellSize = 50;
+let cellSize = 35;
 let gridCols = 30;
 let gridRows = 30;
 
@@ -375,11 +375,17 @@ function draw(){
 }
 
 // ===== Zoom & map size =====
+function updateZoomInfo(){
+  zoomLevel = Math.round(cellSize / 35 * 100)
+  document.querySelector("#zoom-level").textContent = zoomLevel + "%";
+}
 function zoomIn(){
   if (cellSize < 50){ cellSize += 5; draw(); }
+  updateZoomInfo();
 }
 function zoomOut(){
-  if (cellSize > Math.ceil(2100/(gridCols+gridRows))) { cellSize -= 5; draw(); }
+  if (cellSize > Math.ceil(1800/(gridCols+gridRows))) { cellSize -= 5; draw(); }
+  updateZoomInfo();
 }
 
 function updateMapInfo() {
@@ -617,91 +623,7 @@ document.querySelector("#export-json-btn").addEventListener("click", () => {
   URL.revokeObjectURL(url);
 });
 
-// Variabele voor legenda-hoek
-let legendPosition = "top-right"; // opties: "top-left", "top-right", "bottom-left", "bottom-right"
-
-// Genereert een volledige SVG voor export
-function generateExportSVG() {
-  const exportSVG = document.createElementNS("http://www.w3.org/2000/svg", "svg");
-  exportSVG.setAttribute("xmlns", "http://www.w3.org/2000/svg");
-  exportSVG.setAttribute("width", gridCols * cellSize);
-  exportSVG.setAttribute("height", gridRows * cellSize);
-  exportSVG.setAttribute("viewBox", `0 0 ${gridCols * cellSize} ${gridRows * cellSize}`);
-
-  // Groep voor lijnen
-  const linesGroup = document.createElementNS("http://www.w3.org/2000/svg", "g");
-  lines.forEach(line => {
-    const path = document.createElementNS("http://www.w3.org/2000/svg", "polyline");
-    const coords = line.stations.map(id => {
-      const st = stations.find(s => s.id === id);
-      return `${st.x * cellSize + cellSize / 2},${st.y * cellSize + cellSize / 2}`;
-    }).join(" ");
-    path.setAttribute("points", coords);
-    path.setAttribute("stroke", line.color);
-    path.setAttribute("stroke-width", 4);
-    path.setAttribute("fill", "none");
-    linesGroup.appendChild(path);
-  });
-  exportSVG.appendChild(linesGroup);
-
-  // Groep voor stations
-  const stationsGroup = document.createElementNS("http://www.w3.org/2000/svg", "g");
-  stations.forEach(st => {
-    const circle = document.createElementNS("http://www.w3.org/2000/svg", "circle");
-    circle.setAttribute("cx", st.x * cellSize + cellSize / 2);
-    circle.setAttribute("cy", st.y * cellSize + cellSize / 2);
-    circle.setAttribute("r", 6);
-    circle.setAttribute("fill", stationTypes[st.type]?.color || "#000");
-    stationsGroup.appendChild(circle);
-  });
-  exportSVG.appendChild(stationsGroup);
-
-  // Legenda toevoegen
-  const legendGroup = document.createElementNS("http://www.w3.org/2000/svg", "g");
-  const legendPadding = 20;
-  const legendWidth = 150;
-  const legendHeight = (lines.length * 20) + 20;
-
-  let legendX, legendY;
-  if (legendPosition.includes("top")) legendY = legendPadding;
-  else legendY = gridRows * cellSize - legendHeight - legendPadding;
-
-  if (legendPosition.includes("left")) legendX = legendPadding;
-  else legendX = gridCols * cellSize - legendWidth - legendPadding;
-
-  const legendBg = document.createElementNS("http://www.w3.org/2000/svg", "rect");
-  legendBg.setAttribute("x", legendX);
-  legendBg.setAttribute("y", legendY);
-  legendBg.setAttribute("width", legendWidth);
-  legendBg.setAttribute("height", legendHeight);
-  legendBg.setAttribute("fill", "#fff");
-  legendBg.setAttribute("stroke", "#000");
-  legendGroup.appendChild(legendBg);
-
-  lines.forEach((line, i) => {
-    const yPos = legendY + 15 + i * 20;
-
-    const swatch = document.createElementNS("http://www.w3.org/2000/svg", "rect");
-    swatch.setAttribute("x", legendX + 10);
-    swatch.setAttribute("y", yPos);
-    swatch.setAttribute("width", 20);
-    swatch.setAttribute("height", 10);
-    swatch.setAttribute("fill", line.color);
-    legendGroup.appendChild(swatch);
-
-    const text = document.createElementNS("http://www.w3.org/2000/svg", "text");
-    text.setAttribute("x", legendX + 40);
-    text.setAttribute("y", yPos + 9);
-    text.setAttribute("font-size", "12");
-    text.textContent = line.name || `Lijn ${i + 1}`;
-    legendGroup.appendChild(text);
-  });
-  exportSVG.appendChild(legendGroup);
-
-  return exportSVG;
-}
-
-// Export PDF knop
+// Export PDF button
 document.querySelector("#export-pdf-btn").addEventListener("click", () => {
   const oldTitle = document.title;
   document.title = "My Transit Map";
@@ -709,11 +631,11 @@ document.querySelector("#export-pdf-btn").addEventListener("click", () => {
   setTimeout(() => { document.title = oldTitle }, 10);
 });
 
-let _printBackup = null;
+let exportBackupCellSize = null;
 
 window.addEventListener('beforeprint', () => {
-  _printBackup = {cellSize};
-  cellSize = 50;
+  exportBackupCellSize = {cellSize};
+  cellSize = 35;
 
   setSvgSize();
   drawGrid();
@@ -724,34 +646,75 @@ window.addEventListener('beforeprint', () => {
 });
 
 window.addEventListener('afterprint', () => {
-  if (_printBackup) {
-    cellSize = _printBackup.cellSize;
+  if (exportBackupCellSize) {
+    cellSize = exportBackupCellSize.cellSize;
   }
   draw();
-  _printBackup = null;
+  exportBackupCellSize = null;
 });
 
-// Export PNG knop
+// Export PNG button
 document.querySelector("#export-png-btn").addEventListener("click", () => {
-  const exportSVG = generateExportSVG();
-  const xml = new XMLSerializer().serializeToString(exportSVG);
-  const svg64 = 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(xml);
+  try {
+    const exportBackupCellSize = cellSize;
+    cellSize = 35;
+    draw();
 
-  const img = new Image();
-  img.onload = () => {
-    const canvas = document.createElement("canvas");
-    canvas.width = gridCols * cellSize;
-    canvas.height = gridRows * cellSize;
-    const ctx = canvas.getContext("2d");
-    ctx.drawImage(img, 0, 0);
-    const link = document.createElement("a");
-    link.download = "My Transit Map.png";
-    link.href = canvas.toDataURL("image/png");
-    link.click();
-  };
-  img.src = svg64;
+    const svg = document.getElementById("map");
+
+    const clone = svg.cloneNode(true);
+    const css = Array.from(document.styleSheets)
+      .map(ss => {
+        try {
+          return Array.from(ss.cssRules).map(r => r.cssText).join("\n");
+        } catch (e) {
+          return "";
+        }
+      })
+      .join("\n");
+
+    const styleElem = document.createElement("style");
+    styleElem.textContent = css;
+    clone.insertBefore(styleElem, clone.firstChild);
+
+    const xml = new XMLSerializer().serializeToString(clone);
+    const svgBlob = new Blob([xml], { type: "image/svg+xml;charset=utf-8" });
+    const url = URL.createObjectURL(svgBlob);
+
+    const img = new Image();
+    img.onload = () => {
+      const canvas = document.createElement("canvas");
+      canvas.width = gridCols * cellSize;
+      canvas.height = gridRows * cellSize;
+
+      const ctx = canvas.getContext("2d");
+      ctx.fillStyle = "#F7F4ED";
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+      ctx.drawImage(img, 0, 0);
+
+      const link = document.createElement("a");
+      link.download = `My Transit Map.png`;
+      link.href = canvas.toDataURL("image/png");
+      link.click();
+
+      URL.revokeObjectURL(url);
+      cellSize = exportBackupCellSize;
+    };
+
+    img.onerror = () => {
+      alert("Couldn't export the map to a PNG. Please try using a different browser or export method.");
+      URL.revokeObjectURL(url);
+      cellSize = exportBackupCellSize;
+    };
+
+    img.src = url;
+  } catch (err) {
+    console.error("Export failed:", err);
+    alert("Something seems to have gone wrong while exporting.");
+    cellSize = exportBackupCellSize;
+  }
+  draw();
 });
-
 
 // import (file)
 document.querySelectorAll(".import-json").forEach(input => {
@@ -868,6 +831,8 @@ function loadMetroData(path){
 
       renderStationList();
       draw();
+      updateMapInfo();
+      updateZoomInfo();
     })
     .catch(err => alert("Error loading example: " + err.message));
 }
@@ -886,6 +851,7 @@ document.addEventListener("DOMContentLoaded", () => {
   draw();
   renderStationList();
   updateMapInfo();
+  updateZoomInfo();
 
   const saved = localStorage.getItem("savedMapData");
   if (saved){
@@ -902,6 +868,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
       renderStationList();
       draw();
+      updateMapInfo();
     }catch{}
   }
 });
