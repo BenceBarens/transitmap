@@ -130,8 +130,8 @@ aside{
     color: var(--colour-secondary);
     background-color: var(--colour-primary);
     padding: 1rem; 
-    overflow: auto;
-    width: 20rem;
+    overflow-y: auto;
+    width: 22rem !important;
 }
 
 aside h3{
@@ -290,11 +290,17 @@ aside section:first-child{
 
 .closepopup{
     position: absolute;
-    top: 0;
-    right: 0;
+    top: 0.5rem;
+    right: 0.5rem;
+    height: 2.5rem;
+    width: 2.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
     border: none;
-    font-size: 2.5rem;
+    font-size: 2rem;
     background: none;
+    border-radius: 50rem;
 }
 
 .table-list{
@@ -372,12 +378,29 @@ svg [data-role="line"]{
 #toggleAddStationLabel input:checked + span{
     display: block;
     position: absolute;
+    top: 5rem;
+    left: calc((100% + 22rem)/2);
     transform: translateX(-50%);
-    color: var(--colour-primary);
+    padding: 0.5rem 1rem;
+    border-radius: 50rem;
+    font-size: 0.8rem;
+    background-color: var(--colour-accent);
+    color: var(--colour-secondary)
 }
 
 #toggleAddStation{
     display: none;
+}
+
+#change-log-popup{
+    ul{
+        list-style: square; 
+        padding-left: 1.5rem;
+        margin-top: 1rem;
+    }
+    ul li{
+        margin-bottom: 1rem;
+    }
 }
 
 @media print {

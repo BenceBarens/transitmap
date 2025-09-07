@@ -1,5 +1,5 @@
 // ===== Version & basic elements =====
-const version = "4.00.7";
+const version = "4.01.0";
 document.querySelector("#version-text").textContent = "Version " + version;
 document.querySelector("#version-text2").textContent = "Version " + version;
 
@@ -320,14 +320,12 @@ function renderUsedStationTypes() {
     if (type === 1) {
       shape.style.backgroundColor = "#232322";
     } else if (type === 2) {
-      shape.style.width = ".7rem"; shape.style.height = ".7rem";
       shape.style.border = ".2rem solid #232322";
       shape.style.backgroundColor = "#F7F4ED";
     } else if (type === 3) {
       shape.style.borderRadius = "50%";
       shape.style.backgroundColor = "#232322";
     } else if (type === 4) {
-      shape.style.width = ".7rem"; shape.style.height = ".7rem";
       shape.style.border = ".2rem solid #232322"; shape.style.borderRadius = "50%";
       shape.style.backgroundColor = "#F7F4ED";
     }
@@ -607,6 +605,14 @@ toggleShowLegend.addEventListener("change", renderLineList);
 toggleShowStationNames.addEventListener("change", draw);
 
 // ===== Export / Import =====
+document.querySelector("#btn-export").addEventListener("click", () => {
+  document.querySelector("#export-popup").classList.remove("hidden");
+});
+
+  document.querySelector("#btn-closeexportpopup").addEventListener("click", () => {
+  document.querySelector("#export-popup").classList.add("hidden");
+});
+
 document.querySelector("#export-json-btn").addEventListener("click", () => {
   const info = "Transit Map Maker version " + version + ", Made by Bence (bencebarens.nl)";
   const date = Date.now();

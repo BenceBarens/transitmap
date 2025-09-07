@@ -23,29 +23,26 @@
     <header>
         <div class="brand">
             <h1>Transit Map Maker</h1>
-            <button id="btn-changelog">BETA <span id="version-text"></span></button>
+            <button id="btn-changelog"><span id="version-text"></span></button>
         </div>
 
         <div class="controls">
             <button id="zoomOut" title="Zoom out" class="round-button">−</button> 
             <span id="zoom-level"></span> 
             <button id="zoomIn" title="Zoom in" class="round-button">+</button>
-
+            <button id="btn-export">⬇️ Export</button>
             <label class="import-label">
-                Import JSON
+                ⬆️ Import (JSON)
                 <input type="file" class="import-json" accept="application/json" hidden>
             </label>
-            <button id="export-json-btn">Export JSON</button>
-            <button id="export-png-btn">Export PNG</button>
-            <button id="export-pdf-btn">Export PDF</button>
-            <button id="share-btn">Share</button>
+            <button id="share-btn">🔗 Share URL</button>
         </div>
     </header>
 
     <main>
           <aside>
           <section>
-            <label id="toggleAddStationLabel"><input type="checkbox" id="toggleAddStation">+ Add station<span>Click anywhere on the map to add a station</span></label>
+            <label id="toggleAddStationLabel"><input type="checkbox" id="toggleAddStation">+ Add station<span>Click anywhere on the map to add a station &nbsp;&nbsp;×</span></label>
             <button id="btn-addline">+ Add line</button>
           </section>
           <section>
@@ -95,10 +92,6 @@
                     <li><button id="intro-option-2">Load Amsterdam</button></li>
                     <li><button id="intro-option-3">Load Budapest</button></li>
                 </ul>
-          </section>
-          <section style="padding: 2rem; text-align: center">
-            This is a beta version of TMM. <a href="/v3/" style="color:white;">Return to an older version here.</a><br><br>
-            Got any feedback? <a href="mailto:transitmap@bencebarens.nl" style="color:white;">Let me know!</a>
           </section>
           </aside>
 
@@ -181,19 +174,39 @@
         </div>
     </div>
 
+    Export popup
+    <div id="export-popup" class="popup hidden">
+        <div class="popup-inner">
+            <h3>Export transit map</h3>
+            <p>
+                <button id="export-json-btn">JSON file</button>
+                <button id="export-png-btn">PNG image</button>
+                <button id="export-pdf-btn">PDF file</button>
+            </p>
+            <p>Tip: use CTRL+P or CMD+P to quickly make a PDF export.</p>
+            <p>Note: JSON files contains all map data, meaning you can import it back into the editor and modify them. PNG and PDF are visual exports. More export options will be added in the future.</p>
+            <div class="popup-actions">
+                <button id="btn-closeexportpopup" class="closepopup">×</button>
+            </div>
+        </div>
+    </div>
+
     <!-- Changelog popup -->
     <div id="change-log-popup" class="popup hidden">
         <div class="popup-inner">
             <h3>Changelog</h3>
             <ul>
-                <li>[BETA] v4.00.7 (04-09-2025)<br>Fixed the PNG export<br>Added zoom level percentage<br>Made fonts self-hosted</li>
-                <li>[BETA] v4.00.6 (02-09-2025)<br>Changed vector export to PDF through print page<br>Limited availablity on smaller devices</li>
-                <li>[BETA] v4.00.5 (01-09-2025)<br>Minor cosmetic changes</li>
-                <li>[BETA] v4.00.4 (24-08-2025)<br>UI fixes<br>Made BETA the default version</li>
-                <li>[BETA] v4.00.3 (15-08-2025)<br>UI fixes<br>Added SVG export</li>
-                <li>[BETA] v4.00.2 (14-08-2025)<br>UI fixes<br>Re-added link share functionality</li>
-                <li>[BETA] v4.00.1 (14-08-2025)<br>UI fixes</li>
-                <li>[BETA] v4.00.0 (13-08-2025)<br>Complete fundamental update to make maps vector-based</li>
+                <li>v4.01.0 (07-09-2025)<br>Complete fundamental update to make maps vector-based<br>Completely new UI</li>
+                <li><details><summary>[BETA] v4 (04-09-2025)</summary>
+                    [BETA] v4.00.7 (04-09-2025)<br>Fixed the PNG export<br>Added zoom level percentage<br>Made fonts self-hosted<br>
+                    [BETA] v4.00.6 (02-09-2025)<br>Changed vector export to PDF through print page<br>Limited availablity on smaller devices<br>
+                    [BETA] v4.00.5 (01-09-2025)<br>Minor cosmetic changes<br>
+                    [BETA] v4.00.4 (24-08-2025)<br>UI fixes<br>Made BETA the default version<br>
+                    [BETA] v4.00.3 (15-08-2025)<br>UI fixes<br>Added SVG export<br>
+                    [BETA] v4.00.2 (14-08-2025)<br>UI fixes<br>Re-added link share functionality<br>
+                    [BETA] v4.00.1 (14-08-2025)<br>UI fixes<br>
+                    [BETA] v4.00.0 (13-08-2025)<br>Complete fundamental update to make maps vector-based<br>
+                </details></li>
                 <li>v3.20.0 (13-08-2025)<br>Complete restructuring of the codebase (shouldn't be any visible changes)</li>
                 <li>v3.10.1 (09-07-2025)<br>New feature: line styles and width can now be changed (backwards compatible)</li>
                 <li>v3.02.2<br>Slight correction to v3.02.1</li>
@@ -211,7 +224,7 @@
 
     <div id="mobile-message">
         <h1>Transit Map Maker</h1>
-        <p><button><span id="version-text2"></span> BETA</button></p>
+        <p><button><span id="version-text2"></span></button></p>
         <p>This version of Transit Map Maker is not available on smaller devices.<br><br>Support will be coming something in the future, but in the meantime, please visit TMM on a larger device.</p>
         <p>Love, <a href="https://bencebarens.nl/">Bence</a> ✌️</p>
     </div>
