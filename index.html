@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>[BETA] Transit Map Maker</title>
+    <title>Transit Map Maker</title>
     <link rel="stylesheet" href="style.css">
 
     <link rel="icon" type="image/png" href="/img/favicon/favicon-96x96.png" sizes="96x96">
@@ -27,7 +27,7 @@
         </div>
 
         <div class="controls">
-            <button id="zoomOut" title="Zoom out" class="round-button">−</button> 
+            <button id="zoomOut" title="Zoom out" class="round-button">-</button> 
             <span id="zoom-level"></span> 
             <button id="zoomIn" title="Zoom in" class="round-button">+</button>
             <button id="btn-export">⬇️ Export</button>
@@ -174,17 +174,21 @@
         </div>
     </div>
 
-    Export popup
+    <!-- Export popup -->
     <div id="export-popup" class="popup hidden">
         <div class="popup-inner">
             <h3>Export transit map</h3>
+            <h4>Preview</h4>
+            <img id="export-preview-img" alt="Preview of export">
+            <h4>File format</h4>
             <p>
-                <button id="export-json-btn">JSON file</button>
                 <button id="export-png-btn">PNG image</button>
-                <button id="export-pdf-btn">PDF file</button>
+                <button id="export-svg-btn">SVG image</button>
+                <button id="export-json-btn">JSON file</button>
+                <button id="export-pdf-btn">PDF file (print)</button>
             </p>
-            <p>Tip: use CTRL+P or CMD+P to quickly make a PDF export.</p>
-            <p>Note: JSON files contains all map data, meaning you can import it back into the editor and modify them. PNG and PDF are visual exports. More export options will be added in the future.</p>
+            <p>Note: JSON files contains all map data, meaning you can import it back into the editor and modify them. PNG, SVG and PDF are visual exports. More export options will be added in the future.</p>
+            <p>PDF-files will look slightly different from the preview, as they are optimized for printing.</p>
             <div class="popup-actions">
                 <button id="btn-closeexportpopup" class="closepopup">×</button>
             </div>
@@ -196,6 +200,7 @@
         <div class="popup-inner">
             <h3>Changelog</h3>
             <ul>
+                <li>v4.01.1 (09-09-2025)<br>Added preview to export function<br>Added SVG export<br>Added the legend to PNG and SVG exports</li>
                 <li>v4.01.0 (07-09-2025)<br>Complete fundamental update to make maps vector-based<br>Completely new UI</li>
                 <li><details><summary>[BETA] v4 (04-09-2025)</summary>
                     [BETA] v4.00.7 (04-09-2025)<br>Fixed the PNG export<br>Added zoom level percentage<br>Made fonts self-hosted<br>
@@ -230,6 +235,7 @@
     </div>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pako/2.1.0/pako.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
     <script src="script.js" defer></script>
 </body>
 </html>

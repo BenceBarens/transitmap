@@ -403,6 +403,31 @@ svg [data-role="line"]{
     }
 }
 
+#export-popup .popup-inner{
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    width: auto;
+    gap: 0.5rem;
+    column-gap: 2rem;
+}
+
+#export-popup *{
+    grid-column: 2/3;
+}
+
+#export-preview-img{
+    width: 100%;
+    height: auto;
+    border-radius: 0.5rem;
+    grid-row: span 6;
+}
+
+#export-popup h3,
+#export-popup h4:first-of-type,
+#export-preview-img{
+    grid-column: 1/2;
+}
+
 @media print {
   html, body {
     background: var(--colour-secondary) !important;
@@ -454,7 +479,7 @@ svg [data-role="line"]{
     display: none;;
 }
  
-@media only screen and (max-width: 768px) {
+@media only screen and (max-width: 1000px) {
     header, main, .popup{
         display: none !important;
     }

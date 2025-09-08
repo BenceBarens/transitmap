@@ -1,10 +1,11 @@
 // ===== Version & basic elements =====
-const version = "4.01.0";
+const version = "4.01.1";
 document.querySelector("#version-text").textContent = "Version " + version;
 document.querySelector("#version-text2").textContent = "Version " + version;
 
 // ===== State =====
-let cellSize = 35;
+let defaultZoom = 35;
+let cellSize = defaultZoom;
 let gridCols = 30;
 let gridRows = 30;
 
@@ -374,7 +375,7 @@ function draw(){
 
 // ===== Zoom & map size =====
 function updateZoomInfo(){
-  zoomLevel = Math.round(cellSize / 35 * 100)
+  zoomLevel = Math.round(cellSize / defaultZoom * 100)
   document.querySelector("#zoom-level").textContent = zoomLevel + "%";
 }
 function zoomIn(){
@@ -606,12 +607,79 @@ toggleShowStationNames.addEventListener("change", draw);
 
 // ===== Export / Import =====
 document.querySelector("#btn-export").addEventListener("click", () => {
+  generateExportPreview();
   document.querySelector("#export-popup").classList.remove("hidden");
 });
 
   document.querySelector("#btn-closeexportpopup").addEventListener("click", () => {
-  document.querySelector("#export-popup").classList.add("hidden");
+    document.querySelector("#export-popup").classList.add("hidden");
 });
+
+let exportPreviewDataURL = null; // hier bewaren we de preview
+
+function generateExportPreview() {
+  const exportBackupCellSize = cellSize;
+  cellSize = 35;
+  draw();
+
+  const svg = document.getElementById("map");
+  const clone = svg.cloneNode(true);
+
+  // Voeg legenda toe
+  const legend = document.getElementById("legend");
+  if (legend) {
+    const bbox = legend.getBoundingClientRect();
+    const foreign = document.createElementNS("http://www.w3.org/2000/svg", "foreignObject");
+    foreign.setAttribute("x", 0);
+    foreign.setAttribute("y", 0);
+    foreign.setAttribute("width", bbox.width);
+    foreign.setAttribute("height", bbox.height);
+    const legendClone = legend.cloneNode(true);
+    legendClone.style.position = "static";
+    foreign.appendChild(legendClone);
+    clone.appendChild(foreign);
+  }
+
+  // CSS inline
+  const css = Array.from(document.styleSheets)
+    .map(ss => {
+      try { return Array.from(ss.cssRules).map(r => r.cssText).join("\n"); }
+      catch (e) { return ""; }
+    }).join("\n");
+
+  const styleElem = document.createElement("style");
+  styleElem.textContent = css;
+  clone.insertBefore(styleElem, clone.firstChild);
+
+  const xml = new XMLSerializer().serializeToString(clone);
+  const svg64 = 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(xml);
+
+  const img = new Image();
+  img.onload = () => {
+    const canvas = document.createElement("canvas");
+    canvas.width = gridCols * cellSize;
+    canvas.height = gridRows * cellSize;
+    const ctx = canvas.getContext("2d");
+    ctx.fillStyle = "#F7F4ED";
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+    ctx.drawImage(img, 0, 0);
+
+    const previewImg = document.getElementById("export-preview-img");
+    exportPreviewDataURL = canvas.toDataURL("image/png");
+    previewImg.src = exportPreviewDataURL;
+
+    cellSize = exportBackupCellSize;
+    draw();
+  };
+
+  img.onerror = () => {
+    alert("Couldn't generate preview.");
+    cellSize = exportBackupCellSize;
+    draw();
+  };
+
+  img.src = svg64;
+}
 
 document.querySelector("#export-json-btn").addEventListener("click", () => {
   const info = "Transit Map Maker version " + version + ", Made by Bence (bencebarens.nl)";
@@ -641,7 +709,7 @@ let exportBackupCellSize = null;
 
 window.addEventListener('beforeprint', () => {
   exportBackupCellSize = {cellSize};
-  cellSize = 35;
+  cellSize = defaultZoom;
 
   setSvgSize();
   drawGrid();
@@ -661,66 +729,71 @@ window.addEventListener('afterprint', () => {
 
 // Export PNG button
 document.querySelector("#export-png-btn").addEventListener("click", () => {
-  try {
-    const exportBackupCellSize = cellSize;
-    cellSize = 35;
-    draw();
-
-    const svg = document.getElementById("map");
-
-    const clone = svg.cloneNode(true);
-    const css = Array.from(document.styleSheets)
-      .map(ss => {
-        try {
-          return Array.from(ss.cssRules).map(r => r.cssText).join("\n");
-        } catch (e) {
-          return "";
-        }
-      })
-      .join("\n");
-
-    const styleElem = document.createElement("style");
-    styleElem.textContent = css;
-    clone.insertBefore(styleElem, clone.firstChild);
-
-    const xml = new XMLSerializer().serializeToString(clone);
-    const svgBlob = new Blob([xml], { type: "image/svg+xml;charset=utf-8" });
-    const url = URL.createObjectURL(svgBlob);
-
-    const img = new Image();
-    img.onload = () => {
-      const canvas = document.createElement("canvas");
-      canvas.width = gridCols * cellSize;
-      canvas.height = gridRows * cellSize;
-
-      const ctx = canvas.getContext("2d");
-      ctx.fillStyle = "#F7F4ED";
-      ctx.fillRect(0, 0, canvas.width, canvas.height);
-      ctx.drawImage(img, 0, 0);
-
-      const link = document.createElement("a");
-      link.download = `My Transit Map.png`;
-      link.href = canvas.toDataURL("image/png");
-      link.click();
-
-      URL.revokeObjectURL(url);
-      cellSize = exportBackupCellSize;
-    };
-
-    img.onerror = () => {
-      alert("Couldn't export the map to a PNG. Please try using a different browser or export method.");
-      URL.revokeObjectURL(url);
-      cellSize = exportBackupCellSize;
-    };
-
-    img.src = url;
-  } catch (err) {
-    console.error("Export failed:", err);
-    alert("Something seems to have gone wrong while exporting.");
-    cellSize = exportBackupCellSize;
+  if (!exportPreviewDataURL) {
+    alert("Please wait for the preview image to finish loading.");
+    return;
   }
+  const link = document.createElement("a");
+  link.href = exportPreviewDataURL;
+  link.download = `My Transit Map.png`;
+  link.click();
+});
+
+// Export SVG button
+document.querySelector("#export-svg-btn").addEventListener("click", () => {
+  const exportBackupCellSize = cellSize;
+  cellSize = defaultZoom;
+  draw();
+
+  // clone SVG
+  const svg = document.getElementById("map");
+  const clone = svg.cloneNode(true);
+
+  // legenda als foreignObject toevoegen
+  const legend = document.getElementById("legend");
+  if (legend) {
+    const bbox = legend.getBoundingClientRect();
+    const foreign = document.createElementNS("http://www.w3.org/2000/svg", "foreignObject");
+    foreign.setAttribute("x", 0);
+    foreign.setAttribute("y", 0);
+    foreign.setAttribute("width", bbox.width);
+    foreign.setAttribute("height", bbox.height);
+    const legendClone = legend.cloneNode(true);
+    legendClone.style.position = "static"; // position verwijderen
+    foreign.appendChild(legendClone);
+    clone.appendChild(foreign);
+  }
+
+  // CSS inline zetten
+  const css = Array.from(document.styleSheets)
+    .map(ss => {
+      try {
+        return Array.from(ss.cssRules).map(r => r.cssText).join("\n");
+      } catch (e) {
+        return "";
+      }
+    })
+    .join("\n");
+  const styleElem = document.createElement("style");
+  styleElem.textContent = css;
+  clone.insertBefore(styleElem, clone.firstChild);
+
+  // exporteren
+  const xml = new XMLSerializer().serializeToString(clone);
+  const blob = new Blob([xml], { type: "image/svg+xml;charset=utf-8" });
+  const url = URL.createObjectURL(blob);
+
+  const link = document.createElement("a");
+  link.href = url;
+  link.download = "My Transit Map.svg";
+  link.click();
+  URL.revokeObjectURL(url);
+
+  // terugzetten
+  cellSize = exportBackupCellSize;
   draw();
 });
+
 
 // import (file)
 document.querySelectorAll(".import-json").forEach(input => {
