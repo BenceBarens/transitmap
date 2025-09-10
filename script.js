@@ -9,6 +9,9 @@ let cellSize = defaultZoom;
 let gridCols = 30;
 let gridRows = 30;
 
+const maxGridCols = 120;
+const maxGridRows = 120;
+
 const stations = [];
 const lines = [];
 const stationTypes = [
@@ -417,7 +420,7 @@ svg.addEventListener("click", (e) => {
   const exists = stations.some(s => s.x == col && s.y == row);
   if (!exists){
     stations.push({
-      id: Date.now(),
+      id: "l"+(Date.now()-1757416518623).toString(36), 
       name: `Station ${stations.length + 1}`,
       x: col, y: row, lines: [], type: 1,
     });
@@ -454,7 +457,6 @@ document.querySelector("#btn-savestationedits").addEventListener("click", () => 
 document.querySelector("#btn-deletestation").addEventListener("click", () => {
   if (selectedStationIndex === null) return;
   const deleted = stations[selectedStationIndex];
-  // verwijder station id uit alle lijnen
   lines.forEach(line => {
     line.stations = line.stations.filter(id => id !== deleted.id);
   });
@@ -556,7 +558,7 @@ function renderEditableStationList(){
 }
 
 document.querySelector("#btn-addstationtoline").addEventListener("click", () => {
-  const id = parseInt(document.querySelector("#stationSelect").value,10);
+  const id = document.querySelector("#stationSelect").value;
   if (selectedLineIndex === null) return;
   const line = lines[selectedLineIndex];
   if (!line.stations.includes(id)){
@@ -615,7 +617,7 @@ document.querySelector("#btn-export").addEventListener("click", () => {
     document.querySelector("#export-popup").classList.add("hidden");
 });
 
-let exportPreviewDataURL = null; // hier bewaren we de preview
+let exportPreviewDataURL = null;
 
 function generateExportPreview() {
   const exportBackupCellSize = cellSize;
@@ -625,15 +627,15 @@ function generateExportPreview() {
   const svg = document.getElementById("map");
   const clone = svg.cloneNode(true);
 
-  // Voeg legenda toe
+  // Add legend
   const legend = document.getElementById("legend");
   if (legend) {
     const bbox = legend.getBoundingClientRect();
     const foreign = document.createElementNS("http://www.w3.org/2000/svg", "foreignObject");
-    foreign.setAttribute("x", 0);
-    foreign.setAttribute("y", 0);
-    foreign.setAttribute("width", bbox.width);
-    foreign.setAttribute("height", bbox.height);
+    foreign.setAttribute("x", 32);
+    foreign.setAttribute("y", 32);
+    foreign.setAttribute("width", bbox.width + 32);
+    foreign.setAttribute("height", bbox.height + 32);
     const legendClone = legend.cloneNode(true);
     legendClone.style.position = "static";
     foreign.appendChild(legendClone);
@@ -754,12 +756,12 @@ document.querySelector("#export-svg-btn").addEventListener("click", () => {
   if (legend) {
     const bbox = legend.getBoundingClientRect();
     const foreign = document.createElementNS("http://www.w3.org/2000/svg", "foreignObject");
-    foreign.setAttribute("x", 0);
-    foreign.setAttribute("y", 0);
-    foreign.setAttribute("width", bbox.width);
-    foreign.setAttribute("height", bbox.height);
+    foreign.setAttribute("x", 32);
+    foreign.setAttribute("y", 32);
+    foreign.setAttribute("width", bbox.width + 32);
+    foreign.setAttribute("height", bbox.height + 32);
     const legendClone = legend.cloneNode(true);
-    legendClone.style.position = "static"; // position verwijderen
+    legendClone.style.position = "static";
     foreign.appendChild(legendClone);
     clone.appendChild(foreign);
   }
@@ -832,16 +834,11 @@ function importMapData(ev){
 
 // === Share ====
 
-// Zorg dat pako beschikbaar is
-// <script src="https://cdnjs.cloudflare.com/ajax/libs/pako/2.1.0/pako.min.js"></script>
-
 // Base64 URL helper
 function toBase64Url(uint8Array) {
   let str = btoa(String.fromCharCode(...uint8Array));
   return str.replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/, "");
 }
-
-const MAX_SHARE_URL_LENGTH = 2000; // bijv.
 
 document.querySelector("#share-btn").addEventListener("click", () => {
   const data = {
@@ -857,8 +854,8 @@ document.querySelector("#share-btn").addEventListener("click", () => {
   const encoded = toBase64Url(compressed);
   const url = `${location.origin}${location.pathname}?data=${encoded}`;
 
-  if (url.length > MAX_SHARE_URL_LENGTH) {
-    alert("Sorry, this map is too large to share via a link (max URL-size is " + MAX_SHARE_URL_LENGTH + " characters). Please try exporting it and sharing the file instead.");
+  if (url.length > 2000) {
+    alert("Sorry, this map is too large to share via a link (max URL-size is 2000 characters). Please try exporting it and sharing the file instead.");
     return;
   }
 
@@ -926,28 +923,60 @@ window.addEventListener("beforeunload", () => {
 });
 
 // ===== Init =====
+function fromBase64Url(str) {
+  str = str.replace(/-/g, "+").replace(/_/g, "/");
+  while (str.length % 4) str += "=";
+  const bin = atob(str);
+  const arr = new Uint8Array(bin.length);
+  for (let i = 0; i < bin.length; i++) arr[i] = bin.charCodeAt(i);
+  return arr;
+}
+
 document.addEventListener("DOMContentLoaded", () => {
-  draw();
-  renderStationList();
-  updateMapInfo();
-  updateZoomInfo();
+  function loadMapData(data) {
+    stations.length = 0; lines.length = 0; stationTypes.length = 0;
+    data.s?.forEach(st => stations.push(st));
+    data.l?.forEach(ln => lines.push(ln));
+    data.t?.forEach(t => stationTypes.push(t));
+    cellSize = data.c ?? cellSize;
+    gridCols = data.w ?? gridCols;
+    gridRows = data.h ?? gridRows;
+    draw();
+    renderStationList();
+    updateMapInfo();
+    updateZoomInfo();
+  }
 
-  const saved = localStorage.getItem("savedMapData");
-  if (saved){
-    try{
-      const data = JSON.parse(saved);
-      stations.length = 0; lines.length = 0; stationTypes.length = 0;
-      data.stations?.forEach(st => stations.push(st));
-      data.lines?.forEach(ln => lines.push(ln));
-      data.stationTypes?.forEach(t => stationTypes.push(t));
-
-      cellSize = data.cellSize ?? cellSize;
-      gridCols = data.gridCols ?? gridCols;
-      gridRows = data.gridRows ?? gridRows;
-
-      renderStationList();
+  const params = new URLSearchParams(location.search);
+  if (params.has("data")) {
+    try {
+      const compressed = fromBase64Url(params.get("data"));
+      const jsonStr = pako.inflateRaw(compressed, { to: "string" });
+      const data = JSON.parse(jsonStr);
+      loadMapData(data);
+    } catch (e) {
+      console.error("Failed to load map from URL:", e);
+    }
+  } else {
+    const saved = localStorage.getItem("savedMapData");
+    if (saved){
+      try {
+        const data = JSON.parse(saved);
+        const mappedData = {
+          s: data.stations,
+          l: data.lines,
+          t: data.stationTypes,
+          w: data.gridCols,
+          h: data.gridRows,
+          c: data.cellSize
+        };
+        loadMapData(mappedData);
+      } catch {}
+    } else {
       draw();
+      renderStationList();
       updateMapInfo();
-    }catch{}
+      updateZoomInfo();
+    }
   }
 });
