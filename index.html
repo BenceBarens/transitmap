@@ -33,7 +33,7 @@
             <button id="btn-export">⬇️ Export</button>
             <label class="import-label">
                 ⬆️ Import (JSON)
-                <input type="file" class="import-json" accept="application/json" hidden>
+                <input type="file" id="import-json" accept="application/json" hidden>
             </label>
             <button id="share-btn">🔗 Share URL</button>
         </div>
@@ -86,7 +86,15 @@
             </details>
           </section>
           <section>
-            <br>
+            <details>
+              <summary>Sound effects</summary>
+                    <ul>
+                        <li><label class="toggle-label"><input type="checkbox" id="toggleSoundEffects"> UI sounds [BETA]</label></li>
+                    </ul>
+            </details>
+          </section>
+          <section>
+                <br>
                 <h3>Examples</h3>
                 <ul>
                     <li><button id="intro-option-2">Load Amsterdam</button></li>
@@ -200,6 +208,7 @@
         <div class="popup-inner">
             <h3>Changelog</h3>
             <ul>
+                <li>v4.02.0 (07-10-2025)<br>Added sound effects because </li>
                 <li>v4.01.2 (10-09-2025)<br>Bug fix for URL sharing<br>Made station ID's shorter to save export and URL space<br>Made legends look better in exports</li>
                 <li>v4.01.1 (09-09-2025)<br>Added preview to export function<br>Added SVG export<br>Added the legend to PNG and SVG exports</li>
                 <li>v4.01.0 (07-09-2025)<br>Complete fundamental update to make maps vector-based<br>Completely new UI</li>
@@ -228,6 +237,9 @@
         </div>
     </div>
 
+    <audio id="soundHover" src="sounds/hover.mp3" preload="auto"></audio>
+    <audio id="soundClick" src="sounds/click.mp3" preload="auto"></audio>
+
     <div id="mobile-message">
         <h1>Transit Map Maker</h1>
         <p><button><span id="version-text2"></span></button></p>
@@ -237,6 +249,7 @@
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pako/2.1.0/pako.min.js"></script> <!-- For (de)compression of URL data -->
     <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script> <!-- For image exports -->
-    <script src="script.js" defer></script>
+    <script src="scripts/main.js" defer></script>
+    <script src="scripts/sound.js" defer></script>
 </body>
 </html>

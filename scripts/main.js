@@ -1,5 +1,5 @@
 // ===== Version & basic elements =====
-const version = "4.01.1";
+const version = "4.02.0";
 document.querySelector("#version-text").textContent = "Version " + version;
 document.querySelector("#version-text2").textContent = "Version " + version;
 
@@ -798,7 +798,7 @@ document.querySelector("#export-svg-btn").addEventListener("click", () => {
 
 
 // import (file)
-document.querySelectorAll(".import-json").forEach(input => {
+document.querySelectorAll("#import-json").forEach(input => {
   input.addEventListener("change", importMapData);
 });
 
