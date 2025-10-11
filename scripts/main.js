@@ -1,5 +1,5 @@
 // ===== Version & basic elements =====
-const version = "4.02.0";
+const version = "4.02.1";
 document.querySelector("#version-text").textContent = "Version " + version;
 document.querySelector("#version-text2").textContent = "Version " + version;
 
@@ -880,12 +880,14 @@ document.querySelector("#btn-closechangelog").addEventListener("click", () => {
   document.querySelector("#change-log-popup").classList.add("hidden");
 });
 
-// ===== Load examples (paths moeten bestaan) =====
+// ===== Load examples =====
 document.querySelector("#intro-option-2").addEventListener("click", () => {
   loadMetroData("example/ams-metro.json");
+  console.log("AMS loaded");
 });
 document.querySelector("#intro-option-3").addEventListener("click", () => {
   loadMetroData("example/bud-metro.json");
+  console.log("BUD loaded");
 });
 
 function loadMetroData(path){
@@ -914,12 +916,16 @@ function loadMetroData(path){
 }
 
 // ===== Autosave on unload & restore on load =====
+
+const soundToggleUI = document.getElementById('toggleSoundEffects')
+
 window.addEventListener("beforeunload", () => {
   const date = Date.now();
   const data = {
     stations, lines, stationTypes, cellSize, gridCols, gridRows, date
   };
   localStorage.setItem("savedMapData", JSON.stringify(data));
+  localStorage.setItem("uiSound", soundToggleUI.checked ? "true" : "false");
 });
 
 // ===== Init =====
@@ -954,8 +960,9 @@ document.addEventListener("DOMContentLoaded", () => {
       const jsonStr = pako.inflateRaw(compressed, { to: "string" });
       const data = JSON.parse(jsonStr);
       loadMapData(data);
+      console.log("Retrieved map data from URL");
     } catch (e) {
-      console.error("Failed to load map from URL:", e);
+      console.error("Failed to load map from URL: ", e);
     }
   } else {
     const saved = localStorage.getItem("savedMapData");
@@ -971,6 +978,7 @@ document.addEventListener("DOMContentLoaded", () => {
           c: data.cellSize
         };
         loadMapData(mappedData);
+        console.log("Retrieved map data from local storage: ", mappedData);
       } catch {}
     } else {
       draw();
@@ -979,4 +987,13 @@ document.addEventListener("DOMContentLoaded", () => {
       updateZoomInfo();
     }
   }
+
+  if (localStorage.getItem("uiSound") === "true") {
+    soundToggleUI.checked = true;
+  } else {
+    soundToggleUI.checked = false;
+  }
+
+
+  console.log("Initiation successful");
 });

@@ -27,72 +27,88 @@
         </div>
 
         <div class="controls">
-            <button id="zoomOut" title="Zoom out" class="round-button">-</button> 
+            <button id="zoomOut" title="Zoom out" class="round-button">
+                <svg xmlns="http://www.w3.org/2000/svg" height="20px" viewBox="0 -960 960 960" width="20px" fill="currentColor"><path d="M765-144 526-384q-30 23-65.79 35.5-35.79 12.5-76.18 12.5Q284-336 214-406t-70-170q0-100 70-170t170-70q100 0 170 70t70 170.03q0 40.39-12.5 76.18Q599-464 577-434l239 239-51 51ZM384-408q70 0 119-49t49-119q0-70-49-119t-119-49q-70 0-119 49t-49 119q0 70 49 119t119 49Zm-96-132v-72h192v72H288Z"/></svg>
+            </button> 
             <span id="zoom-level"></span> 
-            <button id="zoomIn" title="Zoom in" class="round-button">+</button>
-            <button id="btn-export">⬇️ Export</button>
+            <button id="zoomIn" title="Zoom in" class="round-button">
+                <svg xmlns="http://www.w3.org/2000/svg" height="20px" viewBox="0 -960 960 960" width="20px" fill="currentColor"><path d="M765-144 526-384q-30 23-65.79 35.5-35.79 12.5-76.18 12.5Q284-336 214-406t-70-170q0-100 70-170t170-70q100 0 170 70t70 170.03q0 40.39-12.5 76.18Q599-464 577-434l239 239-51 51ZM384-408q70 0 119-49t49-119q0-70-49-119t-119-49q-70 0-119 49t-49 119q0 70 49 119t119 49Zm-36-60v-72h-72v-72h72v-72h72v72h72v72h-72v72h-72Z"/></svg>
+            </button>
+            <button id="btn-export">
+                <svg xmlns="http://www.w3.org/2000/svg" height="20px" viewBox="0 -960 960 960" width="20px" fill="currentColor"><path d="M480-480ZM230-83l-50-51 106-106h-82v-72h204v204h-72v-81L230-83Zm250-13v-72h216v-456H528v-168H264v408h-72v-408q0-29.7 21.15-50.85Q234.3-864 264-864h312l192 192v504q0 29.7-21.15 50.85Q725.7-96 696-96H480Z"/></svg>
+                Export</button>
             <label class="import-label">
-                ⬆️ Import (JSON)
+                <svg xmlns="http://www.w3.org/2000/svg" height="20px" viewBox="0 -960 960 960" width="20px" fill="currentColor"><path d="M444-240h72v-150l57 57 51-51-144-144-144 144 51 51 57-57v150ZM263.72-96Q234-96 213-117.15T192-168v-624q0-29.7 21.15-50.85Q234.3-864 264-864h312l192 192v504q0 29.7-21.16 50.85Q725.68-96 695.96-96H263.72ZM528-624v-168H264v624h432v-456H528ZM264-792v189-189 624-624Z"/></svg> 
+                Import JSON
                 <input type="file" id="import-json" accept="application/json" hidden>
             </label>
-            <button id="share-btn">🔗 Share URL</button>
+            <button id="share-btn">
+                <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="currentColor"><path d="M440-280H280q-83 0-141.5-58.5T80-480q0-83 58.5-141.5T280-680h160v80H280q-50 0-85 35t-35 85q0 50 35 85t85 35h160v80ZM320-440v-80h320v80H320Zm200 160v-80h160q50 0 85-35t35-85q0-50-35-85t-85-35H520v-80h160q83 0 141.5 58.5T880-480q0 83-58.5 141.5T680-280H520Z"/></svg> 
+                Share
+            </button>
         </div>
     </header>
 
     <main>
           <aside>
           <section>
-            <label id="toggleAddStationLabel"><input type="checkbox" id="toggleAddStation">+ Add station<span>Click anywhere on the map to add a station &nbsp;&nbsp;×</span></label>
+            <label id="toggleAddStationLabel"><input type="checkbox" id="toggleAddStation">+ Add station<span>Station adding enabled: click anywhere on the map to add a station &nbsp;&nbsp;×</span></label>
             <button id="btn-addline">+ Add line</button>
           </section>
           <section>
               <details>
                   <summary>Edit lines</summary>
                   <ul id="line-list"></ul>
-                  
               </details>
           </section>
+
           <section>
               <details>
                   <summary>Edit stations</summary>
                   <ul id="station-list"></ul>
               </details>
           </section>
+
           <section>
               <details>
                   <summary>Legend</summary>
+                  <ul>
+                    <li><label class="toggle-label"><input type="checkbox" id="toggleShowLegend" checked> Show legend</label></li>
+                  </ul>
                   <ul id="controls-legend-list"></ul>
               </details>
           </section>
+
           <section>
               <details id="details-map">
                   <summary>Map</summary>
                   <ul>
-                        <li>width <div><button id="mapWidthMin" class="round-button">-</button> <span id="map-width"></span> <button id="mapWidthPlus" class="round-button">+</button></div></li>
-                        <li>height <div><button id="mapHeightMin" class="round-button">-</button> <span id="map-height"></span> <button id="mapHeightPlus" class="round-button">+</button></div></li>
-                        <li><button id="btn-clearall">Clear whole map</button></li>
+                        <li><label class="toggle-label"><input type="checkbox" id="toggleShowGridLines" checked> Show grid</label></li>
+                        <li><label class="toggle-label"><input type="checkbox" id="toggleShowCoordinates"> Show coordinates</label></li>
+                        <li><label class="toggle-label"><input type="checkbox" id="toggleShowStationNames" checked> Show station names</label></li>
+                    </ul>
+                  <ul>
+                        <li>Map width <div><button id="mapWidthMin" class="round-button">-</button> <span id="map-width"></span> <button id="mapWidthPlus" class="round-button">+</button></div></li>
+                        <li>Map height <div><button id="mapHeightMin" class="round-button">-</button> <span id="map-height"></span> <button id="mapHeightPlus" class="round-button">+</button></div></li>
+                  </ul>
+                  <ul>
+                    <li><button id="btn-clearall">
+                        <svg xmlns="http://www.w3.org/2000/svg" height="20px" viewBox="0 -960 960 960" width="20px" fill="currentColor"><path d="M672-264h192v72H600l72-72Zm-437 72L117-310q-21-21-21.5-50.5T117-412l431-431q22-22 51-22t51.27 22.27L843-650q21 21 21.5 50.5T843-548L487-192H235Zm222-72 335-335-193-193-431 431 97 97h192Zm23-216Z"/></svg>
+                        Clear whole map
+                    </button></li>
                   </ul>
               </details>
           </section>
+
           <section>
             <details>
-              <summary>View settings</summary>
-                    <ul>
-                        <li><label class="toggle-label"><input type="checkbox" id="toggleShowGridLines" checked> Show Grid</label></li>
-                        <li><label class="toggle-label"><input type="checkbox" id="toggleShowCoordinates"> Show coordinates</label></li>
-                        <li><label class="toggle-label"><input type="checkbox" id="toggleShowStationNames" checked> Show station names</label></li>
-                        <li><label class="toggle-label"><input type="checkbox" id="toggleShowLegend" checked> Show legend</label></li>
-                    </ul>
-            </details>
-          </section>
-          <section>
-            <details>
-              <summary>Sound effects</summary>
+              <summary>Settings</summary>
                     <ul>
                         <li><label class="toggle-label"><input type="checkbox" id="toggleSoundEffects"> UI sounds [BETA]</label></li>
                     </ul>
             </details>
           </section>
+
           <section>
                 <br>
                 <h3>Examples</h3>
@@ -136,9 +152,14 @@
         <label>X <input id="station-x-input" type="number"></label>
         <label>Y <input id="station-y-input" type="number"></label>
         <div class="popup-actions">
-          <button id="btn-savestationedits">Save</button>
-          <button id="btn-deletestation" class="danger">Delete</button>
-          <button id="btn-closepopup" class="closepopup">×</button>
+          <button id="btn-savestationedits"><svg xmlns="http://www.w3.org/2000/svg" height="20px" viewBox="0 -960 960 960" width="20px" fill="currentColor"><path d="M816-672v456q0 29.7-21.15 50.85Q773.7-144 744-144H216q-29.7 0-50.85-21.15Q144-186.3 144-216v-528q0-29.7 21.15-50.85Q186.3-816 216-816h456l144 144Zm-72 30L642-744H216v528h528v-426ZM480-252q45 0 76.5-31.5T588-360q0-45-31.5-76.5T480-468q-45 0-76.5 31.5T372-360q0 45 31.5 76.5T480-252ZM264-552h336v-144H264v144Zm-48-77v413-528 115Z"/></svg> 
+            Save
+          </button>
+          <button id="btn-deletestation" class="danger">
+            <svg xmlns="http://www.w3.org/2000/svg" height="20px" viewBox="0 -960 960 960" width="20px" fill="currentColor"><path d="M312-144q-29.7 0-50.85-21.15Q240-186.3 240-216v-480h-48v-72h192v-48h192v48h192v72h-48v479.57Q720-186 698.85-165T648-144H312Zm336-552H312v480h336v-480ZM384-288h72v-336h-72v336Zm120 0h72v-336h-72v336ZM312-696v480-480Z"/></svg> 
+            Delete
+          </button>
+          <button id="btn-closepopup" class="closepopup" aria-label="Close popup">×</button>
         </div>
       </div>
     </div>
@@ -175,9 +196,15 @@
             </div>
 
             <div class="popup-actions">
-              <button id="btn-savelineedits">Save</button>
-              <button id="btn-deleteline" class="danger">Delete line</button>
-              <button id="btn-closelinepopup" class="closepopup">×</button>
+              <button id="btn-savelineedits">
+                <svg xmlns="http://www.w3.org/2000/svg" height="20px" viewBox="0 -960 960 960" width="20px" fill="currentColor"><path d="M816-672v456q0 29.7-21.15 50.85Q773.7-144 744-144H216q-29.7 0-50.85-21.15Q144-186.3 144-216v-528q0-29.7 21.15-50.85Q186.3-816 216-816h456l144 144Zm-72 30L642-744H216v528h528v-426ZM480-252q45 0 76.5-31.5T588-360q0-45-31.5-76.5T480-468q-45 0-76.5 31.5T372-360q0 45 31.5 76.5T480-252ZM264-552h336v-144H264v144Zm-48-77v413-528 115Z"/></svg> 
+                Save
+              </button>
+              <button id="btn-deleteline" class="danger">
+                <svg xmlns="http://www.w3.org/2000/svg" height="20px" viewBox="0 -960 960 960" width="20px" fill="currentColor"><path d="M312-144q-29.7 0-50.85-21.15Q240-186.3 240-216v-480h-48v-72h192v-48h192v48h192v72h-48v479.57Q720-186 698.85-165T648-144H312Zm336-552H312v480h336v-480ZM384-288h72v-336h-72v336Zm120 0h72v-336h-72v336ZM312-696v480-480Z"/></svg>
+                Delete line
+              </button>
+              <button id="btn-closelinepopup" class="closepopup" aria-label="Close popup">×</button>
             </div>
         </div>
     </div>
@@ -198,7 +225,7 @@
             <p>Note: JSON files contains all map data, meaning you can import it back into the editor and modify them. PNG, SVG and PDF are visual exports. More export options will be added in the future.</p>
             <p>PDF-files will look slightly different from the preview, as they are optimized for printing.</p>
             <div class="popup-actions">
-                <button id="btn-closeexportpopup" class="closepopup">×</button>
+                <button id="btn-closeexportpopup" class="closepopup" aria-label="Close popup">×</button>
             </div>
         </div>
     </div>
@@ -208,7 +235,8 @@
         <div class="popup-inner">
             <h3>Changelog</h3>
             <ul>
-                <li>v4.02.0 (07-10-2025)<br>Added sound effects because </li>
+                <li>v4.02.1 (10-10-2025)<br>Improved the icons, layout and hover effects<br>Sound settings will now be saved</li>
+                <li>v4.02.0 (07-10-2025)<br>Added sound effects because Noa asked for it</li>
                 <li>v4.01.2 (10-09-2025)<br>Bug fix for URL sharing<br>Made station ID's shorter to save export and URL space<br>Made legends look better in exports</li>
                 <li>v4.01.1 (09-09-2025)<br>Added preview to export function<br>Added SVG export<br>Added the legend to PNG and SVG exports</li>
                 <li>v4.01.0 (07-09-2025)<br>Complete fundamental update to make maps vector-based<br>Completely new UI</li>
@@ -232,7 +260,7 @@
                 <li>v2.24.1<br>Added a welcome screen<br>Better hover effects</li>
             </ul>
             <div class="popup-actions">
-                <button id="btn-closechangelog" class="closepopup">×</button>
+                <button id="btn-closechangelog" class="closepopup" aria-label="Close popup">×</button>
             </div>
         </div>
     </div>

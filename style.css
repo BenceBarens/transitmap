@@ -24,6 +24,16 @@
     color: var(--colour-primary);
 }
 
+::selection {
+  background: #e4382f;
+  color: #F7F4ED;
+}
+
+::-moz-selection {
+  background: #e4382f;
+  color: #F7F4ED;
+}
+
 details, .inner-popup{
     --colour-primary:#F7F4ED;
     --colour-secondary:#232322;
@@ -35,6 +45,9 @@ details, .inner-popup{
     font-weight: 500;
     font-style: normal;
     box-sizing: border-box;
+    scrollbar-width: thin;
+    scrollbar-color: var(--colour-secondary) var(--colour-primary);
+    scroll-behavior: smooth;
 }
 
 *:focus-visible{
@@ -99,6 +112,14 @@ button, .import-label{
     font-size: 1rem;
     border-radius: var(--border-radius);
     text-align: left;
+
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.2rem;
+    width: fit-content;
+
+    transition: all 150ms ease;
 }
 
 button:hover, .import-label:hover{
@@ -115,6 +136,7 @@ a{
     height: 2rem;
     width: 2rem;
     text-align: center;
+    padding: 0;
 }
 
 label{
@@ -364,6 +386,8 @@ svg [data-role="line"]{
     border-radius: var(--border-radius);
     padding: 0.3rem 0.6rem;
     font-size: 1rem;
+
+    transition: all 150ms ease;
 }
 
 #toggleAddStationLabel:hover{
@@ -479,7 +503,7 @@ svg [data-role="line"]{
     display: none;;
 }
  
-@media only screen and (max-width: 1000px) {
+@media only screen and (max-width: 800px) {
     header, main, .popup{
         display: none !important;
     }

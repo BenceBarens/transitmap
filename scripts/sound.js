@@ -1,4 +1,4 @@
-const elements = ['button', 'a', '.toggle-label', '#toggleAddStationLabel', '#import-json']
+const elements = ['button', 'a', '.toggle-label', '#toggleAddStationLabel', '.import-label', "summary"]
 const soundHover = document.getElementById('soundHover')
 const soundClick = document.getElementById('soundClick')
 const soundToggle = document.getElementById('toggleSoundEffects')
