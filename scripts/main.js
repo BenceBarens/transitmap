@@ -1,5 +1,5 @@
 // ===== Version & basic elements =====
-const version = "4.02.1";
+const version = "4.02.2";
 document.querySelector("#version-text").textContent = "Version " + version;
 document.querySelector("#version-text2").textContent = "Version " + version;
 
@@ -127,6 +127,25 @@ function drawGrid(){
     }
   }
 }
+
+// ==== stations.push and lines.push ====
+
+function addStation(station){
+  stations.push(station)
+  if (!window.startHidden && (stations.length > 0 || lines.length > 0)) {
+    hideGetStarted()
+    window.startHidden = true
+  }
+}
+
+function addLine(line){
+  lines.push(line)
+  if (!window.startHidden && (stations.length > 0 || lines.length > 0)) {
+    hideGetStarted()
+    window.startHidden = true
+  }
+}
+
 
 // ===== Render: Lines =====
 function drawLines(){
@@ -419,7 +438,7 @@ svg.addEventListener("click", (e) => {
 
   const exists = stations.some(s => s.x == col && s.y == row);
   if (!exists){
-    stations.push({
+    addStation({
       id: "l"+(Date.now()-1757416518623).toString(36), 
       name: `Station ${stations.length + 1}`,
       x: col, y: row, lines: [], type: 1,
@@ -562,7 +581,7 @@ document.querySelector("#btn-addstationtoline").addEventListener("click", () => 
   if (selectedLineIndex === null) return;
   const line = lines[selectedLineIndex];
   if (!line.stations.includes(id)){
-    line.stations.push(id);
+    line.addStation(id);
     renderEditableStationList();
     draw();
   }
@@ -590,7 +609,7 @@ function moveStationInLine(index, dir){
 document.querySelector("#btn-addline").addEventListener("click", () => {
   const color = "#"+Math.floor(Math.random()*0xFFFFFF).toString(16).padStart(6,"0");
   const lineNumber = lines.length + 1;
-  lines.push({
+  addLine({
     name: `Line ${lineNumber}`,
     color,
     style: "solid",
@@ -815,8 +834,8 @@ function importMapData(ev){
       }
       stations.length = 0; lines.length = 0; stationTypes.length = 0;
 
-      data.stations?.forEach(st => stations.push(st));
-      data.lines?.forEach(ln => lines.push(ln));
+      data.stations?.forEach(st => addStation(st));
+      data.lines?.forEach(ln => addLine(ln));
       data.stationTypes?.forEach(t => stationTypes.push(t));
 
       cellSize = data.cellSize ?? cellSize;
@@ -825,8 +844,10 @@ function importMapData(ev){
 
       renderStationList();
       draw();
-    }catch(err){
+      console.log("Import succesful")
+    }catch(e){
       alert("This file seems to be corrupt.");
+      console.error("Error importing map data: ", e);
     }
   };
   reader.readAsText(file);
@@ -899,8 +920,8 @@ function loadMetroData(path){
     .then(data => {
       stations.length = 0; lines.length = 0; stationTypes.length = 0;
 
-      data.stations?.forEach(st => stations.push(st));
-      data.lines?.forEach(ln => lines.push(ln));
+      data.stations?.forEach(st => addStation(st));
+      data.lines?.forEach(ln => addLine(ln));
       data.stationTypes?.forEach(t => stationTypes.push(t));
 
       cellSize = data.cellSize ?? cellSize;
@@ -938,11 +959,27 @@ function fromBase64Url(str) {
   return arr;
 }
 
+function showGetStarted(){
+  document.querySelector("aside").querySelectorAll("section").forEach(section => section.classList.add("hidden"));
+  document.querySelector("aside").querySelector("section:first-child").classList.remove("hidden");
+  document.querySelector("aside").querySelector("section:nth-child(2)").classList.remove("hidden");
+  document.querySelector("aside").querySelector("section:last-child").classList.remove("hidden");
+  toggleShowLegend.checked = false;
+  renderLineList();
+}
+
+function hideGetStarted(){
+  document.querySelector("aside").querySelectorAll("section").forEach(section => section.classList.remove("hidden"));
+  document.querySelector("aside").querySelector("section:nth-child(2)").classList.add("hidden");
+  toggleShowLegend.checked = true;
+  renderLineList();
+}
+
 document.addEventListener("DOMContentLoaded", () => {
   function loadMapData(data) {
     stations.length = 0; lines.length = 0; stationTypes.length = 0;
-    data.s?.forEach(st => stations.push(st));
-    data.l?.forEach(ln => lines.push(ln));
+    data.s?.forEach(st => addStation(st));
+    data.l?.forEach(ln => addLine(ln));
     data.t?.forEach(t => stationTypes.push(t));
     cellSize = data.c ?? cellSize;
     gridCols = data.w ?? gridCols;
@@ -988,12 +1025,16 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   }
 
+  if (stations.length === 0 && lines.length === 0) {
+    showGetStarted();
+  }
+
   if (localStorage.getItem("uiSound") === "true") {
     soundToggleUI.checked = true;
   } else {
     soundToggleUI.checked = false;
   }
 
+  console.log("\n%c Transit Map Maker %c\n\nInitiation succesful%c | Made with love by Bence\n", "font-family: Helvetica; font-weight: bold; color: #232322; font-size: 25px; background-color: #f7f4ed; border-style: solid; border-color: #232322; border-width: 2px; border-radius: 5px;", "font-family: Helvetica; font-weight: bold;", "font-family: Helvetica;");
 
-  console.log("Initiation successful");
 });

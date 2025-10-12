@@ -45,7 +45,6 @@ details, .inner-popup{
     font-weight: 500;
     font-style: normal;
     box-sizing: border-box;
-    scrollbar-width: thin;
     scrollbar-color: var(--colour-secondary) var(--colour-primary);
     scroll-behavior: smooth;
 }
@@ -180,7 +179,7 @@ aside details{
     margin-bottom: 0.5rem;
 }
 
-aside details summary{
+aside details summary, .popup-inner > details > summary{
     font-size: 1.2rem;
     background-color: var(--colour-secondary);
     color: var(--colour-primary);
@@ -208,6 +207,7 @@ aside section:first-child{
     width: 100%; 
     height: 100%;
     overflow: auto; 
+    scrollbar-color: var(--colour-primary) var(--colour-secondary);
     background: var(--colour-secondary);
 }
 
@@ -231,7 +231,7 @@ aside section:first-child{
 }
 
 .hidden{
-    display:none;
+    display: none;
 }
 
 .popup-inner{

@@ -23,14 +23,14 @@
     <header>
         <div class="brand">
             <h1>Transit Map Maker</h1>
-            <button id="btn-changelog"><span id="version-text"></span></button>
+            <button id="btn-changelog"><span id="version-text">Initializing...</span></button>
         </div>
 
         <div class="controls">
             <button id="zoomOut" title="Zoom out" class="round-button">
                 <svg xmlns="http://www.w3.org/2000/svg" height="20px" viewBox="0 -960 960 960" width="20px" fill="currentColor"><path d="M765-144 526-384q-30 23-65.79 35.5-35.79 12.5-76.18 12.5Q284-336 214-406t-70-170q0-100 70-170t170-70q100 0 170 70t70 170.03q0 40.39-12.5 76.18Q599-464 577-434l239 239-51 51ZM384-408q70 0 119-49t49-119q0-70-49-119t-119-49q-70 0-119 49t-49 119q0 70 49 119t119 49Zm-96-132v-72h192v72H288Z"/></svg>
-            </button> 
-            <span id="zoom-level"></span> 
+            </button>
+            <span id="zoom-level"></span>
             <button id="zoomIn" title="Zoom in" class="round-button">
                 <svg xmlns="http://www.w3.org/2000/svg" height="20px" viewBox="0 -960 960 960" width="20px" fill="currentColor"><path d="M765-144 526-384q-30 23-65.79 35.5-35.79 12.5-76.18 12.5Q284-336 214-406t-70-170q0-100 70-170t170-70q100 0 170 70t70 170.03q0 40.39-12.5 76.18Q599-464 577-434l239 239-51 51ZM384-408q70 0 119-49t49-119q0-70-49-119t-119-49q-70 0-119 49t-49 119q0 70 49 119t119 49Zm-36-60v-72h-72v-72h72v-72h72v72h72v72h-72v72h-72Z"/></svg>
             </button>
@@ -55,6 +55,12 @@
             <label id="toggleAddStationLabel"><input type="checkbox" id="toggleAddStation">+ Add station<span>Station adding enabled: click anywhere on the map to add a station &nbsp;&nbsp;×</span></label>
             <button id="btn-addline">+ Add line</button>
           </section>
+
+          <section class="hidden">
+            <p>Start by adding a few stations to the map and connecting them with a line.</p>
+            <p>You can also load up an example map to help you get started.</p>
+          </section>
+          
           <section>
               <details>
                   <summary>Edit lines</summary>
@@ -112,10 +118,8 @@
           <section>
                 <br>
                 <h3>Examples</h3>
-                <ul>
-                    <li><button id="intro-option-2">Load Amsterdam</button></li>
-                    <li><button id="intro-option-3">Load Budapest</button></li>
-                </ul>
+                    <button id="intro-option-2">Load Amsterdam</button>
+                    <button id="intro-option-3">Load Budapest</button>
           </section>
           </aside>
 
@@ -213,7 +217,7 @@
     <div id="export-popup" class="popup hidden">
         <div class="popup-inner">
             <h3>Export transit map</h3>
-            <h4>Preview</h4>
+            <h4>PNG / SVG preview</h4>
             <img id="export-preview-img" alt="Preview of export">
             <h4>File format</h4>
             <p>
@@ -233,32 +237,48 @@
     <!-- Changelog popup -->
     <div id="change-log-popup" class="popup hidden">
         <div class="popup-inner">
-            <h3>Changelog</h3>
-            <ul>
-                <li>v4.02.1 (10-10-2025)<br>Improved the icons, layout and hover effects<br>Sound settings will now be saved</li>
-                <li>v4.02.0 (07-10-2025)<br>Added sound effects because Noa asked for it</li>
-                <li>v4.01.2 (10-09-2025)<br>Bug fix for URL sharing<br>Made station ID's shorter to save export and URL space<br>Made legends look better in exports</li>
-                <li>v4.01.1 (09-09-2025)<br>Added preview to export function<br>Added SVG export<br>Added the legend to PNG and SVG exports</li>
-                <li>v4.01.0 (07-09-2025)<br>Complete fundamental update to make maps vector-based<br>Completely new UI</li>
-                <li><details><summary>[BETA] v4 (04-09-2025)</summary>
-                    [BETA] v4.00.7 (04-09-2025)<br>Fixed the PNG export<br>Added zoom level percentage<br>Made fonts self-hosted<br>
-                    [BETA] v4.00.6 (02-09-2025)<br>Changed vector export to PDF through print page<br>Limited availablity on smaller devices<br>
-                    [BETA] v4.00.5 (01-09-2025)<br>Minor cosmetic changes<br>
-                    [BETA] v4.00.4 (24-08-2025)<br>UI fixes<br>Made BETA the default version<br>
-                    [BETA] v4.00.3 (15-08-2025)<br>UI fixes<br>Added SVG export<br>
-                    [BETA] v4.00.2 (14-08-2025)<br>UI fixes<br>Re-added link share functionality<br>
-                    [BETA] v4.00.1 (14-08-2025)<br>UI fixes<br>
-                    [BETA] v4.00.0 (13-08-2025)<br>Complete fundamental update to make maps vector-based<br>
-                </details></li>
-                <li>v3.20.0 (13-08-2025)<br>Complete restructuring of the codebase (shouldn't be any visible changes)</li>
-                <li>v3.10.1 (09-07-2025)<br>New feature: line styles and width can now be changed (backwards compatible)</li>
-                <li>v3.02.2<br>Slight correction to v3.02.1</li>
-                <li>v3.02.1<br>Added a toggle for showing coordinates<br>Removed "show true grid lines" function<br>Added ability to create map URL<br>Made popup backdrop darker</li>
-                <li>v3.01.1<br>Added autosave on close<br>Added data validation for JSON imports<br>System now removes deleted stations from line arrays<br>Changed export format from PNG to JPG</li>
-                <li>v2.25.1<br>Added ability to edit station coordinates<br>Finished Budapest metro on welcome screen<br>Added ability to hide station names</li>
-                <li>v2.24.2<br>Added a change log (yay!)<br>Fixed AMS metro import on welcome screen<br>Added (a part of) Budapest metro</li>
-                <li>v2.24.1<br>Added a welcome screen<br>Better hover effects</li>
-            </ul>
+            <details>
+                <summary>Planned features</summary>
+                <ul>
+                    <li>More (UI) sounds</li>
+                    <li>Improved export window and more export options</li>
+                    <li>Use of HTML &lt;dialog&gt; tag for popups</li>
+                    <li>Bringing back the welcome popup from v3</li>
+                    <li>Customized input fields for downdowns</li>
+                    <li>Re-organization of the page (display:grid) for better scalability</li>
+                    <li>More direct map interaction (like clicking on lines to edit them)</li>
+                    <li>Terrain backgrounds</li>
+                </ul>
+            </details>
+            <details open>
+                <summary>Changelog</summary>
+                <ul>
+                    <li>v4.02.2 (12-10-2025)<br>Added text to help get used started when the map is empty<br>Added "planned features" section to changelog popup<br>Minor JS structure changes</li>
+                    <li>v4.02.1 (10-10-2025)<br>Improved the icons, layout and hover effects<br>Sound settings will now be saved across sessions<br>Themed scrollbar and highlight colours</li>
+                    <li>v4.02.0 (07-10-2025)<br>Added sound effects because Noa asked for it</li>
+                    <li>v4.01.2 (10-09-2025)<br>Bug fix for URL sharing<br>Made station ID's shorter to save export and URL space<br>Made legends look better in exports</li>
+                    <li>v4.01.1 (09-09-2025)<br>Added preview to export function<br>Added SVG export<br>Added the legend to PNG and SVG exports</li>
+                    <li>v4.01.0 (07-09-2025)<br>Complete fundamental update to make maps vector-based<br>Completely new UI</li>
+                    <li><details><summary>[BETA] v4 (04-09-2025)</summary>
+                        [BETA] v4.00.7 (04-09-2025)<br>Fixed the PNG export<br>Added zoom level percentage<br>Made fonts self-hosted<br>
+                        [BETA] v4.00.6 (02-09-2025)<br>Changed vector export to PDF through print page<br>Limited availablity on smaller devices<br>
+                        [BETA] v4.00.5 (01-09-2025)<br>Minor cosmetic changes<br>
+                        [BETA] v4.00.4 (24-08-2025)<br>UI fixes<br>Made BETA the default version<br>
+                        [BETA] v4.00.3 (15-08-2025)<br>UI fixes<br>Added SVG export<br>
+                        [BETA] v4.00.2 (14-08-2025)<br>UI fixes<br>Re-added link share functionality<br>
+                        [BETA] v4.00.1 (14-08-2025)<br>UI fixes<br>
+                        [BETA] v4.00.0 (13-08-2025)<br>Complete fundamental update to make maps vector-based<br>
+                    </details></li>
+                    <li>v3.20.0 (13-08-2025)<br>Complete restructuring of the codebase (shouldn't be any visible changes)</li>
+                    <li>v3.10.1 (09-07-2025)<br>New feature: line styles and width can now be changed (backwards compatible)</li>
+                    <li>v3.02.2<br>Slight correction to v3.02.1</li>
+                    <li>v3.02.1<br>Added a toggle for showing coordinates<br>Removed "show true grid lines" function<br>Added ability to create map URL<br>Made popup backdrop darker</li>
+                    <li>v3.01.1<br>Added autosave on close<br>Added data validation for JSON imports<br>System now removes deleted stations from line arrays<br>Changed export format from PNG to JPG</li>
+                    <li>v2.25.1<br>Added ability to edit station coordinates<br>Finished Budapest metro on welcome screen<br>Added ability to hide station names</li>
+                    <li>v2.24.2<br>Added a change log (yay!)<br>Fixed AMS metro import on welcome screen<br>Added (a part of) Budapest metro</li>
+                    <li>v2.24.1<br>Added a welcome screen<br>Better hover effects</li>
+                </ul>
+            </details>
             <div class="popup-actions">
                 <button id="btn-closechangelog" class="closepopup" aria-label="Close popup">×</button>
             </div>
