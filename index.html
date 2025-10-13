@@ -145,12 +145,12 @@
       <div class="popup-inner">
         <h3>Edit station</h3>
         <label>Name <input id="station-name-input" type="text"></label>
-        <label>Type
+        <label>Style 
           <select id="station-type-input">
-                <option value="1">Station</option>
-                <option value="2">Transfer station</option>
-                <option value="3">Train station</option>
-                <option value="4">Large train station</option>
+                <option value="1">Filled rectangle</option>
+                <option value="2">Outlined rectangle</option>
+                <option value="3">Filled circle</option>
+                <option value="4">Outlined circle</option>
           </select>
         </label>
         <label>X <input id="station-x-input" type="number"></label>
@@ -220,6 +220,13 @@
             <h4>PNG / SVG preview</h4>
             <img id="export-preview-img" alt="Preview of export">
             <h4>File format</h4>
+            <fieldset>
+                <legend>Legend position</legend>
+                <label><input type="radio" name="legend-position" value="tl" checked>Top left</label>
+                <label><input type="radio" name="legend-position" value="tr">Top right</label>
+                <label><input type="radio" name="legend-position" value="bl">Bottom left</label>
+                <label><input type="radio" name="legend-position" value="br">Bottom right</label>
+            </fieldset>
             <p>
                 <button id="export-png-btn">PNG image</button>
                 <button id="export-svg-btn">SVG image</button>
@@ -239,20 +246,22 @@
         <div class="popup-inner">
             <details>
                 <summary>Planned features</summary>
-                <ul>
-                    <li>More (UI) sounds</li>
-                    <li>Improved export window and more export options</li>
-                    <li>Use of HTML &lt;dialog&gt; tag for popups</li>
+                <ol>
+                    <li>More station shapes</li>
                     <li>Bringing back the welcome popup from v3</li>
-                    <li>Customized input fields for downdowns</li>
+                    <li>More (UI) sounds</li>
+                    <li>Parallel line support (finally!)</li>
                     <li>Re-organization of the page (display:grid) for better scalability</li>
+                    <li>Use of HTML &lt;dialog&gt; tag for popups</li>
+                    <li>Customized input fields for dropdowns</li>
                     <li>More direct map interaction (like clicking on lines to edit them)</li>
                     <li>Terrain backgrounds</li>
-                </ul>
+                </ol>
             </details>
             <details open>
                 <summary>Changelog</summary>
                 <ul>
+                    <li>v4.03.0 (13-10-2025)<br>Added possibility to position legend on export<br>Fixed "add to station"-not working bug<br>Improved the station icon rendering logic</li>
                     <li>v4.02.2 (12-10-2025)<br>Added text to help get used started when the map is empty<br>Added "planned features" section to changelog popup<br>Minor JS structure changes</li>
                     <li>v4.02.1 (10-10-2025)<br>Improved the icons, layout and hover effects<br>Sound settings will now be saved across sessions<br>Themed scrollbar and highlight colours</li>
                     <li>v4.02.0 (07-10-2025)<br>Added sound effects because Noa asked for it</li>
@@ -297,6 +306,7 @@
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pako/2.1.0/pako.min.js"></script> <!-- For (de)compression of URL data -->
     <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script> <!-- For image exports -->
+    <script src="scripts/stationstyles.js" defer></script>
     <script src="scripts/main.js" defer></script>
     <script src="scripts/sound.js" defer></script>
 </body>

@@ -1,5 +1,5 @@
 // ===== Version & basic elements =====
-const version = "4.02.2";
+const version = "4.03.0";
 document.querySelector("#version-text").textContent = "Version " + version;
 document.querySelector("#version-text2").textContent = "Version " + version;
 
@@ -212,41 +212,7 @@ function drawStations(){
     group.style.cursor = "pointer";
 
     // shape
-    if (st.type == 1){
-      const r = document.createElementNS("http://www.w3.org/2000/svg","rect");
-      r.setAttribute("x", cellSize/4);
-      r.setAttribute("y", cellSize/4);
-      r.setAttribute("width", cellSize/2);
-      r.setAttribute("height", cellSize/2);
-      r.setAttribute("fill", "#232322");
-      group.appendChild(r);
-    } else if (st.type == 2){
-      const r = document.createElementNS("http://www.w3.org/2000/svg","rect");
-      r.setAttribute("x", cellSize/4);
-      r.setAttribute("y", cellSize/4);
-      r.setAttribute("width", cellSize/2);
-      r.setAttribute("height", cellSize/2);
-      r.setAttribute("fill", "#F7F4ED");
-      r.setAttribute("stroke", "#232322");
-      r.setAttribute("stroke-width", '0.3em');
-      group.appendChild(r);
-    } else if (st.type == 3){
-      const c = document.createElementNS("http://www.w3.org/2000/svg","circle");
-      c.setAttribute("cx", cellSize/2);
-      c.setAttribute("cy", cellSize/2);
-      c.setAttribute("r", cellSize/4);
-      c.setAttribute("fill", "#232322");
-      group.appendChild(c);
-    } else if (st.type == 4){
-      const c = document.createElementNS("http://www.w3.org/2000/svg","circle");
-      c.setAttribute("cx", cellSize/2);
-      c.setAttribute("cy", cellSize/2);
-      c.setAttribute("r", cellSize/4);
-      c.setAttribute("fill", "#F7F4ED");
-      c.setAttribute("stroke", "#232322");
-      c.setAttribute("stroke-width", '0.3em');
-      group.appendChild(c);
-    }
+    stationType(st.type, group, cellSize);
 
     group.addEventListener("click", () => editStation(idx));
     gStations.appendChild(group);
@@ -334,24 +300,14 @@ function renderUsedStationTypes() {
   const inputMap = new Map();
 
   stationTypes.forEach(({ type, name }) => {
-    const isUsed = stations.some(s => s.type === type);
+    // check of er stations van dit type bestaan
+    const isUsed = stations.some(s => Number(s.type) === Number(type));
     if (!isUsed) return;
 
     const shape = document.createElement("span");
     shape.style.cssText = "display:inline-block;width:1rem;height:1rem;margin-right:.5rem;vertical-align:-2px;";
 
-    if (type === 1) {
-      shape.style.backgroundColor = "#232322";
-    } else if (type === 2) {
-      shape.style.border = ".2rem solid #232322";
-      shape.style.backgroundColor = "#F7F4ED";
-    } else if (type === 3) {
-      shape.style.borderRadius = "50%";
-      shape.style.backgroundColor = "#232322";
-    } else if (type === 4) {
-      shape.style.border = ".2rem solid #232322"; shape.style.borderRadius = "50%";
-      shape.style.backgroundColor = "#F7F4ED";
-    }
+    Object.assign(shape.style, getStationStyle(type));
 
     const legendItem = document.createElement("li");
     legendItem.append(shape.cloneNode(true), document.createTextNode(name));
@@ -377,7 +333,7 @@ function renderUsedStationTypes() {
     saveBtn.style.marginTop = "1rem";
     saveBtn.addEventListener("click", () => {
       inputMap.forEach((input, type) => {
-        const foundType = stationTypes.find(t => t.type === type);
+        const foundType = stationTypes.find(t => Number(t.type) === Number(type));
         if (foundType) foundType.name = input.value;
       });
       renderUsedStationTypes();
@@ -580,8 +536,8 @@ document.querySelector("#btn-addstationtoline").addEventListener("click", () => 
   const id = document.querySelector("#stationSelect").value;
   if (selectedLineIndex === null) return;
   const line = lines[selectedLineIndex];
-  if (!line.stations.includes(id)){
-    line.addStation(id);
+  if (!line.stations.includes(id)) {
+    line.stations.push(id);
     renderEditableStationList();
     draw();
   }
@@ -627,13 +583,23 @@ toggleShowLegend.addEventListener("change", renderLineList);
 toggleShowStationNames.addEventListener("change", draw);
 
 // ===== Export / Import =====
+let selectedLegendPosition = "tl";
+let legendPosition = {x: 0, y: 0};
+
+document.querySelectorAll('input[name="legend-position"]').forEach(radio => {
+  radio.addEventListener("change", () => {
+    selectedLegendPosition = radio.value;
+    generateExportPreview();
+  });
+});
+
 document.querySelector("#btn-export").addEventListener("click", () => {
   generateExportPreview();
   document.querySelector("#export-popup").classList.remove("hidden");
 });
 
-  document.querySelector("#btn-closeexportpopup").addEventListener("click", () => {
-    document.querySelector("#export-popup").classList.add("hidden");
+document.querySelector("#btn-closeexportpopup").addEventListener("click", () => {
+  document.querySelector("#export-popup").classList.add("hidden");
 });
 
 let exportPreviewDataURL = null;
@@ -650,11 +616,32 @@ function generateExportPreview() {
   const legend = document.getElementById("legend");
   if (legend) {
     const bbox = legend.getBoundingClientRect();
+
+    const svgWidth = svg.viewBox.baseVal.width || svg.clientWidth;
+    const svgHeight = svg.viewBox.baseVal.height || svg.clientHeight;
+    const offset = 32;
+
+    switch (selectedLegendPosition) {
+      case "tl":
+        legendPosition = {x: offset, y: offset};
+        break;
+      case "tr":
+        legendPosition = {x: svgWidth - bbox.width - offset, y: offset};
+        break;
+      case "bl":
+        legendPosition = {x: offset, y: svgHeight - bbox.height - offset*1.5};
+        break;
+      case "br":
+        legendPosition = {x: svgWidth - bbox.width - offset, y: svgHeight - bbox.height - offset*1.5};
+        break;
+    }
+
     const foreign = document.createElementNS("http://www.w3.org/2000/svg", "foreignObject");
-    foreign.setAttribute("x", 32);
-    foreign.setAttribute("y", 32);
-    foreign.setAttribute("width", bbox.width + 32);
-    foreign.setAttribute("height", bbox.height + 32);
+    foreign.setAttribute("x", legendPosition.x);
+    foreign.setAttribute("y", legendPosition.y);
+    foreign.setAttribute("width", bbox.width);
+    foreign.setAttribute("height", bbox.height + offset);
+
     const legendClone = legend.cloneNode(true);
     legendClone.style.position = "static";
     foreign.appendChild(legendClone);
@@ -701,6 +688,8 @@ function generateExportPreview() {
 
   img.src = svg64;
 }
+
+generateExportPreview();
 
 document.querySelector("#export-json-btn").addEventListener("click", () => {
   const info = "Transit Map Maker version " + version + ", Made by Bence (bencebarens.nl)";
@@ -761,6 +750,7 @@ document.querySelector("#export-png-btn").addEventListener("click", () => {
 });
 
 // Export SVG button
+const offset = 32;
 document.querySelector("#export-svg-btn").addEventListener("click", () => {
   const exportBackupCellSize = cellSize;
   cellSize = defaultZoom;
@@ -775,10 +765,10 @@ document.querySelector("#export-svg-btn").addEventListener("click", () => {
   if (legend) {
     const bbox = legend.getBoundingClientRect();
     const foreign = document.createElementNS("http://www.w3.org/2000/svg", "foreignObject");
-    foreign.setAttribute("x", 32);
-    foreign.setAttribute("y", 32);
-    foreign.setAttribute("width", bbox.width + 32);
-    foreign.setAttribute("height", bbox.height + 32);
+    foreign.setAttribute("x", legendPosition.x);
+    foreign.setAttribute("y", legendPosition.y);
+    foreign.setAttribute("width", bbox.width);
+    foreign.setAttribute("height", bbox.height + offset);
     const legendClone = legend.cloneNode(true);
     legendClone.style.position = "static";
     foreign.appendChild(legendClone);
