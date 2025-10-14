@@ -1,5 +1,5 @@
 // ===== Version & basic elements =====
-const version = "4.03.0";
+const version = "4.04.0";
 document.querySelector("#version-text").textContent = "Version " + version;
 document.querySelector("#version-text2").textContent = "Version " + version;
 
@@ -414,7 +414,8 @@ function editStation(index){
   document.querySelector('#station-type-input').value = s.type;
   document.querySelector('#station-x-input').value = s.x;
   document.querySelector('#station-y-input').value = s.y;
-  document.querySelector('#station-popup').classList.remove('hidden');
+  document.getElementById("dialog-station").showModal();
+
 }
 
 document.querySelector("#btn-savestationedits").addEventListener("click", () => {
@@ -443,7 +444,7 @@ document.querySelector("#btn-deletestation").addEventListener("click", () => {
 
 document.querySelector("#btn-closepopup").addEventListener("click", closeStationPopup);
 function closeStationPopup(){
-  document.querySelector('#station-popup').classList.add('hidden');
+  document.getElementById("dialog-station").close();
   selectedStationIndex = null;
 }
 
@@ -457,7 +458,8 @@ function openLinePopup(index){
   document.querySelector("#line-color-input").value = line.color || "#000000";
   document.querySelector("#line-style-input").value = line.style || "solid";
   document.querySelector("#line-width-input").value = line.width || "normal";
-  document.querySelector("#line-popup").classList.remove("hidden");
+  document.getElementById("dialog-line").showModal();
+
 
   renderEditStationSelectOptions();
   renderEditableStationList();
@@ -465,7 +467,7 @@ function openLinePopup(index){
 
 document.querySelector("#btn-closelinepopup").addEventListener("click", closeLinePopup);
 function closeLinePopup(){
-  document.querySelector("#line-popup").classList.add("hidden");
+  document.getElementById("dialog-line").close();
   selectedLineIndex = null;
 }
 
@@ -513,9 +515,9 @@ function renderEditableStationList(){
     tr.innerHTML = `
       <th>${st ? st.name : "(missing station)"}</th>
       <td>
-        <button data-act="up" data-idx="${index}">⬆️</button>
-        <button data-act="down" data-idx="${index}">⬇️</button>
-        <button data-act="del" data-idx="${index}">❌</button>
+        <button data-act="up" data-idx="${index}"><svg xmlns="http://www.w3.org/2000/svg" height="20px" viewBox="0 -960 960 960" width="20px" fill="currentColor"><path d="M444-192v-438L243-429l-51-51 288-288 288 288-51 51-201-201v438h-72Z"/></svg></button>
+        <button data-act="down" data-idx="${index}"><svg xmlns="http://www.w3.org/2000/svg" height="20px" viewBox="0 -960 960 960" width="20px" fill="currentColor"><path d="M444-768v438L243-531l-51 51 288 288 288-288-51-51-201 201v-438h-72Z"/></svg></button>
+        <button data-act="del" data-idx="${index}"><svg xmlns="http://www.w3.org/2000/svg" height="20px" viewBox="0 -960 960 960" width="20px" fill="currentColor"><path d="M312-144q-29.7 0-50.85-21.15Q240-186.3 240-216v-480h-48v-72h192v-48h192v48h192v72h-48v479.57Q720-186 698.85-165T648-144H312Zm336-552H312v480h336v-480ZM384-288h72v-336h-72v336Zm120 0h72v-336h-72v336ZM312-696v480-480Z"/></svg></button>
       </td>
     `;
     tbody.appendChild(tr);
@@ -583,7 +585,7 @@ toggleShowLegend.addEventListener("change", renderLineList);
 toggleShowStationNames.addEventListener("change", draw);
 
 // ===== Export / Import =====
-let selectedLegendPosition = "tl";
+let selectedLegendPosition = "br";
 let legendPosition = {x: 0, y: 0};
 
 document.querySelectorAll('input[name="legend-position"]').forEach(radio => {
@@ -595,11 +597,6 @@ document.querySelectorAll('input[name="legend-position"]').forEach(radio => {
 
 document.querySelector("#btn-export").addEventListener("click", () => {
   generateExportPreview();
-  document.querySelector("#export-popup").classList.remove("hidden");
-});
-
-document.querySelector("#btn-closeexportpopup").addEventListener("click", () => {
-  document.querySelector("#export-popup").classList.add("hidden");
 });
 
 let exportPreviewDataURL = null;
@@ -874,7 +871,7 @@ document.querySelector("#share-btn").addEventListener("click", () => {
 });
 
 
-// ===== Clear / Changelog =====
+// ===== Clear =====
 document.querySelector("#btn-clearall").addEventListener("click", () => {
   if (confirm("Are you sure you want to start over? All existing stations and lines will be erased and saved data will be deleted.")){
     stations.length = 0; lines.length = 0;
@@ -882,13 +879,6 @@ document.querySelector("#btn-clearall").addEventListener("click", () => {
     renderStationList();
     draw();
   }
-});
-
-document.querySelector("#btn-changelog").addEventListener("click", () => {
-  document.querySelector("#change-log-popup").classList.remove("hidden");
-});
-document.querySelector("#btn-closechangelog").addEventListener("click", () => {
-  document.querySelector("#change-log-popup").classList.add("hidden");
 });
 
 // ===== Load examples =====

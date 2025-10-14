@@ -23,7 +23,7 @@
     <header>
         <div class="brand">
             <h1>Transit Map Maker</h1>
-            <button id="btn-changelog"><span id="version-text">Initializing...</span></button>
+            <button id="btn-changelog" data-dialog="changelog"><span id="version-text">Initializing...</span></button>
         </div>
 
         <div class="controls">
@@ -34,7 +34,7 @@
             <button id="zoomIn" title="Zoom in" class="round-button">
                 <svg xmlns="http://www.w3.org/2000/svg" height="20px" viewBox="0 -960 960 960" width="20px" fill="currentColor"><path d="M765-144 526-384q-30 23-65.79 35.5-35.79 12.5-76.18 12.5Q284-336 214-406t-70-170q0-100 70-170t170-70q100 0 170 70t70 170.03q0 40.39-12.5 76.18Q599-464 577-434l239 239-51 51ZM384-408q70 0 119-49t49-119q0-70-49-119t-119-49q-70 0-119 49t-49 119q0 70 49 119t119 49Zm-36-60v-72h-72v-72h72v-72h72v72h72v72h-72v72h-72Z"/></svg>
             </button>
-            <button id="btn-export">
+            <button id="btn-export" data-dialog="export">
                 <svg xmlns="http://www.w3.org/2000/svg" height="20px" viewBox="0 -960 960 960" width="20px" fill="currentColor"><path d="M480-480ZM230-83l-50-51 106-106h-82v-72h204v204h-72v-81L230-83Zm250-13v-72h216v-456H528v-168H264v408h-72v-408q0-29.7 21.15-50.85Q234.3-864 264-864h312l192 192v504q0 29.7-21.15 50.85Q725.7-96 696-96H480Z"/></svg>
                 Export</button>
             <label class="import-label">
@@ -64,14 +64,18 @@
           <section>
               <details>
                   <summary>Edit lines</summary>
-                  <ul id="line-list"></ul>
+                  <ul id="line-list">
+                    <li>Retrieving line data...</li>
+                  </ul>
               </details>
           </section>
 
           <section>
               <details>
                   <summary>Edit stations</summary>
-                  <ul id="station-list"></ul>
+                  <ul id="station-list">
+                    <li>Retrieving station data...</li>
+                  </ul>
               </details>
           </section>
 
@@ -81,7 +85,9 @@
                   <ul>
                     <li><label class="toggle-label"><input type="checkbox" id="toggleShowLegend" checked> Show legend</label></li>
                   </ul>
-                  <ul id="controls-legend-list"></ul>
+                  <ul id="controls-legend-list">
+                    <li>Retrieving legend data...</li>
+                  </ul>
               </details>
           </section>
 
@@ -141,9 +147,9 @@
     </main>
 
     <!-- Station popup -->
-    <div id="station-popup" class="popup hidden">
-      <div class="popup-inner">
+    <dialog id="dialog-station">
         <h3>Edit station</h3>
+        <button aria-label="Close" id="btn-closepopup">×</button>
         <label>Name <input id="station-name-input" type="text"></label>
         <label>Style 
           <select id="station-type-input">
@@ -163,140 +169,131 @@
             <svg xmlns="http://www.w3.org/2000/svg" height="20px" viewBox="0 -960 960 960" width="20px" fill="currentColor"><path d="M312-144q-29.7 0-50.85-21.15Q240-186.3 240-216v-480h-48v-72h192v-48h192v48h192v72h-48v479.57Q720-186 698.85-165T648-144H312Zm336-552H312v480h336v-480ZM384-288h72v-336h-72v336Zm120 0h72v-336h-72v336ZM312-696v480-480Z"/></svg> 
             Delete
           </button>
-          <button id="btn-closepopup" class="closepopup" aria-label="Close popup">×</button>
         </div>
-      </div>
-    </div>
+    </dialog>
 
     <!-- Line popup -->
-    <div id="line-popup" class="popup hidden">
-        <div class="popup-inner">
-            <h3>Edit line</h3>
-            <label>Name <input id="line-name-input" type="text"></label>
-            <label>Color <input id="line-color-input" type="color"></label>
-            <label>Style
-                <select id="line-style-input">
-                  <option value="solid">Solid</option>
-                  <option value="dash">Dash</option>
-                  <option value="dot">Dot</option>
-                </select>
-            </label>
-            <label>Width
-                <select id="line-width-input">
-                  <option value="thin">Thin</option>
-                  <option value="normal" selected>Normal</option>
-                  <option value="thick">Thick</option>
-                </select>
-            </label>
+    <dialog id="dialog-line">
+        <h3>Edit line</h3>
+        <button id="btn-closelinepopup" aria-label="Close">×</button>
+        <label>Name <input id="line-name-input" type="text"></label>
+        <label>Color <input id="line-color-input" type="color"></label>
+        <label>Style
+            <select id="line-style-input">
+                <option value="solid">Solid</option>
+                <option value="dash">Dash</option>
+                <option value="dot">Dot</option>
+            </select>
+        </label>
+        <label>Width
+            <select id="line-width-input">
+                <option value="thin">Thin</option>
+                <option value="normal" selected>Normal</option>
+                <option value="thick">Thick</option>
+            </select>
+        </label>
 
-            <h4>Stations in line</h4>
-            <table class="table-list">
-              <tbody id="stationList"></tbody>
-            </table>
+        <h4>Stations in line</h4>
+        <table class="table-list">
+            <tbody id="stationList"></tbody>
+        </table>
 
-            <div class="row">
-              <select id="stationSelect"></select>
-              <button id="btn-addstationtoline">Add to line</button>
-            </div>
-
-            <div class="popup-actions">
-              <button id="btn-savelineedits">
-                <svg xmlns="http://www.w3.org/2000/svg" height="20px" viewBox="0 -960 960 960" width="20px" fill="currentColor"><path d="M816-672v456q0 29.7-21.15 50.85Q773.7-144 744-144H216q-29.7 0-50.85-21.15Q144-186.3 144-216v-528q0-29.7 21.15-50.85Q186.3-816 216-816h456l144 144Zm-72 30L642-744H216v528h528v-426ZM480-252q45 0 76.5-31.5T588-360q0-45-31.5-76.5T480-468q-45 0-76.5 31.5T372-360q0 45 31.5 76.5T480-252ZM264-552h336v-144H264v144Zm-48-77v413-528 115Z"/></svg> 
-                Save
-              </button>
-              <button id="btn-deleteline" class="danger">
-                <svg xmlns="http://www.w3.org/2000/svg" height="20px" viewBox="0 -960 960 960" width="20px" fill="currentColor"><path d="M312-144q-29.7 0-50.85-21.15Q240-186.3 240-216v-480h-48v-72h192v-48h192v48h192v72h-48v479.57Q720-186 698.85-165T648-144H312Zm336-552H312v480h336v-480ZM384-288h72v-336h-72v336Zm120 0h72v-336h-72v336ZM312-696v480-480Z"/></svg>
-                Delete line
-              </button>
-              <button id="btn-closelinepopup" class="closepopup" aria-label="Close popup">×</button>
-            </div>
+        <div class="row">
+            <select id="stationSelect"></select>
+            <button id="btn-addstationtoline">Add to line</button>
         </div>
-    </div>
+
+        <div class="popup-actions">
+            <button id="btn-savelineedits">
+            <svg xmlns="http://www.w3.org/2000/svg" height="20px" viewBox="0 -960 960 960" width="20px" fill="currentColor"><path d="M816-672v456q0 29.7-21.15 50.85Q773.7-144 744-144H216q-29.7 0-50.85-21.15Q144-186.3 144-216v-528q0-29.7 21.15-50.85Q186.3-816 216-816h456l144 144Zm-72 30L642-744H216v528h528v-426ZM480-252q45 0 76.5-31.5T588-360q0-45-31.5-76.5T480-468q-45 0-76.5 31.5T372-360q0 45 31.5 76.5T480-252ZM264-552h336v-144H264v144Zm-48-77v413-528 115Z"/></svg> 
+            Save
+            </button>
+            <button id="btn-deleteline" class="danger">
+            <svg xmlns="http://www.w3.org/2000/svg" height="20px" viewBox="0 -960 960 960" width="20px" fill="currentColor"><path d="M312-144q-29.7 0-50.85-21.15Q240-186.3 240-216v-480h-48v-72h192v-48h192v48h192v72h-48v479.57Q720-186 698.85-165T648-144H312Zm336-552H312v480h336v-480ZM384-288h72v-336h-72v336Zm120 0h72v-336h-72v336ZM312-696v480-480Z"/></svg>
+            Delete line
+            </button>
+        </div>
+    </dialog>
 
     <!-- Export popup -->
-    <div id="export-popup" class="popup hidden">
-        <div class="popup-inner">
-            <h3>Export transit map</h3>
-            <h4>PNG / SVG preview</h4>
+    <dialog id="dialog-export">
+        <h3>Export transit map</h3>
+        <button data-close aria-label="Close">×</button>
+        <div>
             <img id="export-preview-img" alt="Preview of export">
-            <h4>File format</h4>
             <fieldset>
                 <legend>Legend position</legend>
-                <label><input type="radio" name="legend-position" value="tl" checked>Top left</label>
+                <label><input type="radio" name="legend-position" value="tl">Top left</label>
                 <label><input type="radio" name="legend-position" value="tr">Top right</label>
                 <label><input type="radio" name="legend-position" value="bl">Bottom left</label>
-                <label><input type="radio" name="legend-position" value="br">Bottom right</label>
+                <label><input type="radio" name="legend-position" value="br" checked>Bottom right</label>
             </fieldset>
-            <p>
-                <button id="export-png-btn">PNG image</button>
-                <button id="export-svg-btn">SVG image</button>
-                <button id="export-json-btn">JSON file</button>
-                <button id="export-pdf-btn">PDF file (print)</button>
-            </p>
-            <p>Note: JSON files contains all map data, meaning you can import it back into the editor and modify them. PNG, SVG and PDF are visual exports. More export options will be added in the future.</p>
-            <p>PDF-files will look slightly different from the preview, as they are optimized for printing.</p>
-            <div class="popup-actions">
-                <button id="btn-closeexportpopup" class="closepopup" aria-label="Close popup">×</button>
-            </div>
+            <fieldset>
+                <legend>File format</legend>
+                <button id="export-png-btn"><svg xmlns="http://www.w3.org/2000/svg" height="20px" viewBox="0 -960 960 960" width="20px" fill="currentColor"><path d="M216-144q-29.7 0-50.85-21.5Q144-187 144-216v-528q0-29 21.15-50.5T216-816h528q29.7 0 50.85 21.5Q816-773 816-744v528q0 29-21.15 50.5T744-144H216Zm0-72h528v-528H216v528Zm48-72h432L552-480 444-336l-72-96-108 144Zm-48 72v-528 528Z"/></svg> PNG</button>
+                <button id="export-svg-btn"><svg xmlns="http://www.w3.org/2000/svg" height="20px" viewBox="0 -960 960 960" width="20px" fill="currentColor"><path d="M600-96v-86L317-336H144v-216h152l112-132v-180h216v216H472L360-516v121l240 131v-48h216v216H600ZM480-720h72v-72h-72v72ZM216-408h72v-72h-72v72Zm456 240h72v-72h-72v72ZM516-755ZM252-444Zm455 240Z"/></svg> SVG</button>
+                <button id="export-json-btn"><svg xmlns="http://www.w3.org/2000/svg" height="20px" viewBox="0 -960 960 960" width="20px" fill="currentColor"><path d="m384-360 51-51-69-69 69-69-51-51-120 120 120 120Zm192 0 120-120-120-120-51 51 69 69-69 69 51 51ZM216-144q-29.7 0-50.85-21.15Q144-186.3 144-216v-528q0-29.7 21.15-50.85Q186.3-816 216-816h528q29.7 0 50.85 21.15Q816-773.7 816-744v528q0 29.7-21.15 50.85Q773.7-144 744-144H216Zm0-72h528v-528H216v528Zm0-528v528-528Z"/></svg> JSON file</button>
+                <button id="export-pdf-btn"><svg xmlns="http://www.w3.org/2000/svg" height="20px" viewBox="0 -960 960 960" width="20px" fill="currentColor"><path d="M360-456h48v-72h24q20.4 0 34.2-13.8Q480-555.6 480-576v-24q0-20.4-13.8-34.2Q452.4-648 432-648h-72v192Zm48-120v-24h24v24h-24Zm96 120h72q20.4 0 34.2-13.8Q624-483.6 624-504v-96q0-20.4-13.8-34.2Q596.4-648 576-648h-72v192Zm48-48v-96h24v96h-24Zm96 48h48v-72h48v-48h-48v-24h48v-48h-96v192ZM312-240q-29.7 0-50.85-21.15Q240-282.3 240-312v-480q0-29.7 21.15-50.85Q282.3-864 312-864h480q29.7 0 50.85 21.15Q864-821.7 864-792v480q0 29.7-21.15 50.85Q821.7-240 792-240H312Zm0-72h480v-480H312v480ZM168-96q-29.7 0-50.85-21.15Q96-138.3 96-168v-552h72v552h552v72H168Zm144-696v480-480Z"/></svg> PDF (print)</button>
+            </fieldset>
+            <p>Note: JSON files contains all map data, meaning you can import it back into the editor and modify them. PNG, SVG and PDF are visual exports. More export options will be added in the future.
+            <br><br>PDF-files will look slightly different from the preview, as they are optimized for printing.</p>
         </div>
-    </div>
+    </dialog>
 
     <!-- Changelog popup -->
-    <div id="change-log-popup" class="popup hidden">
-        <div class="popup-inner">
-            <details>
-                <summary>Planned features</summary>
-                <ol>
-                    <li>More station shapes</li>
-                    <li>Bringing back the welcome popup from v3</li>
-                    <li>More (UI) sounds</li>
-                    <li>Parallel line support (finally!)</li>
-                    <li>Re-organization of the page (display:grid) for better scalability</li>
-                    <li>Use of HTML &lt;dialog&gt; tag for popups</li>
-                    <li>Customized input fields for dropdowns</li>
-                    <li>More direct map interaction (like clicking on lines to edit them)</li>
-                    <li>Terrain backgrounds</li>
-                </ol>
-            </details>
-            <details open>
-                <summary>Changelog</summary>
-                <ul>
-                    <li>v4.03.0 (13-10-2025)<br>Added possibility to position legend on export<br>Fixed "add to station"-not working bug<br>Improved the station icon rendering logic</li>
-                    <li>v4.02.2 (12-10-2025)<br>Added text to help get used started when the map is empty<br>Added "planned features" section to changelog popup<br>Minor JS structure changes</li>
-                    <li>v4.02.1 (10-10-2025)<br>Improved the icons, layout and hover effects<br>Sound settings will now be saved across sessions<br>Themed scrollbar and highlight colours</li>
-                    <li>v4.02.0 (07-10-2025)<br>Added sound effects because Noa asked for it</li>
-                    <li>v4.01.2 (10-09-2025)<br>Bug fix for URL sharing<br>Made station ID's shorter to save export and URL space<br>Made legends look better in exports</li>
-                    <li>v4.01.1 (09-09-2025)<br>Added preview to export function<br>Added SVG export<br>Added the legend to PNG and SVG exports</li>
-                    <li>v4.01.0 (07-09-2025)<br>Complete fundamental update to make maps vector-based<br>Completely new UI</li>
-                    <li><details><summary>[BETA] v4 (04-09-2025)</summary>
-                        [BETA] v4.00.7 (04-09-2025)<br>Fixed the PNG export<br>Added zoom level percentage<br>Made fonts self-hosted<br>
-                        [BETA] v4.00.6 (02-09-2025)<br>Changed vector export to PDF through print page<br>Limited availablity on smaller devices<br>
-                        [BETA] v4.00.5 (01-09-2025)<br>Minor cosmetic changes<br>
-                        [BETA] v4.00.4 (24-08-2025)<br>UI fixes<br>Made BETA the default version<br>
-                        [BETA] v4.00.3 (15-08-2025)<br>UI fixes<br>Added SVG export<br>
-                        [BETA] v4.00.2 (14-08-2025)<br>UI fixes<br>Re-added link share functionality<br>
-                        [BETA] v4.00.1 (14-08-2025)<br>UI fixes<br>
-                        [BETA] v4.00.0 (13-08-2025)<br>Complete fundamental update to make maps vector-based<br>
-                    </details></li>
-                    <li>v3.20.0 (13-08-2025)<br>Complete restructuring of the codebase (shouldn't be any visible changes)</li>
-                    <li>v3.10.1 (09-07-2025)<br>New feature: line styles and width can now be changed (backwards compatible)</li>
-                    <li>v3.02.2<br>Slight correction to v3.02.1</li>
-                    <li>v3.02.1<br>Added a toggle for showing coordinates<br>Removed "show true grid lines" function<br>Added ability to create map URL<br>Made popup backdrop darker</li>
-                    <li>v3.01.1<br>Added autosave on close<br>Added data validation for JSON imports<br>System now removes deleted stations from line arrays<br>Changed export format from PNG to JPG</li>
-                    <li>v2.25.1<br>Added ability to edit station coordinates<br>Finished Budapest metro on welcome screen<br>Added ability to hide station names</li>
-                    <li>v2.24.2<br>Added a change log (yay!)<br>Fixed AMS metro import on welcome screen<br>Added (a part of) Budapest metro</li>
-                    <li>v2.24.1<br>Added a welcome screen<br>Better hover effects</li>
-                </ul>
-            </details>
-            <div class="popup-actions">
-                <button id="btn-closechangelog" class="closepopup" aria-label="Close popup">×</button>
-            </div>
-        </div>
-    </div>
+    <dialog id="dialog-changelog">
+        <button data-close aria-label="Close">×</button>
+        <details>
+            <summary>Planned features</summary>
+            <ol>
+                <li>More station shapes</li>
+                <li>Bringing back the welcome popup from v3</li>
+                <li>More (UI) sounds</li>
+                <li>Parallel line support (finally!)</li>
+                <li>Re-organization of the page (display:grid) for better scalability</li>
+                <li>Customized input fields for dropdowns</li>
+                <li>More direct map interaction (like clicking on lines to edit them)</li>
+                <li>Terrain backgrounds</li>
+            </ol>
+        </details>
+        <details open>
+            <summary>Changelog</summary>
+            <ul>
+                <li>v4.04.0 (14-10-2025)<br>Implemented HTML &lt;dialog&gt; tags for popups<br>Updated more icons</li>
+                <li>v4.03.0 (13-10-2025)<br>Added possibility to position legend on export<br>Fixed "add to station"-not working bug<br>Improved the station icon rendering logic</li>
+                <li>v4.02.2 (12-10-2025)<br>Added text to help get used started when the map is empty<br>Added "planned features" section to changelog popup<br>Minor JS structure changes</li>
+                <li>v4.02.1 (10-10-2025)<br>Improved the icons, layout and hover effects<br>Sound settings will now be saved across sessions<br>Themed scrollbar and highlight colours</li>
+                <li>v4.02.0 (07-10-2025)<br>Added sound effects because Noa asked for it</li>
+                <li>v4.01.2 (10-09-2025)<br>Bug fix for URL sharing<br>Made station ID's shorter to save export and URL space<br>Made legends look better in exports</li>
+                <li>v4.01.1 (09-09-2025)<br>Added preview to export function<br>Added SVG export<br>Added the legend to PNG and SVG exports</li>
+                <li>v4.01.0 (07-09-2025)<br>Complete fundamental update to make maps vector-based<br>Completely new UI</li>
+                <li><details><summary>[BETA] v4 (04-09-2025)</summary>
+                    [BETA] v4.00.7 (04-09-2025)<br>Fixed the PNG export<br>Added zoom level percentage<br>Made fonts self-hosted<br>
+                    [BETA] v4.00.6 (02-09-2025)<br>Changed vector export to PDF through print page<br>Limited availablity on smaller devices<br>
+                    [BETA] v4.00.5 (01-09-2025)<br>Minor cosmetic changes<br>
+                    [BETA] v4.00.4 (24-08-2025)<br>UI fixes<br>Made BETA the default version<br>
+                    [BETA] v4.00.3 (15-08-2025)<br>UI fixes<br>Added SVG export<br>
+                    [BETA] v4.00.2 (14-08-2025)<br>UI fixes<br>Re-added link share functionality<br>
+                    [BETA] v4.00.1 (14-08-2025)<br>UI fixes<br>
+                    [BETA] v4.00.0 (13-08-2025)<br>Complete fundamental update to make maps vector-based<br>
+                </details></li>
+                <li>v3.20.0 (13-08-2025)<br>Complete restructuring of the codebase (shouldn't be any visible changes)</li>
+                <li>v3.10.1 (09-07-2025)<br>New feature: line styles and width can now be changed (backwards compatible)</li>
+                <li>v3.02.2<br>Slight correction to v3.02.1</li>
+                <li>v3.02.1<br>Added a toggle for showing coordinates<br>Removed "show true grid lines" function<br>Added ability to create map URL<br>Made popup backdrop darker</li>
+                <li>v3.01.1<br>Added autosave on close<br>Added data validation for JSON imports<br>System now removes deleted stations from line arrays<br>Changed export format from PNG to JPG</li>
+                <li>v2.25.1<br>Added ability to edit station coordinates<br>Finished Budapest metro on welcome screen<br>Added ability to hide station names</li>
+                <li>v2.24.2<br>Added a change log (yay!)<br>Fixed AMS metro import on welcome screen<br>Added (a part of) Budapest metro</li>
+                <li>v2.24.1<br>Added a welcome screen<br>Better hover effects</li>
+            </ul>
+        </details>
+    </dialog>
 
+    <!-- Sound effects -->
     <audio id="soundHover" src="sounds/hover.mp3" preload="auto"></audio>
     <audio id="soundClick" src="sounds/click.mp3" preload="auto"></audio>
 
+    <!-- Mobile message -->
     <div id="mobile-message">
         <h1>Transit Map Maker</h1>
         <p><button><span id="version-text2"></span></button></p>
@@ -304,9 +301,10 @@
         <p>Love, <a href="https://bencebarens.nl/">Bence</a> ✌️</p>
     </div>
 
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/pako/2.1.0/pako.min.js"></script> <!-- For (de)compression of URL data -->
-    <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script> <!-- For image exports -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pako/2.1.0/pako.min.js" defer></script> <!-- For (de)compression of URL data -->
+    <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js" defer></script> <!-- For image exports -->
     <script src="scripts/stationstyles.js" defer></script>
+    <script src="scripts/dialogs.js" defer></script>
     <script src="scripts/main.js" defer></script>
     <script src="scripts/sound.js" defer></script>
 </body>

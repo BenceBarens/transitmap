@@ -34,7 +34,7 @@
   color: #F7F4ED;
 }
 
-details, .inner-popup{
+details{
     --colour-primary:#F7F4ED;
     --colour-secondary:#232322;
     color: var(--colour-primary);
@@ -179,7 +179,7 @@ aside details{
     margin-bottom: 0.5rem;
 }
 
-aside details summary, .popup-inner > details > summary{
+summary{
     font-size: 1.2rem;
     background-color: var(--colour-secondary);
     color: var(--colour-primary);
@@ -234,7 +234,7 @@ aside section:first-child{
     display: none;
 }
 
-.popup-inner{
+.popup-inner, dialog{
     background-color: var(--colour-primary);
     color: var(--colour-secondary);
     padding: 1rem; 
@@ -244,6 +244,31 @@ aside section:first-child{
     overflow-y: auto;
     position: relative;
     border-radius: var(--border-radius);
+    border: none;
+}
+
+dialog::backdrop{
+    backdrop-filter: blur(0.1rem);
+}
+
+.closepopup, dialog > button:first-of-type{
+    position: absolute;
+    top: 0.5rem;
+    right: 0.5rem;
+    height: 2.5rem;
+    width: 2.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: none;
+    font-size: 2rem;
+    background: none;
+    border-radius: 50rem;
+}
+
+dialog button:first-of-type:hover{
+    background-color: var(--colour-secondary);
+    color: var(--colour-primary);
 }
 
 .toggle-label input{
@@ -291,7 +316,7 @@ aside section:first-child{
     display: inline-block;
 }
 
-.popup-inner label{
+.popup-inner label, dialog label{
     display:flex; 
     gap:.5rem; 
     margin:.5rem 0; 
@@ -304,25 +329,13 @@ aside section:first-child{
     margin-top:1rem
 }
 
-.popup .danger{
-    background:var(--danger); 
-    border-color:var(--danger); 
-    color:#fff
+.danger{
+    border-color:var(--danger);
 }
 
-.closepopup{
-    position: absolute;
-    top: 0.5rem;
-    right: 0.5rem;
-    height: 2.5rem;
-    width: 2.5rem;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    border: none;
-    font-size: 2rem;
-    background: none;
-    border-radius: 50rem;
+.danger:hover{
+    background-color: var(--danger);
+    color: var(--colour-secondary);
 }
 
 .table-list{
@@ -416,7 +429,7 @@ svg [data-role="line"]{
     display: none;
 }
 
-#change-log-popup{
+#dialog-changelog{
     ul{
         list-style: square; 
         padding-left: 1.5rem;
@@ -427,15 +440,18 @@ svg [data-role="line"]{
     }
 }
 
-#export-popup .popup-inner{
+#dialog-export{
+    width: auto;
+}
+
+#dialog-export > div{
     display: grid;
     grid-template-columns: 1fr 1fr;
-    width: auto;
     gap: 0.5rem;
     column-gap: 2rem;
 }
 
-#export-popup *{
+#dialog-export *{
     grid-column: 2/3;
 }
 
@@ -446,8 +462,7 @@ svg [data-role="line"]{
     grid-row: span 6;
 }
 
-#export-popup h3,
-#export-popup h4:first-of-type,
+#dialog-export h3,
 #export-preview-img{
     grid-column: 1/2;
 }
@@ -504,7 +519,7 @@ svg [data-role="line"]{
 }
  
 @media only screen and (max-width: 800px) {
-    header, main, .popup{
+    header, main, .popup, dialog{
         display: none !important;
     }
 
