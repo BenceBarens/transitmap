@@ -142,6 +142,19 @@ label{
     cursor: pointer;
 }
 
+input, select, textarea{
+    border-radius: var(--border-radius);
+    border: solid 0.1rem var(--colour-secondary);
+    background-color: white;
+    padding: 0.1rem 0.2rem;
+}
+
+ul{
+    list-style: none; 
+    padding: 0; 
+    margin: 0;
+}
+
 main{
     display:flex;
     height: calc(100vh - 4rem);
@@ -157,12 +170,6 @@ aside{
 
 aside h3{
     margin: .5rem 0;
-}
-
-ul{
-    list-style: none; 
-    padding: 0; 
-    margin: 0;
 }
 
 aside ul{
@@ -221,20 +228,21 @@ aside section:first-child{
     display:none
 }
 
-.popup{
-    position:fixed;
-    inset:0; 
-    display:flex; 
-    align-items:center; 
-    justify-content:center;
-    background:rgba(0,0,0,.2);
-}
-
 .hidden{
     display: none;
 }
 
-.popup-inner, dialog{
+.visually-hidden{
+    clip: rect(0 0 0 0);
+    clip-path: inset(50%);
+    height: 1px;
+    overflow: hidden;
+    position: absolute;
+    white-space: nowrap;
+    width: 1px;
+}
+
+dialog{
     background-color: var(--colour-primary);
     color: var(--colour-secondary);
     padding: 1rem; 
@@ -248,7 +256,23 @@ aside section:first-child{
 }
 
 dialog::backdrop{
+    background-color: rgba(247, 244, 237, 0.2);
     backdrop-filter: blur(0.1rem);
+    animation: backdropIn 0.2s ease;
+}
+
+dialog[open] {
+    animation: fadeIn 100ms ease;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: scale(0.95); }
+    to { opacity: 1; transform: scale(1); }
+}
+
+@keyframes backdropIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
 }
 
 .closepopup, dialog > button:first-of-type{
@@ -316,7 +340,7 @@ dialog button:first-of-type:hover{
     display: inline-block;
 }
 
-.popup-inner label, dialog label{
+dialog label{
     display:flex; 
     gap:.5rem; 
     margin:.5rem 0; 
@@ -390,6 +414,15 @@ svg [data-role="line"]{
     background-color: var(--colour-secondary);
     border: solid 0.1rem var(--colour-primary);
     border-radius: var(--border-radius);
+}
+
+footer{
+    position: absolute;
+    bottom: 1rem;
+    color: var(--colour-weak);
+    left: 20rem;
+    opacity: 0;
+    pointer-events: none;
 }
 
 #toggleAddStationLabel{
@@ -466,7 +499,7 @@ svg [data-role="line"]{
 #export-preview-img{
     grid-column: 1/2;
 }
-
+@media only screen and (min-width: 800px) {
 @media print {
   html, body {
     background: var(--colour-secondary) !important;
@@ -477,7 +510,7 @@ svg [data-role="line"]{
     overflow: visible !important;
   }
 
-  header, aside, .popup{
+  header, aside, dialog{
     display: none !important;
   }
 
@@ -513,13 +546,14 @@ svg [data-role="line"]{
     margin: 0;
   }
 }
+}
 
 #mobile-message{
-    display: none;;
+    display: none;
 }
  
 @media only screen and (max-width: 800px) {
-    header, main, .popup, dialog{
+    header, main, dialog{
         display: none !important;
     }
 

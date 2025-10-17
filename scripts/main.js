@@ -1,5 +1,5 @@
 // ===== Version & basic elements =====
-const version = "4.04.0";
+const version = "4.04.1";
 document.querySelector("#version-text").textContent = "Version " + version;
 document.querySelector("#version-text2").textContent = "Version " + version;
 
@@ -33,6 +33,27 @@ const toggleShowGridLines = document.querySelector("#toggleShowGridLines");
 const toggleShowCoordinates = document.querySelector("#toggleShowCoordinates");
 const toggleShowStationNames = document.querySelector("#toggleShowStationNames");
 const toggleShowLegend = document.querySelector("#toggleShowLegend");
+
+// ===== Rendering =====
+let renderScheduled = false;
+
+function scheduleRender() {
+  if (!renderScheduled) {
+    renderScheduled = true;
+    requestAnimationFrame(() => {
+      draw();
+      renderScheduled = false;
+    });
+  }
+}
+
+function draw(){
+  setSvgSize();
+  drawGrid();
+  drawLines();
+  drawStations();
+  renderLineList();
+}
 
 // ===== Helpers =====
 const lineWidthMap = { thin: 6, normal: 8, thick: 12 };
@@ -342,15 +363,6 @@ function renderUsedStationTypes() {
   }
 }
 
-// ===== Master draw =====
-function draw(){
-  setSvgSize();
-  drawGrid();
-  drawLines();
-  drawStations();
-  renderLineList();
-}
-
 // ===== Zoom & map size =====
 function updateZoomInfo(){
   zoomLevel = Math.round(cellSize / defaultZoom * 100)
@@ -361,7 +373,7 @@ function zoomIn(){
   updateZoomInfo();
 }
 function zoomOut(){
-  if (cellSize > Math.ceil(1800/(gridCols+gridRows))) { cellSize -= 5; draw(); }
+  if (cellSize > Math.ceil(1800/(gridCols+gridRows))) { cellSize -= 5; scheduleRender(); }
   updateZoomInfo();
 }
 
@@ -373,10 +385,10 @@ function updateMapInfo() {
 document.querySelector("#zoomIn").addEventListener("click", zoomIn);
 document.querySelector("#zoomOut").addEventListener("click", zoomOut);
 
-document.querySelector("#mapWidthMin").addEventListener("click", () => { gridCols = Math.max(2, gridCols - 2); draw(); updateMapInfo();});
-document.querySelector("#mapWidthPlus").addEventListener("click", () => { gridCols += 2; draw(); updateMapInfo();});
-document.querySelector("#mapHeightMin").addEventListener("click", () => { gridRows = Math.max(2, gridRows - 2); draw(); updateMapInfo();});
-document.querySelector("#mapHeightPlus").addEventListener("click", () => { gridRows += 2; draw(); updateMapInfo();});
+document.querySelector("#mapWidthMin").addEventListener("click", () => { gridCols = Math.max(2, gridCols - 2); scheduleRender(); updateMapInfo();});
+document.querySelector("#mapWidthPlus").addEventListener("click", () => { gridCols += 2; scheduleRender(); updateMapInfo();});
+document.querySelector("#mapHeightMin").addEventListener("click", () => { gridRows = Math.max(2, gridRows - 2); scheduleRender(); updateMapInfo();});
+document.querySelector("#mapHeightPlus").addEventListener("click", () => { gridRows += 2; scheduleRender(); updateMapInfo();});
 
 // ===== Map click: add station =====
 svg.addEventListener("click", (e) => {
@@ -400,7 +412,7 @@ svg.addEventListener("click", (e) => {
       x: col, y: row, lines: [], type: 1,
     });
     renderStationList();
-    draw();
+    scheduleRender();
   }
 });
 
@@ -426,7 +438,7 @@ document.querySelector("#btn-savestationedits").addEventListener("click", () => 
   s.x = parseInt(document.querySelector('#station-x-input').value,10);
   s.y = parseInt(document.querySelector('#station-y-input').value,10);
   renderStationList();
-  draw();
+  scheduleRender();
   closeStationPopup();
 });
 
@@ -438,7 +450,7 @@ document.querySelector("#btn-deletestation").addEventListener("click", () => {
   });
   stations.splice(selectedStationIndex, 1);
   renderStationList();
-  draw();
+  scheduleRender();
   closeStationPopup();
 });
 
@@ -480,7 +492,7 @@ document.querySelector("#btn-savelineedits").addEventListener("click", () => {
   line.width = document.querySelector("#line-width-input").value;
 
   renderLineList();
-  draw();
+  scheduleRender();
   closeLinePopup();
 });
 
@@ -488,7 +500,7 @@ document.querySelector("#btn-deleteline").addEventListener("click", () => {
   if (selectedLineIndex === null) return;
   lines.splice(selectedLineIndex, 1);
   renderLineList();
-  draw();
+  scheduleRender();
   closeLinePopup();
 });
 
@@ -541,7 +553,7 @@ document.querySelector("#btn-addstationtoline").addEventListener("click", () => 
   if (!line.stations.includes(id)) {
     line.stations.push(id);
     renderEditableStationList();
-    draw();
+    scheduleRender();
   }
 });
 
@@ -550,7 +562,7 @@ function removeStationFromLine(index){
   const line = lines[selectedLineIndex];
   line.stations.splice(index,1);
   renderEditableStationList();
-  draw();
+  scheduleRender();
 }
 
 function moveStationInLine(index, dir){
@@ -560,7 +572,7 @@ function moveStationInLine(index, dir){
   if (ni < 0 || ni >= line.stations.length) return;
   [line.stations[index], line.stations[ni]] = [line.stations[ni], line.stations[index]];
   renderEditableStationList();
-  draw();
+  scheduleRender();
 }
 
 // Add line
@@ -575,7 +587,7 @@ document.querySelector("#btn-addline").addEventListener("click", () => {
     stations: [],
   });
   renderLineList();
-  draw();
+  scheduleRender();
 });
 
 // ===== Toggles =====
@@ -604,7 +616,7 @@ let exportPreviewDataURL = null;
 function generateExportPreview() {
   const exportBackupCellSize = cellSize;
   cellSize = 35;
-  draw();
+  scheduleRender();
 
   const svg = document.getElementById("map");
   const clone = svg.cloneNode(true);
@@ -674,13 +686,13 @@ function generateExportPreview() {
     previewImg.src = exportPreviewDataURL;
 
     cellSize = exportBackupCellSize;
-    draw();
+    scheduleRender();
   };
 
   img.onerror = () => {
     alert("Couldn't generate preview.");
     cellSize = exportBackupCellSize;
-    draw();
+    scheduleRender();
   };
 
   img.src = svg64;
@@ -730,7 +742,7 @@ window.addEventListener('afterprint', () => {
   if (exportBackupCellSize) {
     cellSize = exportBackupCellSize.cellSize;
   }
-  draw();
+  scheduleRender();
   exportBackupCellSize = null;
 });
 
@@ -751,7 +763,7 @@ const offset = 32;
 document.querySelector("#export-svg-btn").addEventListener("click", () => {
   const exportBackupCellSize = cellSize;
   cellSize = defaultZoom;
-  draw();
+  scheduleRender();
 
   // clone SVG
   const svg = document.getElementById("map");
@@ -799,7 +811,7 @@ document.querySelector("#export-svg-btn").addEventListener("click", () => {
 
   // terugzetten
   cellSize = exportBackupCellSize;
-  draw();
+  scheduleRender();
 });
 
 
@@ -830,7 +842,7 @@ function importMapData(ev){
       gridRows = data.gridRows ?? gridRows;
 
       renderStationList();
-      draw();
+      scheduleRender();
       console.log("Import succesful")
     }catch(e){
       alert("This file seems to be corrupt.");
@@ -877,7 +889,7 @@ document.querySelector("#btn-clearall").addEventListener("click", () => {
     stations.length = 0; lines.length = 0;
     localStorage.removeItem("savedMapData");
     renderStationList();
-    draw();
+    scheduleRender();
   }
 });
 
@@ -909,7 +921,7 @@ function loadMetroData(path){
       gridRows = data.gridRows ?? gridRows;
 
       renderStationList();
-      draw();
+      scheduleRender();
       updateMapInfo();
       updateZoomInfo();
     })
@@ -964,7 +976,7 @@ document.addEventListener("DOMContentLoaded", () => {
     cellSize = data.c ?? cellSize;
     gridCols = data.w ?? gridCols;
     gridRows = data.h ?? gridRows;
-    draw();
+    scheduleRender();
     renderStationList();
     updateMapInfo();
     updateZoomInfo();
@@ -998,7 +1010,7 @@ document.addEventListener("DOMContentLoaded", () => {
         console.log("Retrieved map data from local storage: ", mappedData);
       } catch {}
     } else {
-      draw();
+      scheduleRender();
       renderStationList();
       updateMapInfo();
       updateZoomInfo();
