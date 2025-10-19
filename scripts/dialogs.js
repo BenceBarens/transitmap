@@ -19,9 +19,3 @@ document.querySelectorAll("dialog").forEach(d =>
     if (e.target === d) d.close();
   })
 );
-
-document.addEventListener("keydown", e => {
-  if (e.key === "Escape") {
-    document.querySelectorAll("dialog[open]").forEach(d => d.close());
-  }
-});

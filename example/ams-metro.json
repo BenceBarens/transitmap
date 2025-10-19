@@ -1,72 +1,451 @@
 {
+  "info": "Transit Map Maker version 4.04.2, Made by Bence (bencebarens.nl)",
+  "date": 1760902005431,
+  "version": "4.04.2",
   "stations": [
-    { "id": "2j3pp", "name": "Isolatorweg", "x": 6, "y": 5, "lines": [], "type": 1 },
-    { "id": "2j4vs", "name": "Sloterdijk", "x": 3, "y": 7, "lines": [], "type": 2 },
-    { "id": "2j55p", "name": "De Vlugtlaan", "x": 3, "y": 9, "lines": [], "type": 1 },
-    { "id": "2j57f", "name": "Jan van Galenstraat", "x": 3, "y": 11, "lines": [], "type": 1 },
-    { "id": "2j5ci", "name": "Postjesweg", "x": 3, "y": 13, "lines": [], "type": 1 },
-    { "id": "2j5fd", "name": "Lelylaan", "x": 3, "y": 15, "lines": [], "type": 2 },
-    { "id": "2j9pv", "name": "Heemstedestraat", "x": 3, "y": 17, "lines": [], "type": 1 },
-    { "id": "2j9ur", "name": "Henk Sneevlietweg", "x": 3, "y": 19, "lines": [], "type": 1 },
-    { "id": "2ja31", "name": "Amstelveenseweg", "x": 6, "y": 20, "lines": [], "type": 1 },
-    { "id": "2jae5", "name": "Zuid", "x": 9, "y": 20, "lines": [], "type": 2 },
-    { "id": "2jbmq", "name": "Europaplein", "x": 12, "y": 19, "lines": [], "type": 1 },
-    { "id": "2jbpz", "name": "De Pijp", "x": 12, "y": 17, "lines": [], "type": 1 },
-    { "id": "2jbqf", "name": "Vijzelgracht", "x": 12, "y": 15, "lines": [], "type": 1 },
-    { "id": "2jf9a", "name": "Rokin", "x": 13, "y": 12, "lines": [], "type": 1 },
-    { "id": "2jfbv", "name": "Centraal Station", "x": 15, "y": 10, "lines": [], "type": 2 },
-    { "id": "2jfvn", "name": "Noorderpark", "x": 16, "y": 7, "lines": [], "type": 1 },
-    { "id": "2jg5v", "name": "Noord", "x": 19, "y": 4, "lines": [], "type": 1 },
-    { "id": "2k5ii", "name": "RAI", "x": 11, "y": 22, "lines": [], "type": 2 },
-    { "id": "2k5tr", "name": "Overamstel", "x": 13, "y": 23, "lines": [], "type": 1 },
-    { "id": "2k8gi", "name": "Nieuwmarkt", "x": 17, "y": 12, "lines": [], "type": 1 },
-    { "id": "2k8rq", "name": "Waterloopplein", "x": 18, "y": 14, "lines": [], "type": 1 },
-    { "id": "2kbgv", "name": "Van der Madeweg", "x": 18, "y": 24, "lines": [], "type": 3 },
-    { "id": "2kbim", "name": "Spaklerweg", "x": 18, "y": 21, "lines": [], "type": 3 },
-    { "id": "2kdsj", "name": "Amstel", "x": 18, "y": 18, "lines": [], "type": 2 },
-    { "id": "2kdvm", "name": "Wibautstraat", "x": 18, "y": 16, "lines": [], "type": 1 },
-    { "id": "3efhn", "name": "Duivendrecht", "x": 19, "y": 26, "lines": [], "type": 2 },
-    { "id": "3efjp", "name": "Strandvliet", "x": 20, "y": 28, "lines": [], "type": 1 },
-    { "id": "3efkx", "name": "Bijlmer ArenA", "x": 21, "y": 30, "lines": [], "type": 2 },
-    { "id": "3efok", "name": "Bullewijk", "x": 22, "y": 32, "lines": [], "type": 1 },
-    { "id": "3efwn", "name": "Holendrecht", "x": 23, "y": 34, "lines": [], "type": 2 },
-    { "id": "3eg3v", "name": "Reigersbos", "x": 26, "y": 33, "lines": [], "type": 1 },
-    { "id": "3eg71", "name": "Gein", "x": 28, "y": 33, "lines": [], "type": 1 },
-    { "id": "3f98v", "name": "Diemen Zuid", "x": 23, "y": 23, "lines": [], "type": 2 },
-    { "id": "3f9fp", "name": "Verrijn Stuartweg", "x": 25, "y": 24, "lines": [], "type": 1 },
-    { "id": "3f9kx", "name": "Ganzenhoef", "x": 26, "y": 26, "lines": [], "type": 1 },
-    { "id": "3f9ok", "name": "Kraaiennest", "x": 27, "y": 28, "lines": [], "type": 1 },
-    { "id": "3f9pj", "name": "Gaasperplas", "x": 28, "y": 30, "lines": [], "type": 1 },
-    { "id": "3fbln", "name": "Venserpolder", "x": 21, "y": 24, "lines": [], "type": 1 }
+    {
+      "id": "2kdsj",
+      "name": "Amstel",
+      "x": 18,
+      "y": 19,
+      "lines": [],
+      "type": 2
+    },
+    {
+      "id": "2ja31",
+      "name": "Amstelveenseweg",
+      "x": 6,
+      "y": 20,
+      "lines": [],
+      "type": 1
+    },
+    {
+      "id": "3efkx",
+      "name": "Bijlmer ArenA",
+      "x": 21,
+      "y": 30,
+      "lines": [],
+      "type": 2
+    },
+    {
+      "id": "3efok",
+      "name": "Bullewijk",
+      "x": 22,
+      "y": 32,
+      "lines": [],
+      "type": 1
+    },
+    {
+      "id": "2jfbv",
+      "name": "Centraal Station",
+      "x": 15,
+      "y": 10,
+      "lines": [],
+      "type": 2
+    },
+    {
+      "id": "2jbpz",
+      "name": "De Pijp",
+      "x": 12,
+      "y": 17,
+      "lines": [],
+      "type": 1
+    },
+    {
+      "id": "2j55p",
+      "name": "De Vlugtlaan",
+      "x": 3,
+      "y": 9,
+      "lines": [],
+      "type": 1
+    },
+    {
+      "id": "3f98v",
+      "name": "Diemen Zuid",
+      "x": 23,
+      "y": 23,
+      "lines": [],
+      "type": 2
+    },
+    {
+      "id": "3efhn",
+      "name": "Duivendrecht",
+      "x": 19,
+      "y": 26,
+      "lines": [],
+      "type": 2
+    },
+    {
+      "id": "2jbmq",
+      "name": "Europaplein",
+      "x": 12,
+      "y": 19,
+      "lines": [],
+      "type": 1
+    },
+    {
+      "id": "3f9pj",
+      "name": "Gaasperplas",
+      "x": 28,
+      "y": 30,
+      "lines": [],
+      "type": 1
+    },
+    {
+      "id": "3f9kx",
+      "name": "Ganzenhoef",
+      "x": 26,
+      "y": 26,
+      "lines": [],
+      "type": 1
+    },
+    {
+      "id": "3eg71",
+      "name": "Gein",
+      "x": 28,
+      "y": 33,
+      "lines": [],
+      "type": 1
+    },
+    {
+      "id": "2j9pv",
+      "name": "Heemstedestraat",
+      "x": 3,
+      "y": 17,
+      "lines": [],
+      "type": 1
+    },
+    {
+      "id": "2j9ur",
+      "name": "Henk Sneevlietweg",
+      "x": 3,
+      "y": 19,
+      "lines": [],
+      "type": 1
+    },
+    {
+      "id": "3efwn",
+      "name": "Holendrecht",
+      "x": 23,
+      "y": 34,
+      "lines": [],
+      "type": 2
+    },
+    {
+      "id": "2j3pp",
+      "name": "Isolatorweg",
+      "x": 6,
+      "y": 5,
+      "lines": [],
+      "type": 1
+    },
+    {
+      "id": "2j57f",
+      "name": "Jan van Galenstraat",
+      "x": 3,
+      "y": 11,
+      "lines": [],
+      "type": 1
+    },
+    {
+      "id": "3f9ok",
+      "name": "Kraaiennest",
+      "x": 27,
+      "y": 28,
+      "lines": [],
+      "type": 1
+    },
+    {
+      "id": "2j5fd",
+      "name": "Lelylaan",
+      "x": 3,
+      "y": 15,
+      "lines": [],
+      "type": 2
+    },
+    {
+      "id": "2k8gi",
+      "name": "Nieuwmarkt",
+      "x": 17,
+      "y": 11,
+      "lines": [],
+      "type": 1
+    },
+    {
+      "id": "2jg5v",
+      "name": "Noord",
+      "x": 19,
+      "y": 4,
+      "lines": [],
+      "type": 1
+    },
+    {
+      "id": "2jfvn",
+      "name": "Noorderpark",
+      "x": 16,
+      "y": 7,
+      "lines": [],
+      "type": 1
+    },
+    {
+      "id": "2k5tr",
+      "name": "Overamstel",
+      "x": 13,
+      "y": 23,
+      "lines": [],
+      "type": 1
+    },
+    {
+      "id": "2j5ci",
+      "name": "Postjesweg",
+      "x": 3,
+      "y": 13,
+      "lines": [],
+      "type": 1
+    },
+    {
+      "id": "2k5ii",
+      "name": "RAI",
+      "x": 11,
+      "y": 22,
+      "lines": [],
+      "type": 2
+    },
+    {
+      "id": "3eg3v",
+      "name": "Reigersbos",
+      "x": 26,
+      "y": 33,
+      "lines": [],
+      "type": 1
+    },
+    {
+      "id": "2jf9a",
+      "name": "Rokin",
+      "x": 13,
+      "y": 12,
+      "lines": [],
+      "type": 1
+    },
+    {
+      "id": "2j4vs",
+      "name": "Sloterdijk",
+      "x": 3,
+      "y": 7,
+      "lines": [],
+      "type": 2
+    },
+    {
+      "id": "2kbim",
+      "name": "Spaklerweg",
+      "x": 18,
+      "y": 21,
+      "lines": [],
+      "type": 3
+    },
+    {
+      "id": "3efjp",
+      "name": "Strandvliet",
+      "x": 20,
+      "y": 28,
+      "lines": [],
+      "type": 1
+    },
+    {
+      "id": "2kbgv",
+      "name": "Van der Madeweg",
+      "x": 18,
+      "y": 24,
+      "lines": [],
+      "type": 3
+    },
+    {
+      "id": "3fbln",
+      "name": "Venserpolder",
+      "x": 21,
+      "y": 24,
+      "lines": [],
+      "type": 1
+    },
+    {
+      "id": "3f9fp",
+      "name": "Verrijn Stuartweg",
+      "x": 25,
+      "y": 24,
+      "lines": [],
+      "type": 1
+    },
+    {
+      "id": "2jbqf",
+      "name": "Vijzelgracht",
+      "x": 12,
+      "y": 15,
+      "lines": [],
+      "type": 1
+    },
+    {
+      "id": "2k8rq",
+      "name": "Waterloopplein",
+      "x": 18,
+      "y": 13,
+      "lines": [],
+      "type": 1
+    },
+    {
+      "id": "l1lmzk1j",
+      "name": "Weesperplein",
+      "x": 18,
+      "y": 15,
+      "lines": [],
+      "type": 1
+    },
+    {
+      "id": "2kdvm",
+      "name": "Wibautstraat",
+      "x": 18,
+      "y": 17,
+      "lines": [],
+      "type": 1
+    },
+    {
+      "id": "2jae5",
+      "name": "Zuid",
+      "x": 9,
+      "y": 20,
+      "lines": [],
+      "type": 2
+    }
   ],
   "lines": [
     {
       "name": "M50 | Isolatorweg - Gein",
       "color": "#37a461",
       "stations": [
-        "2j3pp","2j4vs","2j55p","2j57f","2j5ci","2j5fd","2j9pv","2j9ur","2ja31","2jae5",
-        "2k5ii","2k5tr","2kbgv","3efhn","3efjp","3efkx","3efok","3efwn","3eg3v","3eg71"
+        "2j3pp",
+        "2j4vs",
+        "2j55p",
+        "2j57f",
+        "2j5ci",
+        "2j5fd",
+        "2j9pv",
+        "2j9ur",
+        "2ja31",
+        "2jae5",
+        "2k5ii",
+        "2k5tr",
+        "2kbgv",
+        "3efhn",
+        "3efjp",
+        "3efkx",
+        "3efok",
+        "3efwn",
+        "3eg3v",
+        "3eg71"
+      ]
+    },
+    {
+      "name": "M51 | Isolatorweg - CS",
+      "color": "#fa891f",
+      "style": "solid",
+      "width": "normal",
+      "stations": [
+        "2j3pp",
+        "2j4vs",
+        "2j55p",
+        "2j57f",
+        "2j5ci",
+        "2j5fd",
+        "2j9pv",
+        "2j9ur",
+        "2ja31",
+        "2jae5",
+        "2k5ii",
+        "2k5tr",
+        "2kbim",
+        "2kdsj",
+        "2kdvm",
+        "l1lmzk1j",
+        "2k8rq",
+        "2k8gi",
+        "2jfbv"
       ]
     },
     {
       "name": "M52 | Noord - Zuid",
       "color": "#71c9f4",
-      "stations": ["2jae5","2jbmq","2jbpz","2jbqf","2jf9a","2jfbv","2jfvn","2jg5v"]
+      "stations": [
+        "2jae5",
+        "2jbmq",
+        "2jbpz",
+        "2jbqf",
+        "2jf9a",
+        "2jfbv",
+        "2jfvn",
+        "2jg5v"
+      ]
     },
     {
       "name": "M53 | CS - Gaasperplas",
       "color": "#ff2724",
-      "stations": ["2jfvn","2k8gi","2k8rq","2kdvm","2kdsj","2kbim","2kbgv","3fbln","3f98v","3f9fp","3f9kx","3f9ok","3f9pj"]
+      "stations": [
+        "2jfbv",
+        "2k8gi",
+        "2k8rq",
+        "2kdvm",
+        "2kdsj",
+        "2kbim",
+        "2kbgv",
+        "3fbln",
+        "3f98v",
+        "3f9fp",
+        "3f9kx",
+        "3f9ok",
+        "3f9pj"
+      ]
+    },
+    {
+      "name": "M54 | CS - Gein",
+      "color": "#fad505",
+      "style": "solid",
+      "width": "normal",
+      "stations": [
+        "2jfbv",
+        "2k8gi",
+        "2k8rq",
+        "l1lmzk1j",
+        "2kdvm",
+        "2kdsj",
+        "2kbim",
+        "2kbgv",
+        "3efhn",
+        "3efjp",
+        "3efkx",
+        "3efok",
+        "3efwn",
+        "3eg3v",
+        "3eg71"
+      ]
     }
   ],
   "stationTypes": [
-    { "type": 1, "name": "Station" },
-    { "type": 2, "name": "Train station" },
-    { "type": 3, "name": "Transfer station" },
-    { "type": 4, "name": "Large station" }
+    {
+      "type": 1,
+      "name": "Station"
+    },
+    {
+      "type": 2,
+      "name": "Train station"
+    },
+    {
+      "type": 3,
+      "name": "Transfer station"
+    },
+    {
+      "type": 4,
+      "name": "Large station"
+    }
   ],
-  "cellSize": 30,
+  "cellSize": 35,
   "gridCols": 36,
-  "gridRows": 40,
-  "version": "2.24.1"
+  "gridRows": 40
 }

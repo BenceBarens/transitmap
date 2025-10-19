@@ -116,6 +116,7 @@
           <section>
                 <br>
                 <h2>Examples</h2>
+                    <br>
                     <button id="intro-option-2">Load Amsterdam</button>
                     <button id="intro-option-3">Load Budapest</button>
           </section>
@@ -148,7 +149,7 @@
     <!-- Station popup -->
     <dialog id="dialog-station">
         <h2>Edit station</h2>
-        <button aria-label="Close" id="btn-closepopup">×</button>
+        <button aria-label="Close" id="btn-closepopup"><svg xmlns="http://www.w3.org/2000/svg" height="20px" viewBox="0 -960 960 960" width="20px" fill="currentColor"><path d="m291-240-51-51 189-189-189-189 51-51 189 189 189-189 51 51-189 189 189 189-51 51-189-189-189 189Z"/></svg></button>
         <label>Name <input id="station-name-input" type="text"></label>
         <label>Style 
           <select id="station-type-input">
@@ -174,7 +175,7 @@
     <!-- Line popup -->
     <dialog id="dialog-line">
         <h2>Edit line</h2><br>
-        <button id="btn-closelinepopup" aria-label="Close">×</button>
+        <button id="btn-closelinepopup" aria-label="Close"><svg xmlns="http://www.w3.org/2000/svg" height="20px" viewBox="0 -960 960 960" width="20px" fill="currentColor"><path d="m291-240-51-51 189-189-189-189 51-51 189 189 189-189 51 51-189 189 189 189-51 51-189-189-189 189Z"/></svg></button>
         <label>Name <input id="line-name-input" type="text"></label>
         <label>Color <input id="line-color-input" type="color"></label>
         <label>Style
@@ -216,7 +217,7 @@
     <!-- Export popup -->
     <dialog id="dialog-export">
         <h2>Export transit map</h2>
-        <button data-close aria-label="Close">×</button>
+        <button data-close aria-label="Close"><svg xmlns="http://www.w3.org/2000/svg" height="20px" viewBox="0 -960 960 960" width="20px" fill="currentColor"><path d="m291-240-51-51 189-189-189-189 51-51 189 189 189-189 51 51-189 189 189 189-51 51-189-189-189 189Z"/></svg></button>
         <div>
             <img id="export-preview-img" alt="Preview of export">
             <fieldset>
@@ -240,7 +241,7 @@
 
     <!-- Changelog popup -->
     <dialog id="dialog-changelog">
-        <button data-close aria-label="Close">×</button>
+        <button data-close aria-label="Close"><svg xmlns="http://www.w3.org/2000/svg" height="20px" viewBox="0 -960 960 960" width="20px" fill="currentColor"><path d="m291-240-51-51 189-189-189-189 51-51 189 189 189-189 51 51-189 189 189 189-51 51-189-189-189 189Z"/></svg></button>
         <details>
             <summary>Planned features</summary>
             <ol>
@@ -257,27 +258,28 @@
         <details open>
             <summary>Changelog</summary>
             <ul>
-                <li>v4.04.1 (17-10-2025)<br>Small dialog tweaks and fixes<br>Performance and CSS optimizations<br>Minor content updates and accessibility improvements</li>
-                <li>v4.04.0 (14-10-2025)<br>Implemented HTML &lt;dialog&gt; tags for popups<br>Updated more icons</li>
-                <li>v4.03.0 (13-10-2025)<br>Added possibility to position legend on export<br>Fixed "add to station"-not working bug<br>Improved the station icon rendering logic</li>
-                <li>v4.02.2 (12-10-2025)<br>Added text to help get used started when the map is empty<br>Added "planned features" section to changelog popup<br>Minor JS structure changes</li>
-                <li>v4.02.1 (10-10-2025)<br>Improved the icons, layout and hover effects<br>Sound settings will now be saved across sessions<br>Themed scrollbar and highlight colours</li>
-                <li>v4.02.0 (07-10-2025)<br>Added sound effects because Noa asked for it</li>
-                <li>v4.01.2 (10-09-2025)<br>Bug fix for URL sharing<br>Made station ID's shorter to save export and URL space<br>Made legends look better in exports</li>
-                <li>v4.01.1 (09-09-2025)<br>Added preview to export function<br>Added SVG export<br>Added the legend to PNG and SVG exports</li>
-                <li>v4.01.0 (07-09-2025)<br>Complete fundamental update to make maps vector-based<br>Completely new UI</li>
-                <li><details><summary>[BETA] v4 (04-09-2025)</summary>
-                    [BETA] v4.00.7 (04-09-2025)<br>Fixed the PNG export<br>Added zoom level percentage<br>Made fonts self-hosted<br>
-                    [BETA] v4.00.6 (02-09-2025)<br>Changed vector export to PDF through print page<br>Limited availablity on smaller devices<br>
-                    [BETA] v4.00.5 (01-09-2025)<br>Minor cosmetic changes<br>
-                    [BETA] v4.00.4 (24-08-2025)<br>UI fixes<br>Made BETA the default version<br>
-                    [BETA] v4.00.3 (15-08-2025)<br>UI fixes<br>Added SVG export<br>
-                    [BETA] v4.00.2 (14-08-2025)<br>UI fixes<br>Re-added link share functionality<br>
-                    [BETA] v4.00.1 (14-08-2025)<br>UI fixes<br>
-                    [BETA] v4.00.0 (13-08-2025)<br>Complete fundamental update to make maps vector-based<br>
+                <li>v4.05.0 (<time datetime="2025-10-19">19-10-2025</time>)<br>Made lines and stations list alphabetically everywhere<br>Removed already used stations from the "add station to line" dropdown<br>Major JS structure changes<br>Fixes mistakes in both example maps<br>Small fix for PDF exports</li>
+                <li>v4.04.1 (<time datetime="2025-10-17">17-10-2025</time>)<br>Small dialog tweaks and fixes<br>Performance and CSS optimizations<br>Minor content updates and accessibility improvements</li>
+                <li>v4.04.0 (<time datetime="2025-10-14">14-10-2025</time>)<br>Implemented HTML &lt;dialog&gt; tags for popups<br>Updated more icons</li>
+                <li>v4.03.0 (<time datetime="2025-10-13">13-10-2025</time>)<br>Added possibility to position legend on export<br>Fixed "add to station"-not working bug<br>Improved the station icon rendering logic</li>
+                <li>v4.02.2 (<time datetime="2025-10-12">12-10-2025</time>)<br>Added text to help get used started when the map is empty<br>Added "planned features" section to changelog popup<br>Minor JS structure changes</li>
+                <li>v4.02.1 (<time datetime="2025-10-10">10-10-2025</time>)<br>Improved the icons, layout and hover effects<br>Sound settings will now be saved across sessions<br>Themed scrollbar and highlight colours</li>
+                <li>v4.02.0 (<time datetime="2025-10-07">07-10-2025</time>)<br>Added sound effects because Noa asked for it</li>
+                <li>v4.01.2 (<time datetime="2025-09-10">10-09-2025</time>)<br>Bug fix for URL sharing<br>Made station ID's shorter to save export and URL space<br>Made legends look better in exports</li>
+                <li>v4.01.1 (<time datetime="2025-09-09">09-09-2025</time>)<br>Added preview to export function<br>Added SVG export<br>Added the legend to PNG and SVG exports</li>
+                <li>v4.01.0 (<time datetime="2025-09-07">07-09-2025</time>)<br>Complete fundamental update to make maps vector-based<br>Completely new UI</li>
+                <li><details><summary>[BETA] v4 (<time datetime="2025-09-04">04-09-2025</time>)</summary>
+                    [BETA] v4.00.7 (<time datetime="2025-09-04">04-09-2025</time>)<br>Fixed the PNG export<br>Added zoom level percentage<br>Made fonts self-hosted<br>
+                    [BETA] v4.00.6 (<time datetime="2025-09-02">02-09-2025</time>)<br>Changed vector export to PDF through print page<br>Limited availablity on smaller devices<br>
+                    [BETA] v4.00.5 (<time datetime="2025-09-01">01-09-2025</time>)<br>Minor cosmetic changes<br>
+                    [BETA] v4.00.4 (<time datetime="2025-08-24">24-08-2025</time>)<br>UI fixes<br>Made BETA the default version<br>
+                    [BETA] v4.00.3 (<time datetime="2025-08-15">15-08-2025</time>)<br>UI fixes<br>Added SVG export<br>
+                    [BETA] v4.00.2 (<time datetime="2025-08-14">14-08-2025</time>)<br>UI fixes<br>Re-added link share functionality<br>
+                    [BETA] v4.00.1 (<time datetime="2025-08-14">14-08-2025</time>)<br>UI fixes<br>
+                    [BETA] v4.00.0 (<time datetime="2025-08-13">13-08-2025</time>)<br>Complete fundamental update to make maps vector-based<br>
                 </details></li>
-                <li>v3.20.0 (13-08-2025)<br>Complete restructuring of the codebase (shouldn't be any visible changes)</li>
-                <li>v3.10.1 (09-07-2025)<br>New feature: line styles and width can now be changed (backwards compatible)</li>
+                <li>v3.20.0 (<time datetime="2025-08-13">13-08-2025</time>)<br>Complete restructuring of the codebase (shouldn't be any visible changes)</li>
+                <li>v3.10.1 (<time datetime="2025-07-09">09-07-2025</time>)<br>New feature: line styles and width can now be changed (backwards compatible)</li>
                 <li>v3.02.2<br>Slight correction to v3.02.1</li>
                 <li>v3.02.1<br>Added a toggle for showing coordinates<br>Removed "show true grid lines" function<br>Added ability to create map URL<br>Made popup backdrop darker</li>
                 <li>v3.01.1<br>Added autosave on close<br>Added data validation for JSON imports<br>System now removes deleted stations from line arrays<br>Changed export format from PNG to JPG</li>
@@ -303,6 +305,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pako/2.1.0/pako.min.js" defer></script> <!-- For (de)compression of URL data -->
     <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js" defer></script> <!-- For image exports -->
     <script src="scripts/stationstyles.js" defer></script>
+    <script src="scripts/draw.js" defer></script>
     <script src="scripts/dialogs.js" defer></script>
     <script src="scripts/main.js" defer></script>
     <script src="scripts/sound.js" defer></script>

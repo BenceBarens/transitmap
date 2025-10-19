@@ -246,7 +246,7 @@ dialog{
     background-color: var(--colour-primary);
     color: var(--colour-secondary);
     padding: 1rem; 
-    width: min(600px, 92vw);
+    min-width: 30rem;
     max-height: 80vh;
     max-width: 60vw;
     overflow-y: auto;
@@ -436,7 +436,8 @@ footer{
     transition: all 150ms ease;
 }
 
-#toggleAddStationLabel:hover{
+#toggleAddStationLabel:hover,
+#toggleAddStationLabel:has(input:checked){
     background-color: var(--colour-secondary);
     color: var(--colour-primary);
 }
@@ -499,7 +500,7 @@ footer{
 #export-preview-img{
     grid-column: 1/2;
 }
-@media only screen and (min-width: 800px) {
+
 @media print {
   html, body {
     background: var(--colour-secondary) !important;
@@ -545,7 +546,6 @@ footer{
     size: auto;
     margin: 0;
   }
-}
 }
 
 #mobile-message{
