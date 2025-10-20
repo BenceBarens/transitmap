@@ -40,7 +40,7 @@
             <label class="import-label">
                 <svg xmlns="http://www.w3.org/2000/svg" height="20px" viewBox="0 -960 960 960" width="20px" fill="currentColor"><path d="M444-240h72v-150l57 57 51-51-144-144-144 144 51 51 57-57v150ZM263.72-96Q234-96 213-117.15T192-168v-624q0-29.7 21.15-50.85Q234.3-864 264-864h312l192 192v504q0 29.7-21.16 50.85Q725.68-96 695.96-96H263.72ZM528-624v-168H264v624h432v-456H528ZM264-792v189-189 624-624Z"/></svg> 
                 Import JSON
-                <input type="file" id="import-json" accept="application/json" hidden>
+                <input type="file" class="import-json" accept="application/json" hidden>
             </label>
             <button id="share-btn">
                 <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="currentColor"><path d="M440-280H280q-83 0-141.5-58.5T80-480q0-83 58.5-141.5T280-680h160v80H280q-50 0-85 35t-35 85q0 50 35 85t85 35h160v80ZM320-440v-80h320v80H320Zm200 160v-80h160q50 0 85-35t35-85q0-50-35-85t-85-35H520v-80h160q83 0 141.5 58.5T880-480q0 83-58.5 141.5T680-280H520Z"/></svg> 
@@ -63,14 +63,14 @@
           
           <section>
               <details>
-                  <summary>Edit lines</summary>
+                  <summary>Lines</summary>
                   <ul id="line-list">
                     <li>Retrieving line data...</li>
                   </ul>
               </details>
 
               <details>
-                  <summary>Edit stations</summary>
+                  <summary>Stations</summary>
                   <ul id="station-list">
                     <li>Retrieving station data...</li>
                   </ul>
@@ -109,16 +109,9 @@
               <summary>Settings</summary>
                     <ul>
                         <li><label class="toggle-label"><input type="checkbox" id="toggleSoundEffects"> UI sounds [BETA]</label></li>
+                        <li><label class="toggle-label"><input type="checkbox" id="toggleWelcomePreference" checked> Welcome popup on start</label></li>
                     </ul>
             </details>
-          </section>
-
-          <section>
-                <br>
-                <h2>Examples</h2>
-                    <br>
-                    <button id="intro-option-2">Load Amsterdam</button>
-                    <button id="intro-option-3">Load Budapest</button>
           </section>
           </aside>
 
@@ -142,9 +135,6 @@
             <ul id="legend-station-list"></ul>
           </section>
     </main>
-    <footer>
-        <p><a href="https://bencebarens.nl/" target="_blank" rel="noopener noreferrer">Made by Bence</a> with love</p>
-    </footer>
 
     <!-- Station popup -->
     <dialog id="dialog-station">
@@ -226,6 +216,7 @@
                 <label><input type="radio" name="legend-position" value="tr">Top right</label>
                 <label><input type="radio" name="legend-position" value="bl">Bottom left</label>
                 <label><input type="radio" name="legend-position" value="br" checked>Bottom right</label>
+                <label><input type="radio" name="legend-position" value="none">Hide legend</label>
             </fieldset>
             <fieldset>
                 <legend>File format</legend>
@@ -245,11 +236,11 @@
         <details>
             <summary>Planned features</summary>
             <ol>
-                <li>Bringing back the welcome popup from v3</li>
                 <li>More (UI) sounds</li>
                 <li>More station shapes</li>
                 <li>Parallel line support (finally!)</li>
                 <li>Re-organization of the page (display:grid) for better scalability</li>
+                <li>Improve "hide legend" logic in exports</li>
                 <li>Legend line style support</li>
                 <li>More direct map interaction (like clicking on lines to edit them)</li>
                 <li>Terrain backgrounds</li>
@@ -258,6 +249,7 @@
         <details open>
             <summary>Changelog</summary>
             <ul>
+                <li>v4.06.0 (<time datetime="2025-10-20">20-10-2025</time>)<br>Added welcome popup</li>
                 <li>v4.05.0 (<time datetime="2025-10-19">19-10-2025</time>)<br>Made lines and stations list alphabetically everywhere<br>Removed already used stations from the "add station to line" dropdown<br>Major JS structure changes<br>Fixes mistakes in both example maps<br>Small fix for PDF exports</li>
                 <li>v4.04.1 (<time datetime="2025-10-17">17-10-2025</time>)<br>Small dialog tweaks and fixes<br>Performance and CSS optimizations<br>Minor content updates and accessibility improvements</li>
                 <li>v4.04.0 (<time datetime="2025-10-14">14-10-2025</time>)<br>Implemented HTML &lt;dialog&gt; tags for popups<br>Updated more icons</li>
@@ -288,6 +280,49 @@
                 <li>v2.24.1<br>Added a welcome screen<br>Better hover effects</li>
             </ul>
         </details>
+    </dialog>
+
+    <!-- Welcome popup -->
+    <dialog id="dialog-welcome">
+        <button data-close aria-label="Close"><svg xmlns="http://www.w3.org/2000/svg" height="20px" viewBox="0 -960 960 960" width="20px" fill="currentColor"><path d="m291-240-51-51 189-189-189-189 51-51 189 189 189-189 51 51-189 189 189 189-51 51-189-189-189 189Z"/></svg></button>
+        <h2>Welcome to Transit Map Maker</h2>
+        <p>Start by creating a new map or importing an existing one.</p>
+        <div>
+            <div>
+                <button id="intro-option-6" data-close>
+                    <svg xmlns="http://www.w3.org/2000/svg" height="25px" viewBox="0 -960 960 960" width="25px" fill="currentColor"><path d="M816-672v456q0 29.7-21.15 50.85Q773.7-144 744-144H216q-29.7 0-50.85-21.15Q144-186.3 144-216v-528q0-29.7 21.15-50.85Q186.3-816 216-816h456l144 144Zm-72 30L642-744H216v528h528v-426ZM480-252q45 0 76.5-31.5T588-360q0-45-31.5-76.5T480-468q-45 0-76.5 31.5T372-360q0 45 31.5 76.5T480-252ZM264-552h336v-144H264v144Zm-48-77v413-528 115Z"/></svg>
+                    Pick up where you left off last time
+                </button>
+                <button id="intro-option-5">
+                    <svg xmlns="http://www.w3.org/2000/svg" height="25px" viewBox="0 -960 960 960" width="25px" fill="currentColor"><path d="M216-144q-29.7 0-50.85-21.15Q144-186.3 144-216v-528q0-29.7 21.15-50.85Q186.3-816 216-816h240v72H216v528h528v-240h72v240q0 30-21.15 51T744-144H216Zm420-384v-108H528v-72h108v-108h72v108h108v72H708v108h-72Z"/></svg>
+                    Create a new map (empty canvas)
+                </button>
+                <button id="intro-option-4" data-close class="hidden">
+                    <svg xmlns="http://www.w3.org/2000/svg" height="25px" viewBox="0 -960 960 960" width="25px" fill="currentColor"><path d="M216-144q-29.7 0-50.85-21.15Q144-186.3 144-216v-528q0-29.7 21.15-50.85Q186.3-816 216-816h240v72H216v528h528v-240h72v240q0 30-21.15 51T744-144H216Zm420-384v-108H528v-72h108v-108h72v108h108v72H708v108h-72Z"/></svg>
+                    Create a new map (empty canvas)
+                </button>
+                <label class="import-label">
+                    <svg xmlns="http://www.w3.org/2000/svg" height="25px" viewBox="0 -960 960 960" width="25px" fill="currentColor"><path d="M444-240h72v-150l57 57 51-51-144-144-144 144 51 51 57-57v150ZM263.72-96Q234-96 213-117.15T192-168v-624q0-29.7 21.15-50.85Q234.3-864 264-864h312l192 192v504q0 29.7-21.16 50.85Q725.68-96 695.96-96H263.72ZM528-624v-168H264v624h432v-456H528ZM264-792v189-189 624-624Z"/></svg>
+                    Import a JSON file
+                    <input type="file" accept="application/json" hidden class="import-json">
+                </label>
+            </div>
+            <div>
+                <button id="intro-option-2" data-close>
+                    <img src="img/ams.jpg" alt="">
+                    The Amsterdam Metro system (2025)
+                </button>
+            </div>
+            <div>
+                <button id="intro-option-3" data-close>
+                    <img src="img/bud.jpg" alt="">
+                    Budapest Metro and Suburban Rail (2014)
+                </button>
+            </div>
+        </div>
+        <br>
+        <label class="toggle-label"><input type="checkbox" id="toggleWelcomePopup" checked> Show welcome popup on start</label> <span><a data-dialog="changelog">View changelog</a> | <a href="https://github.com/BenceBarens/transitmap" target="_blank">View code</a> | <a href="https://bencebarens.nl/" target="_blank">Made by Bence</a></span>
+
     </dialog>
 
     <!-- Sound effects -->

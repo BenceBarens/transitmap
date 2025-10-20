@@ -5,7 +5,10 @@ document.addEventListener("click", e => {
   if (openBtn) {
     const id = openBtn.dataset.dialog;
     const dialog = document.getElementById(`dialog-${id}`);
-    if (dialog) dialog.showModal();
+    if (dialog) {
+      dialog.showModal();
+      dialog.focus({ preventScroll: true });
+    }
   }
 
   if (closeBtn) {
@@ -14,8 +17,14 @@ document.addEventListener("click", e => {
   }
 });
 
-document.querySelectorAll("dialog").forEach(d =>
+document.querySelectorAll("dialog").forEach(d => {
   d.addEventListener("click", e => {
-    if (e.target === d) d.close();
-  })
-);
+    const rect = d.getBoundingClientRect();
+    const clickedOutside =
+      e.clientX < rect.left ||
+      e.clientX > rect.right ||
+      e.clientY < rect.top ||
+      e.clientY > rect.bottom;
+    if (clickedOutside) d.close();
+  });
+});

@@ -1,5 +1,5 @@
 // ===== Version & basic elements =====
-const version = "4.05.0";
+const version = "4.06.0";
 document.querySelector("#version-text").textContent = "Version " + version;
 document.querySelector("#version-text2").textContent = "Version " + version;
 
@@ -471,6 +471,7 @@ function generateExportPreview() {
 
   // Add legend
   const legend = document.getElementById("legend");
+  
   if (legend) {
     const bbox = legend.getBoundingClientRect();
 
@@ -479,6 +480,9 @@ function generateExportPreview() {
     const offset = 32;
 
     switch (selectedLegendPosition) {
+      case "none":
+        legendPosition = {x: svgWidth + offset, y: offset};
+        break;
       case "tl":
         legendPosition = {x: offset, y: offset};
         break;
@@ -664,7 +668,7 @@ document.querySelector("#export-svg-btn").addEventListener("click", () => {
 
 
 // import (file)
-document.querySelectorAll("#import-json").forEach(input => {
+document.querySelectorAll(".import-json").forEach(input => {
   input.addEventListener("change", importMapData);
 });
 
@@ -698,6 +702,7 @@ function importMapData(ev){
     }
   };
   reader.readAsText(file);
+  document.querySelectorAll("dialog[open]").forEach(d => d.close());
 }
 
 // === Share ====
@@ -732,14 +737,17 @@ document.querySelector("#share-btn").addEventListener("click", () => {
 
 
 // ===== Clear =====
-document.querySelector("#btn-clearall").addEventListener("click", () => {
+document.querySelector("#btn-clearall").addEventListener("click", () => {clearAllData();});
+document.querySelector("#intro-option-5").addEventListener("click", () => {clearAllData();});
+
+function clearAllData(){
   if (confirm("Are you sure you want to start over? All existing stations and lines will be erased and saved data will be deleted.")){
     stations.length = 0; lines.length = 0;
     localStorage.removeItem("savedMapData");
     renderStationList();
     scheduleRender();
   }
-});
+};
 
 // ===== Load examples =====
 document.querySelector("#intro-option-2").addEventListener("click", () => {
@@ -779,6 +787,8 @@ function loadMetroData(path){
 // ===== Autosave on unload & restore on load =====
 
 const soundToggleUI = document.getElementById('toggleSoundEffects')
+const welcomeToggle = document.getElementById('toggleWelcomePreference')
+const toggleWelcomePopup = document.getElementById('toggleWelcomePopup')
 
 window.addEventListener("beforeunload", () => {
   const date = Date.now();
@@ -787,6 +797,7 @@ window.addEventListener("beforeunload", () => {
   };
   localStorage.setItem("savedMapData", JSON.stringify(data));
   localStorage.setItem("uiSound", soundToggleUI.checked ? "true" : "false");
+  localStorage.setItem("welcomePopup", welcomeToggle.checked ? "true" : "false");
 });
 
 // ===== Init =====
@@ -804,6 +815,9 @@ function showGetStarted(){
   document.querySelector("aside").querySelector("section:first-child").classList.remove("hidden");
   document.querySelector("aside").querySelector("section:nth-child(2)").classList.remove("hidden");
   document.querySelector("aside").querySelector("section:last-child").classList.remove("hidden");
+  document.querySelector("#intro-option-6").classList.add("hidden");
+  document.querySelector("#intro-option-5").classList.add("hidden");
+  document.querySelector("#intro-option-4").classList.remove("hidden");
   toggleShowLegend.checked = false;
   renderLineList();
 }
@@ -811,6 +825,9 @@ function showGetStarted(){
 function hideGetStarted(){
   document.querySelector("aside").querySelectorAll("section").forEach(section => section.classList.remove("hidden"));
   document.querySelector("aside").querySelector("section:nth-child(2)").classList.add("hidden");
+  document.querySelector("#intro-option-6").classList.remove("hidden");
+  document.querySelector("#intro-option-5").classList.remove("hidden");
+  document.querySelector("#intro-option-4").classList.add("hidden");
   toggleShowLegend.checked = true;
   renderLineList();
 }
@@ -874,6 +891,18 @@ document.addEventListener("DOMContentLoaded", () => {
   } else {
     soundToggleUI.checked = false;
   }
+
+  if (localStorage.getItem("welcomePopup") !== "false") {
+    welcomeToggle.checked = true;
+    toggleWelcomePopup.checked = true;
+    document.getElementById('dialog-welcome').showModal();
+  } else {
+    welcomeToggle.checked = false;
+    toggleWelcomePopup.checked = false;
+  }
+
+  toggleWelcomePopup.addEventListener("change", () => {welcomeToggle.checked = toggleWelcomePopup.checked;});
+
 
   console.log("\n%c Transit Map Maker %c\n\nInitiation succesful%c | Made with love by Bence\n", "font-family: Helvetica; font-weight: bold; color: #232322; font-size: 25px; background-color: #f7f4ed; border-style: solid; border-color: #232322; border-width: 2px; border-radius: 5px;", "font-family: Helvetica; font-weight: bold;", "font-family: Helvetica;");
 
