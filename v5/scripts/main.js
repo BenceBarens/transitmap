@@ -1,10 +1,9 @@
 // ===== Version & basic elements =====
-const version = "5.00.1";
+const version = "5.00.2";
 document.querySelector("#version-text").textContent = "Version " + version;
 document.querySelector("#version-text2").textContent = "Version " + version;
 
 // ===== State =====
-// let defaultZoom = 35;
 let cellSize = 35;
 let gridCols = 30;
 let gridRows = 30;
@@ -209,27 +208,12 @@ function renderUsedStationTypes() {
   }
 }
 
-// ===== Zoom & map size =====
-// function updateZoomInfo(){
-//   zoomLevel = Math.round(cellSize / defaultZoom * 100)
-//   document.querySelector("#zoom-level").textContent = zoomLevel + "%";
-// }
-// function zoomIn(){
-//   if (cellSize < 50){ cellSize += 5; draw(); }
-//   updateZoomInfo();
-// }
-// function zoomOut(){
-//   if (cellSize > Math.ceil(1800/(gridCols+gridRows))) { cellSize -= 5; scheduleRender(); }
-//   updateZoomInfo();
-// }
+// ===== Map size =====
 
-// function updateMapInfo() {
-//   document.querySelector("#map-width").textContent = gridCols;
-//   document.querySelector("#map-height").textContent = gridRows;
-// }
-
-// document.querySelector("#zoomIn").addEventListener("click", zoomIn);
-// document.querySelector("#zoomOut").addEventListener("click", zoomOut);
+function updateMapInfo() {
+  document.querySelector("#map-width").textContent = gridCols;
+  document.querySelector("#map-height").textContent = gridRows;
+}
 
 document.querySelector("#mapWidthMin").addEventListener("click", () => { gridCols = Math.max(2, gridCols - 2); scheduleRender(); updateMapInfo();});
 document.querySelector("#mapWidthPlus").addEventListener("click", () => { gridCols += 2; scheduleRender(); updateMapInfo();});
@@ -462,8 +446,6 @@ document.querySelector("#btn-export").addEventListener("click", () => {
 let exportPreviewDataURL = null;
 
 function generateExportPreview() {
-  const exportBackupCellSize = cellSize;
-  cellSize = 35;
   scheduleRender();
 
   const svg = document.getElementById("map");
@@ -537,13 +519,11 @@ function generateExportPreview() {
     exportPreviewDataURL = canvas.toDataURL("image/png");
     previewImg.src = exportPreviewDataURL;
 
-    cellSize = exportBackupCellSize;
     scheduleRender();
   };
 
   img.onerror = () => {
     alert("Couldn't generate preview.");
-    cellSize = exportBackupCellSize;
     scheduleRender();
   };
 
@@ -556,8 +536,7 @@ document.querySelector("#export-json-btn").addEventListener("click", () => {
   const info = "Transit Map Maker version " + version + ", Made by Bence (bencebarens.nl)";
   const date = Date.now();
   const data = {
-    info, date, version, stations, lines, stationTypes,
-    cellSize, gridCols, gridRows
+    info, date, version, stations, lines, stationTypes, gridCols, gridRows
   };
   const json = JSON.stringify(data, null, 2);
   const blob = new Blob([json], { type:"application/json" });
@@ -576,11 +555,8 @@ document.querySelector("#export-json-btn").addEventListener("click", () => {
 //   setTimeout(() => { document.title = oldTitle }, 10);
 // });
 
-// let exportBackupCellSize = null;
 
 // window.addEventListener('beforeprint', () => {
-//   exportBackupCellSize = {cellSize};
-//   cellSize = defaultZoom;
 
 //   setSvgSize();
 //   drawGrid();
@@ -591,11 +567,7 @@ document.querySelector("#export-json-btn").addEventListener("click", () => {
 // });
 
 // window.addEventListener('afterprint', () => {
-//   if (exportBackupCellSize) {
-//     cellSize = exportBackupCellSize.cellSize;
-//   }
 //   scheduleRender();
-//   exportBackupCellSize = null;
 // });
 
 // Export PNG button
@@ -613,8 +585,6 @@ document.querySelector("#export-png-btn").addEventListener("click", () => {
 // Export SVG button
 const offset = 32;
 document.querySelector("#export-svg-btn").addEventListener("click", () => {
-  const exportBackupCellSize = cellSize;
-  cellSize = defaultZoom;
   scheduleRender();
 
   // clone SVG
@@ -661,8 +631,6 @@ document.querySelector("#export-svg-btn").addEventListener("click", () => {
   link.click();
   URL.revokeObjectURL(url);
 
-  // terugzetten
-  cellSize = exportBackupCellSize;
   scheduleRender();
 });
 
@@ -689,7 +657,6 @@ function importMapData(ev){
       data.lines?.forEach(ln => addLine(ln));
       data.stationTypes?.forEach(t => stationTypes.push(t));
 
-      cellSize = data.cellSize ?? cellSize;
       gridCols = data.gridCols ?? gridCols;
       gridRows = data.gridRows ?? gridRows;
 
@@ -719,8 +686,7 @@ document.querySelector("#share-btn").addEventListener("click", () => {
     l: lines,
     t: stationTypes,
     w: gridCols,
-    h: gridRows,
-    c: cellSize
+    h: gridRows
   };
 
   const compressed = pako.deflateRaw(JSON.stringify(data));
@@ -772,7 +738,6 @@ function loadMetroData(path){
       data.lines?.forEach(ln => addLine(ln));
       data.stationTypes?.forEach(t => stationTypes.push(t));
 
-      cellSize = data.cellSize ?? cellSize;
       gridCols = data.gridCols ?? gridCols;
       gridRows = data.gridRows ?? gridRows;
 
@@ -793,7 +758,7 @@ const toggleWelcomePopup = document.getElementById('toggleWelcomePopup')
 window.addEventListener("beforeunload", () => {
   const date = Date.now();
   const data = {
-    stations, lines, stationTypes, cellSize, gridCols, gridRows, date
+    stations, lines, stationTypes, gridCols, gridRows, date
   };
   localStorage.setItem("savedMapData", JSON.stringify(data));
   localStorage.setItem("uiSound", soundToggleUI.checked ? "true" : "false");
@@ -838,7 +803,6 @@ document.addEventListener("DOMContentLoaded", () => {
     data.s?.forEach(st => addStation(st));
     data.l?.forEach(ln => addLine(ln));
     data.t?.forEach(t => stationTypes.push(t));
-    cellSize = data.c ?? cellSize;
     gridCols = data.w ?? gridCols;
     gridRows = data.h ?? gridRows;
     scheduleRender();
@@ -868,8 +832,7 @@ document.addEventListener("DOMContentLoaded", () => {
           l: data.lines,
           t: data.stationTypes,
           w: data.gridCols,
-          h: data.gridRows,
-          c: data.cellSize
+          h: data.gridRows
         };
         loadMapData(mappedData);
         console.log("Retrieved map data from local storage: ", mappedData);

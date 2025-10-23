@@ -493,26 +493,36 @@ dialog label{
 /* MAP STYLING ---------------------------------------------------------------------------------*/
 /************************************************************************************************/
 
-.stage-wrap{
-    border-top-left-radius: 1rem;
-    background-color: var(--colour-secondary);
+.stage-wrap {
+    position: relative;
     width: 100%;
     height: 100%;
-    display: flex; 
-    align-items: center; 
-    justify-content: center;
+    border-top-left-radius: 1rem;
     overflow: hidden;
+    display: flex;
+    align-items: stretch;
+    justify-content: center;
+    background: var(--colour-secondary);
 }
 
 .svg-wrap{
     scrollbar-color: var(--colour-primary) var(--colour-secondary);
     background: var(--colour-secondary);
+    flex: 1;
+    position: relative;
+    overflow: hidden;
 }
 
 #map {
-    cursor: grab;
+    width: 100%;
+    height: 100%;
     user-select: none;
+    touch-action: none;
+    cursor: grab;
+    will-change: transform;
+    border: 0.05rem solid var(--colour-primary);
 }
+
 #map:active {
     cursor: grabbing;
 }
@@ -535,10 +545,6 @@ dialog label{
 /* clickable */
 svg [data-role="station"]{
     cursor:pointer;
-}
-
-svg [data-role="station"]::before{
-    content: "henk";
 }
 
 svg [data-role="line"]{
