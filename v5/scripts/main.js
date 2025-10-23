@@ -1,11 +1,11 @@
 // ===== Version & basic elements =====
-const version = "5.00.0";
+const version = "5.00.1";
 document.querySelector("#version-text").textContent = "Version " + version;
 document.querySelector("#version-text2").textContent = "Version " + version;
 
 // ===== State =====
-let defaultZoom = 35;
-let cellSize = defaultZoom;
+// let defaultZoom = 35;
+let cellSize = 35;
 let gridCols = 30;
 let gridRows = 30;
 
@@ -210,26 +210,26 @@ function renderUsedStationTypes() {
 }
 
 // ===== Zoom & map size =====
-function updateZoomInfo(){
-  zoomLevel = Math.round(cellSize / defaultZoom * 100)
-  document.querySelector("#zoom-level").textContent = zoomLevel + "%";
-}
-function zoomIn(){
-  if (cellSize < 50){ cellSize += 5; draw(); }
-  updateZoomInfo();
-}
-function zoomOut(){
-  if (cellSize > Math.ceil(1800/(gridCols+gridRows))) { cellSize -= 5; scheduleRender(); }
-  updateZoomInfo();
-}
+// function updateZoomInfo(){
+//   zoomLevel = Math.round(cellSize / defaultZoom * 100)
+//   document.querySelector("#zoom-level").textContent = zoomLevel + "%";
+// }
+// function zoomIn(){
+//   if (cellSize < 50){ cellSize += 5; draw(); }
+//   updateZoomInfo();
+// }
+// function zoomOut(){
+//   if (cellSize > Math.ceil(1800/(gridCols+gridRows))) { cellSize -= 5; scheduleRender(); }
+//   updateZoomInfo();
+// }
 
-function updateMapInfo() {
-  document.querySelector("#map-width").textContent = gridCols;
-  document.querySelector("#map-height").textContent = gridRows;
-}
+// function updateMapInfo() {
+//   document.querySelector("#map-width").textContent = gridCols;
+//   document.querySelector("#map-height").textContent = gridRows;
+// }
 
-document.querySelector("#zoomIn").addEventListener("click", zoomIn);
-document.querySelector("#zoomOut").addEventListener("click", zoomOut);
+// document.querySelector("#zoomIn").addEventListener("click", zoomIn);
+// document.querySelector("#zoomOut").addEventListener("click", zoomOut);
 
 document.querySelector("#mapWidthMin").addEventListener("click", () => { gridCols = Math.max(2, gridCols - 2); scheduleRender(); updateMapInfo();});
 document.querySelector("#mapWidthPlus").addEventListener("click", () => { gridCols += 2; scheduleRender(); updateMapInfo();});
@@ -779,7 +779,7 @@ function loadMetroData(path){
       renderStationList();
       scheduleRender();
       updateMapInfo();
-      updateZoomInfo();
+      // updateZoomInfo();
     })
     .catch(err => alert("Error loading example: " + err.message));
 }
@@ -844,7 +844,7 @@ document.addEventListener("DOMContentLoaded", () => {
     scheduleRender();
     renderStationList();
     updateMapInfo();
-    updateZoomInfo();
+    // updateZoomInfo();
   }
 
   const params = new URLSearchParams(location.search);
@@ -878,7 +878,7 @@ document.addEventListener("DOMContentLoaded", () => {
       scheduleRender();
       renderStationList();
       updateMapInfo();
-      updateZoomInfo();
+      // updateZoomInfo();
     }
   }
 
