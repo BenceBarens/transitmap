@@ -1,0 +1,828 @@
+{
+  "info": "Transit Map Maker version 4.04.2, Made by Bence (bencebarens.nl)",
+  "date": 1760900466479,
+  "version": "4.04.2",
+  "stations": [
+    {
+      "id": "l001",
+      "name": "Szentendre",
+      "x": 4,
+      "y": 4,
+      "lines": [],
+      "type": 1
+    },
+    {
+      "id": "l002",
+      "name": "Békásmegyer",
+      "x": 4,
+      "y": 6,
+      "lines": [],
+      "type": 1
+    },
+    {
+      "id": "l003",
+      "name": "Csillaghegy",
+      "x": 5,
+      "y": 8,
+      "lines": [],
+      "type": 1
+    },
+    {
+      "id": "l004",
+      "name": "Rómaifürdő",
+      "x": 6,
+      "y": 11,
+      "lines": [],
+      "type": 1
+    },
+    {
+      "id": "l005",
+      "name": "Kaszásdűlő",
+      "x": 6,
+      "y": 13,
+      "lines": [],
+      "type": 1
+    },
+    {
+      "id": "l006",
+      "name": "Filatorigát",
+      "x": 6,
+      "y": 15,
+      "lines": [],
+      "type": 1
+    },
+    {
+      "id": "l007",
+      "name": "Timár utca",
+      "x": 6,
+      "y": 17,
+      "lines": [],
+      "type": 1
+    },
+    {
+      "id": "l008",
+      "name": "Szépvölgyi út",
+      "x": 6,
+      "y": 19,
+      "lines": [],
+      "type": 1
+    },
+    {
+      "id": "l009",
+      "name": "Batthyány tér",
+      "x": 6,
+      "y": 21,
+      "lines": [],
+      "type": 1
+    },
+    {
+      "id": "l010",
+      "name": "Déli pályaudvar",
+      "x": 2,
+      "y": 26,
+      "lines": [],
+      "type": 2
+    },
+    {
+      "id": "l011",
+      "name": "Széll Kálmán tér",
+      "x": 3,
+      "y": 23,
+      "lines": [],
+      "type": 1
+    },
+    {
+      "id": "l012",
+      "name": "Kossuth Lajos tér",
+      "x": 9,
+      "y": 21,
+      "lines": [],
+      "type": 1
+    },
+    {
+      "id": "l013",
+      "name": "Deák Ferenc tér",
+      "x": 11,
+      "y": 23,
+      "lines": [],
+      "type": 3
+    },
+    {
+      "id": "l014",
+      "name": "Astoria",
+      "x": 13,
+      "y": 25,
+      "lines": [],
+      "type": 1
+    },
+    {
+      "id": "l015",
+      "name": "Blaha Lujza tér",
+      "x": 15,
+      "y": 25,
+      "lines": [],
+      "type": 1
+    },
+    {
+      "id": "l016",
+      "name": "Keleti pályaudvar",
+      "x": 17,
+      "y": 25,
+      "lines": [],
+      "type": 4
+    },
+    {
+      "id": "l017",
+      "name": "Puskás Ferenc Stadion",
+      "x": 19,
+      "y": 25,
+      "lines": [],
+      "type": 1
+    },
+    {
+      "id": "l018",
+      "name": "Örs vezér tere",
+      "x": 21,
+      "y": 25,
+      "lines": [],
+      "type": 1
+    },
+    {
+      "id": "l019",
+      "name": "Arany János utca",
+      "x": 11,
+      "y": 20,
+      "lines": [],
+      "type": 1
+    },
+    {
+      "id": "l020",
+      "name": "Nyugati pályaudvar",
+      "x": 11,
+      "y": 18,
+      "lines": [],
+      "type": 2
+    },
+    {
+      "id": "l021",
+      "name": "Lehel tér",
+      "x": 11,
+      "y": 16,
+      "lines": [],
+      "type": 1
+    },
+    {
+      "id": "l022",
+      "name": "Dózsa György út",
+      "x": 11,
+      "y": 14,
+      "lines": [],
+      "type": 1
+    },
+    {
+      "id": "l023",
+      "name": "Árpád hid",
+      "x": 11,
+      "y": 12,
+      "lines": [],
+      "type": 1
+    },
+    {
+      "id": "l024",
+      "name": "Forgách utca",
+      "x": 11,
+      "y": 10,
+      "lines": [],
+      "type": 1
+    },
+    {
+      "id": "l025",
+      "name": "Gyöngyösi utca",
+      "x": 11,
+      "y": 8,
+      "lines": [],
+      "type": 1
+    },
+    {
+      "id": "l026",
+      "name": "Újpest-Városkapu",
+      "x": 12,
+      "y": 6,
+      "lines": [],
+      "type": 1
+    },
+    {
+      "id": "l027",
+      "name": "Újpest-Központ",
+      "x": 16,
+      "y": 5,
+      "lines": [],
+      "type": 1
+    },
+    {
+      "id": "l028",
+      "name": "Ferenciek tere",
+      "x": 11,
+      "y": 28,
+      "lines": [],
+      "type": 1
+    },
+    {
+      "id": "l029",
+      "name": "Kálvin tér",
+      "x": 13,
+      "y": 30,
+      "lines": [],
+      "type": 3
+    },
+    {
+      "id": "l030",
+      "name": "Corvin-negyed",
+      "x": 15,
+      "y": 32,
+      "lines": [],
+      "type": 1
+    },
+    {
+      "id": "l031",
+      "name": "Klinikák",
+      "x": 16,
+      "y": 33,
+      "lines": [],
+      "type": 1
+    },
+    {
+      "id": "l032",
+      "name": "Nagyvárad tér",
+      "x": 17,
+      "y": 34,
+      "lines": [],
+      "type": 1
+    },
+    {
+      "id": "l033",
+      "name": "Népliget",
+      "x": 18,
+      "y": 35,
+      "lines": [],
+      "type": 1
+    },
+    {
+      "id": "l034",
+      "name": "Ecseri út",
+      "x": 19,
+      "y": 36,
+      "lines": [],
+      "type": 1
+    },
+    {
+      "id": "l035",
+      "name": "Pöttyös utca",
+      "x": 20,
+      "y": 37,
+      "lines": [],
+      "type": 1
+    },
+    {
+      "id": "l036",
+      "name": "Határ út",
+      "x": 21,
+      "y": 38,
+      "lines": [],
+      "type": 1
+    },
+    {
+      "id": "l037",
+      "name": "Köbánya-Kispest",
+      "x": 24,
+      "y": 39,
+      "lines": [],
+      "type": 1
+    },
+    {
+      "id": "l038",
+      "name": "Vörösmarty tér",
+      "x": 7,
+      "y": 26,
+      "lines": [],
+      "type": 1
+    },
+    {
+      "id": "l039",
+      "name": "Bajcsy-Zsilinszky út",
+      "x": 14,
+      "y": 21,
+      "lines": [],
+      "type": 1
+    },
+    {
+      "id": "l040",
+      "name": "Opera",
+      "x": 16,
+      "y": 20,
+      "lines": [],
+      "type": 1
+    },
+    {
+      "id": "l041",
+      "name": "Oktogon",
+      "x": 18,
+      "y": 19,
+      "lines": [],
+      "type": 1
+    },
+    {
+      "id": "l042",
+      "name": "Vörösmarty utca",
+      "x": 20,
+      "y": 18,
+      "lines": [],
+      "type": 1
+    },
+    {
+      "id": "l043",
+      "name": "Kodály körönd",
+      "x": 22,
+      "y": 17,
+      "lines": [],
+      "type": 1
+    },
+    {
+      "id": "l044",
+      "name": "Bajza utca",
+      "x": 24,
+      "y": 16,
+      "lines": [],
+      "type": 1
+    },
+    {
+      "id": "l045",
+      "name": "Hősők tere",
+      "x": 26,
+      "y": 15,
+      "lines": [],
+      "type": 1
+    },
+    {
+      "id": "l046",
+      "name": "Széchenyi fürdő",
+      "x": 28,
+      "y": 14,
+      "lines": [],
+      "type": 1
+    },
+    {
+      "id": "l047",
+      "name": "Mexikói út",
+      "x": 30,
+      "y": 13,
+      "lines": [],
+      "type": 1
+    },
+    {
+      "id": "l048",
+      "name": "Rákóczi tér",
+      "x": 13,
+      "y": 28,
+      "lines": [],
+      "type": 1
+    },
+    {
+      "id": "l049",
+      "name": "János Pál tér",
+      "x": 16,
+      "y": 28,
+      "lines": [],
+      "type": 1
+    },
+    {
+      "id": "l050",
+      "name": "Fővám tér",
+      "x": 10,
+      "y": 31,
+      "lines": [],
+      "type": 1
+    },
+    {
+      "id": "l051",
+      "name": "Szent Gellért tér",
+      "x": 7,
+      "y": 32,
+      "lines": [],
+      "type": 1
+    },
+    {
+      "id": "l052",
+      "name": "Móricz Zsigmond körtér",
+      "x": 5,
+      "y": 33,
+      "lines": [],
+      "type": 1
+    },
+    {
+      "id": "l053",
+      "name": "Újbuda-központ",
+      "x": 5,
+      "y": 35,
+      "lines": [],
+      "type": 1
+    },
+    {
+      "id": "l054",
+      "name": "Bikás park",
+      "x": 4,
+      "y": 39,
+      "lines": [],
+      "type": 1
+    },
+    {
+      "id": "l055",
+      "name": "Kelenföld vasútállomás",
+      "x": 2,
+      "y": 39,
+      "lines": [],
+      "type": 2
+    },
+    {
+      "id": "l056",
+      "name": "Boráros tér",
+      "x": 11,
+      "y": 34,
+      "lines": [],
+      "type": 1
+    },
+    {
+      "id": "l057",
+      "name": "Közvágóhid",
+      "x": 11,
+      "y": 36,
+      "lines": [],
+      "type": 1
+    },
+    {
+      "id": "l058",
+      "name": "Szabadkikötő",
+      "x": 11,
+      "y": 39,
+      "lines": [],
+      "type": 1
+    },
+    {
+      "id": "l059",
+      "name": "Szent Imre tér",
+      "x": 11,
+      "y": 42,
+      "lines": [],
+      "type": 1
+    },
+    {
+      "id": "l060",
+      "name": "Karácsony Sándor utca",
+      "x": 11,
+      "y": 44,
+      "lines": [],
+      "type": 1
+    },
+    {
+      "id": "l061",
+      "name": "Csepel",
+      "x": 11,
+      "y": 46,
+      "lines": [],
+      "type": 1
+    },
+    {
+      "id": "l062",
+      "name": "Közvágóhid",
+      "x": 15,
+      "y": 38,
+      "lines": [],
+      "type": 1
+    },
+    {
+      "id": "l063",
+      "name": "Beöthy utca",
+      "x": 17,
+      "y": 39,
+      "lines": [],
+      "type": 1
+    },
+    {
+      "id": "l064",
+      "name": "Kén utca",
+      "x": 18,
+      "y": 41,
+      "lines": [],
+      "type": 2
+    },
+    {
+      "id": "l065",
+      "name": "Timót utca",
+      "x": 18,
+      "y": 43,
+      "lines": [],
+      "type": 1
+    },
+    {
+      "id": "l066",
+      "name": "Pesterzsébet felső",
+      "x": 18,
+      "y": 45,
+      "lines": [],
+      "type": 2
+    },
+    {
+      "id": "l067",
+      "name": "Torontál utca",
+      "x": 18,
+      "y": 47,
+      "lines": [],
+      "type": 1
+    },
+    {
+      "id": "l068",
+      "name": "Soroksár felső",
+      "x": 18,
+      "y": 49,
+      "lines": [],
+      "type": 1
+    },
+    {
+      "id": "l069",
+      "name": "Soroksár, Hősök tere",
+      "x": 18,
+      "y": 51,
+      "lines": [],
+      "type": 1
+    },
+    {
+      "id": "l070",
+      "name": "Szent István utca",
+      "x": 18,
+      "y": 53,
+      "lines": [],
+      "type": 1
+    },
+    {
+      "id": "l071",
+      "name": "Millenniumtelep",
+      "x": 18,
+      "y": 55,
+      "lines": [],
+      "type": 1
+    },
+    {
+      "id": "l072",
+      "name": "Rákosfalva",
+      "x": 23,
+      "y": 25,
+      "lines": [],
+      "type": 1
+    },
+    {
+      "id": "l073",
+      "name": "Sashalom",
+      "x": 26,
+      "y": 24,
+      "lines": [],
+      "type": 1
+    },
+    {
+      "id": "l074",
+      "name": "Mátyásföld, repülőtér",
+      "x": 28,
+      "y": 23,
+      "lines": [],
+      "type": 1
+    },
+    {
+      "id": "l075",
+      "name": "Mátyásföld, Imre utca",
+      "x": 30,
+      "y": 22,
+      "lines": [],
+      "type": 1
+    },
+    {
+      "id": "l076",
+      "name": "Mátyásföld alsó",
+      "x": 32,
+      "y": 21,
+      "lines": [],
+      "type": 1
+    },
+    {
+      "id": "l077",
+      "name": "Cinkota",
+      "x": 34,
+      "y": 20,
+      "lines": [],
+      "type": 1
+    },
+    {
+      "id": "l078",
+      "name": "Ilonatelep",
+      "x": 36,
+      "y": 19,
+      "lines": [],
+      "type": 1
+    },
+    {
+      "id": "l079",
+      "name": "Cinkota alsó",
+      "x": 33,
+      "y": 18,
+      "lines": [],
+      "type": 1
+    },
+    {
+      "id": "l080",
+      "name": "Árpádföld",
+      "x": 32,
+      "y": 17,
+      "lines": [],
+      "type": 1
+    },
+    {
+      "id": "l081",
+      "name": "Szabadságtelep",
+      "x": 31,
+      "y": 16,
+      "lines": [],
+      "type": 1
+    }
+  ],
+  "lines": [
+    {
+      "name": "M1 - Kisföldalatti",
+      "color": "#ffd500",
+      "stations": [
+        "l038",
+        "l013",
+        "l039",
+        "l040",
+        "l041",
+        "l042",
+        "l043",
+        "l044",
+        "l045",
+        "l046",
+        "l047"
+      ]
+    },
+    {
+      "name": "M2 - Piros metró",
+      "color": "#e53029",
+      "stations": [
+        "l010",
+        "l011",
+        "l009",
+        "l012",
+        "l014",
+        "l013",
+        "l014",
+        "l015",
+        "l016",
+        "l017",
+        "l018",
+        "l018"
+      ]
+    },
+    {
+      "name": "M3 - Kék metró",
+      "color": "#0068aa",
+      "stations": [
+        "l027",
+        "l026",
+        "l025",
+        "l024",
+        "l023",
+        "l022",
+        "l021",
+        "l020",
+        "l019",
+        "l013",
+        "l028",
+        "l029",
+        "l030",
+        "l031",
+        "l032",
+        "l033",
+        "l034",
+        "l035",
+        "l036",
+        "l037"
+      ]
+    },
+    {
+      "name": "M4 - Zöld metró",
+      "color": "#4ea437",
+      "stations": [
+        "l016",
+        "l049",
+        "l048",
+        "l029",
+        "l050",
+        "l051",
+        "l052",
+        "l053",
+        "l054",
+        "l055"
+      ]
+    },
+    {
+      "name": "H5 - Szentendrei hév",
+      "color": "#882467",
+      "stations": [
+        "l001",
+        "l002",
+        "l003",
+        "l004",
+        "l005",
+        "l006",
+        "l007",
+        "l008",
+        "l009"
+      ]
+    },
+    {
+      "name": "H6 - Ráckevei hév",
+      "color": "#824e1e",
+      "stations": [
+        "l062",
+        "l063",
+        "l064",
+        "l065",
+        "l066",
+        "l067",
+        "l068",
+        "l069",
+        "l070",
+        "l071"
+      ]
+    },
+    {
+      "name": "H7 - Csepeli hév",
+      "color": "#eb7432",
+      "stations": [
+        "l056",
+        "l057",
+        "l058",
+        "l059",
+        "l060",
+        "l061"
+      ]
+    },
+    {
+      "name": "H8 - Gödöllői hév",
+      "color": "#ee6f87",
+      "stations": [
+        "l018",
+        "l072",
+        "l073",
+        "l074",
+        "l075",
+        "l076",
+        "l077",
+        "l078"
+      ]
+    },
+    {
+      "name": "H9 - Csömöri hév",
+      "color": "#ee6f87",
+      "stations": [
+        "l018",
+        "l072",
+        "l073",
+        "l074",
+        "l075",
+        "l076",
+        "l077",
+        "l079",
+        "l080",
+        "l081"
+      ]
+    }
+  ],
+  "stationTypes": [
+    {
+      "type": 1,
+      "name": "Station"
+    },
+    {
+      "type": 2,
+      "name": "Train station"
+    },
+    {
+      "type": 3,
+      "name": "Transfer station"
+    },
+    {
+      "type": 4,
+      "name": "Train/transfer station"
+    }
+  ],
+  "cellSize": 35,
+  "gridCols": 40,
+  "gridRows": 58
+}

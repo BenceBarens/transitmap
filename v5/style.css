@@ -1,3 +1,7 @@
+/************************************************************************************************/
+/* BASE STYLING --------------------------------------------------------------------------------*/
+/************************************************************************************************/
+
 @font-face {
     font-family: "Inter";
     src: url(fonts/inter.ttf) format("truetype");
@@ -65,47 +69,6 @@ h1, h2, h3, h4, h5, h6, summary{
     margin:0;
 }
 
-html{
-    overflow: hidden;
-    height: 100vh;
-}
-
-body{
-    margin: 0;
-    background: var(--colour-primary);
-    height: 100vh;
-}
-
-header{
-    display: flex; 
-    width: 100vw;
-    align-items: center; 
-    justify-content: space-between;
-    padding: 1rem;
-    color: var(--colour-secondary);
-    background-color: var(--colour-primary);
-    z-index:100;
-    height: 4rem;
-}
-
-header .brand{
-    display: flex; 
-    align-items: center;
-    gap: 1rem;
-}
-
-#version-text{
-    color: var(--colour-weak);
-    font-size: .8rem;
-}
-
-header .controls{
-    display: flex; 
-    flex-wrap: wrap; 
-    gap: .5rem 1rem; 
-    align-items: center;
-}
-
 button, .import-label{
     cursor: pointer;
     background-color: var(--colour-primary);
@@ -165,6 +128,113 @@ ul{
     margin: 0;
 }
 
+.hidden{
+    display: none !important;
+}
+
+.visually-hidden{
+    clip: rect(0 0 0 0);
+    clip-path: inset(50%);
+    height: 1px;
+    overflow: hidden;
+    position: absolute;
+    white-space: nowrap;
+    width: 1px;
+}
+
+.toggle-label input{
+    width: 2rem;
+}
+
+.toggle-label input::before{
+    content: "";
+    height: 1rem;
+    width: 2rem;
+    display: inline-block;
+    border-radius: 50rem;
+    background-color: var(--colour-weak);
+    cursor: pointer;
+}
+
+.toggle-label input:checked::before{
+    background-color: var(--colour-secondary);
+}
+
+.toggle-label input::after{
+    content: "";
+    height: 0.75rem;
+    width: 0.75rem;
+    display: inline-block;
+    margin-left: -1.85rem;
+    margin-bottom: 0.125rem;
+    border-radius: 50rem;
+    transition: all 0.1s ease;
+    background-color: var(--colour-primary);
+    cursor: pointer;
+}
+
+.toggle-label input:checked:after{
+    margin-left: -0.9rem;
+}
+
+.danger{
+    border-color:var(--danger);
+}
+
+.danger:hover{
+    background-color: var(--danger);
+    color: var(--colour-secondary);
+}
+
+/************************************************************************************************/
+/* PAGE LAYOUT ---------------------------------------------------------------------------------*/
+/************************************************************************************************/
+
+html{
+    overflow: hidden;
+    height: 100vh;
+}
+
+body{
+    margin: 0;
+    background: var(--colour-primary);
+    height: 100vh;
+}
+
+header{
+    display: flex; 
+    width: 100vw;
+    align-items: center; 
+    justify-content: space-between;
+    padding: 1rem;
+    color: var(--colour-secondary);
+    background-color: var(--colour-primary);
+    z-index:100;
+    height: 4rem;
+}
+
+/************************************************************************************************/
+/* CHROME STYLING ------------------------------------------------------------------------------*/
+/************************************************************************************************/
+
+header .brand{
+    display: flex; 
+    align-items: center;
+    gap: 1rem;
+}
+
+#version-text{
+    color: var(--colour-weak);
+    font-size: .8rem;
+}
+
+header .controls{
+    display: flex; 
+    flex-wrap: wrap; 
+    gap: .5rem 1rem; 
+    align-items: center;
+}
+
 main{
     display:flex;
     height: calc(100vh - 4rem);
@@ -209,48 +279,47 @@ aside section:first-child{
     margin-bottom: 3rem;
 }
 
-.stage-wrap{
-    border-top-left-radius: 1rem;
+#toggleAddStationLabel{
+    background-color: var(--colour-primary);
+    border: 0.1rem solid var(--colour-secondary);
+    color: var(--colour-secondary);
+    border-radius: var(--border-radius);
+    padding: 0.3rem 0.6rem;
+    font-size: 1rem;
+
+    transition: all 150ms ease;
+}
+
+#toggleAddStationLabel:hover,
+#toggleAddStationLabel:has(input:checked){
     background-color: var(--colour-secondary);
-    width: 100%;
-    height: 100%;
-    display: flex; 
-    align-items: center; 
-    justify-content: center;
-    overflow: auto;
+    color: var(--colour-primary);
 }
 
-.svg-wrap{
-    width: 100%; 
-    height: 100%;
-    overflow: auto; 
-    scrollbar-color: var(--colour-primary) var(--colour-secondary);
-    background: var(--colour-secondary);
+#toggleAddStationLabel span{
+    display: none;
 }
 
-#map{
-    display:block;
-}
-
-.legend-hidden #legend-list,
-.legend-hidden #legend-station-list,
-.legend-hidden #controls-legend-list{
-    display:none
-}
-
-.hidden{
-    display: none !important;
-}
-
-.visually-hidden{
-    clip: rect(0 0 0 0);
-    clip-path: inset(50%);
-    height: 1px;
-    overflow: hidden;
+#toggleAddStationLabel input:checked + span{
+    display: block;
     position: absolute;
-    white-space: nowrap;
-    width: 1px;
+    top: 5rem;
+    left: calc((100% + 22rem)/2);
+    transform: translateX(-50%);
+    padding: 0.5rem 1rem;
+    border-radius: 50rem;
+    font-size: 0.8rem;
+    background-color: var(--colour-accent);
+    color: var(--colour-secondary)
 }
+
+#toggleAddStation{
+    display: none;
+}
+
+/************************************************************************************************/
+/* DIALOG GENERAL STYLING ----------------------------------------------------------------------*/
+/************************************************************************************************/
 
 dialog{
     background-color: var(--colour-primary);
@@ -304,40 +373,16 @@ dialog button:first-of-type:hover{
     color: var(--colour-primary);
 }
 
-.toggle-label input{
-    width: 2rem;
+dialog label{
+    display:flex; 
+    gap:.5rem; 
+    margin:.5rem 0; 
+    align-items:center
 }
 
-.toggle-label input::before{
-    content: "";
-    height: 1rem;
-    width: 2rem;
-    display: inline-block;
-    border-radius: 50rem;
-    background-color: var(--colour-weak);
-    cursor: pointer;
-}
-
-.toggle-label input:checked::before{
-    background-color: var(--colour-secondary);
-}
-
-.toggle-label input::after{
-    content: "";
-    height: 0.75rem;
-    width: 0.75rem;
-    display: inline-block;
-    margin-left: -1.85rem;
-    margin-bottom: 0.125rem;
-    border-radius: 50rem;
-    transition: all 0.1s ease;
-    background-color: var(--colour-primary);
-    cursor: pointer;
-}
-
-.toggle-label input:checked:after{
-    margin-left: -0.9rem;
-}
+/************************************************************************************************/
+/* DIALOG SPECIFIC STYLING ---------------------------------------------------------------------*/
+/************************************************************************************************/
 
 #details-map li{
     width: 100%;
@@ -347,28 +392,6 @@ dialog button:first-of-type:hover{
 
 #details-map li div{
     display: inline-block;
-}
-
-dialog label{
-    display:flex; 
-    gap:.5rem; 
-    margin:.5rem 0; 
-    align-items:center
-}
-
-.popup-actions{
-    display:flex; gap:.5rem; 
-    justify-content:flex-end; 
-    margin-top:1rem
-}
-
-.danger{
-    border-color:var(--danger);
-}
-
-.danger:hover{
-    background-color: var(--danger);
-    color: var(--colour-secondary);
 }
 
 .table-list{
@@ -384,83 +407,6 @@ dialog label{
 .table-list button{
     margin-right:.35rem;
     border: none;
-}
-
-/* station labels (SVG text) */
-.station-label{
-    font-size: 14px;
-    paint-order: stroke;
-    stroke: var(--colour-secondary);
-    stroke-width: 0.3rem;
-    fill: var(--colour-primary);
-}
-
-/* grid coord text */
-.coord-label{
-    font-size:12px; 
-    fill: rgba(0,0,0,.5);
-}
-
-/* clickable */
-svg [data-role="station"]{
-    cursor:pointer;
-}
-
-svg [data-role="station"]::before{
-    content: "henk";
-}
-
-svg [data-role="line"]{
-    pointer-events: stroke;
-}
-
-#legend{
-    position: absolute;
-    max-width: 30rem;
-    bottom: 2rem;
-    right: 2rem;
-    padding: 1rem;
-    background-color: var(--colour-secondary);
-    border: solid 0.1rem var(--colour-primary);
-    border-radius: var(--border-radius);
-}
-
-#toggleAddStationLabel{
-    background-color: var(--colour-primary);
-    border: 0.1rem solid var(--colour-secondary);
-    color: var(--colour-secondary);
-    border-radius: var(--border-radius);
-    padding: 0.3rem 0.6rem;
-    font-size: 1rem;
-
-    transition: all 150ms ease;
-}
-
-#toggleAddStationLabel:hover,
-#toggleAddStationLabel:has(input:checked){
-    background-color: var(--colour-secondary);
-    color: var(--colour-primary);
-}
-
-#toggleAddStationLabel span{
-    display: none;
-}
-
-#toggleAddStationLabel input:checked + span{
-    display: block;
-    position: absolute;
-    top: 5rem;
-    left: calc((100% + 22rem)/2);
-    transform: translateX(-50%);
-    padding: 0.5rem 1rem;
-    border-radius: 50rem;
-    font-size: 0.8rem;
-    background-color: var(--colour-accent);
-    color: var(--colour-secondary)
-}
-
-#toggleAddStation{
-    display: none;
 }
 
 #dialog-changelog{
@@ -542,6 +488,87 @@ svg [data-role="line"]{
     text-align: right;
     width: 49%;
 }
+
+/************************************************************************************************/
+/* MAP STYLING ---------------------------------------------------------------------------------*/
+/************************************************************************************************/
+
+.stage-wrap{
+    border-top-left-radius: 1rem;
+    background-color: var(--colour-secondary);
+    width: 100%;
+    height: 100%;
+    display: flex; 
+    align-items: center; 
+    justify-content: center;
+    overflow: auto;
+}
+
+.svg-wrap{
+    scrollbar-color: var(--colour-primary) var(--colour-secondary);
+    background: var(--colour-secondary);
+}
+
+#map {
+    cursor: grab;
+    user-select: none;
+}
+#map:active {
+    cursor: grabbing;
+}
+
+/* station labels (SVG text) */
+.station-label{
+    font-size: 14px;
+    paint-order: stroke;
+    stroke: var(--colour-secondary);
+    stroke-width: 0.3rem;
+    fill: var(--colour-primary);
+}
+
+/* grid coord text */
+.coord-label{
+    font-size:12px; 
+    fill: rgba(0,0,0,.5);
+}
+
+/* clickable */
+svg [data-role="station"]{
+    cursor:pointer;
+}
+
+svg [data-role="station"]::before{
+    content: "henk";
+}
+
+svg [data-role="line"]{
+    pointer-events: stroke;
+}
+
+/************************************************************************************************/
+/* LEGEND STYLING ------------------------------------------------------------------------------*/
+/************************************************************************************************/
+
+#legend{
+    position: absolute;
+    max-width: 30rem;
+    bottom: 2rem;
+    right: 2rem;
+    padding: 1rem;
+    background-color: var(--colour-secondary);
+    border: solid 0.1rem var(--colour-primary);
+    border-radius: var(--border-radius);
+}
+
+.legend-hidden #legend-list,
+.legend-hidden #legend-station-list,
+.legend-hidden #controls-legend-list{
+    display:none
+}
+
+/************************************************************************************************/
+/* MEDIA PRINT AND MOBILE ----------------------------------------------------------------------*/
+/************************************************************************************************/
 
 @media print {
   html, body {

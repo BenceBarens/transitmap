@@ -23,7 +23,7 @@
     <header>
         <div class="brand">
             <h1>Transit Map Maker</h1>
-            <button id="btn-changelog" data-dialog="changelog"><span id="version-text">Initializing...</span></button>
+            BETA<button id="btn-changelog" data-dialog="changelog"><span id="version-text">Initializing...</span></button>
         </div>
 
         <div class="controls">
@@ -151,15 +151,14 @@
         </label>
         <label>X <input id="station-x-input" type="number"></label>
         <label>Y <input id="station-y-input" type="number"></label>
-        <div class="popup-actions">
-          <button id="btn-savestationedits"><svg xmlns="http://www.w3.org/2000/svg" height="20px" viewBox="0 -960 960 960" width="20px" fill="currentColor"><path d="M816-672v456q0 29.7-21.15 50.85Q773.7-144 744-144H216q-29.7 0-50.85-21.15Q144-186.3 144-216v-528q0-29.7 21.15-50.85Q186.3-816 216-816h456l144 144Zm-72 30L642-744H216v528h528v-426ZM480-252q45 0 76.5-31.5T588-360q0-45-31.5-76.5T480-468q-45 0-76.5 31.5T372-360q0 45 31.5 76.5T480-252ZM264-552h336v-144H264v144Zm-48-77v413-528 115Z"/></svg> 
-            Save
-          </button>
-          <button id="btn-deletestation" class="danger">
-            <svg xmlns="http://www.w3.org/2000/svg" height="20px" viewBox="0 -960 960 960" width="20px" fill="currentColor"><path d="M312-144q-29.7 0-50.85-21.15Q240-186.3 240-216v-480h-48v-72h192v-48h192v48h192v72h-48v479.57Q720-186 698.85-165T648-144H312Zm336-552H312v480h336v-480ZM384-288h72v-336h-72v336Zm120 0h72v-336h-72v336ZM312-696v480-480Z"/></svg> 
-            Delete
-          </button>
-        </div>
+        <br>
+        <button id="btn-savestationedits"><svg xmlns="http://www.w3.org/2000/svg" height="20px" viewBox="0 -960 960 960" width="20px" fill="currentColor"><path d="M816-672v456q0 29.7-21.15 50.85Q773.7-144 744-144H216q-29.7 0-50.85-21.15Q144-186.3 144-216v-528q0-29.7 21.15-50.85Q186.3-816 216-816h456l144 144Zm-72 30L642-744H216v528h528v-426ZM480-252q45 0 76.5-31.5T588-360q0-45-31.5-76.5T480-468q-45 0-76.5 31.5T372-360q0 45 31.5 76.5T480-252ZM264-552h336v-144H264v144Zm-48-77v413-528 115Z"/></svg> 
+        Save
+        </button>
+        <button id="btn-deletestation" class="danger">
+        <svg xmlns="http://www.w3.org/2000/svg" height="20px" viewBox="0 -960 960 960" width="20px" fill="currentColor"><path d="M312-144q-29.7 0-50.85-21.15Q240-186.3 240-216v-480h-48v-72h192v-48h192v48h192v72h-48v479.57Q720-186 698.85-165T648-144H312Zm336-552H312v480h336v-480ZM384-288h72v-336h-72v336Zm120 0h72v-336h-72v336ZM312-696v480-480Z"/></svg> 
+        Delete
+        </button>
     </dialog>
 
     <!-- Line popup -->
@@ -222,11 +221,9 @@
                 <legend>File format</legend>
                 <button id="export-png-btn"><svg xmlns="http://www.w3.org/2000/svg" height="20px" viewBox="0 -960 960 960" width="20px" fill="currentColor"><path d="M216-144q-29.7 0-50.85-21.5Q144-187 144-216v-528q0-29 21.15-50.5T216-816h528q29.7 0 50.85 21.5Q816-773 816-744v528q0 29-21.15 50.5T744-144H216Zm0-72h528v-528H216v528Zm48-72h432L552-480 444-336l-72-96-108 144Zm-48 72v-528 528Z"/></svg> PNG</button>
                 <button id="export-svg-btn"><svg xmlns="http://www.w3.org/2000/svg" height="20px" viewBox="0 -960 960 960" width="20px" fill="currentColor"><path d="M600-96v-86L317-336H144v-216h152l112-132v-180h216v216H472L360-516v121l240 131v-48h216v216H600ZM480-720h72v-72h-72v72ZM216-408h72v-72h-72v72Zm456 240h72v-72h-72v72ZM516-755ZM252-444Zm455 240Z"/></svg> SVG</button>
-                <button id="export-json-btn"><svg xmlns="http://www.w3.org/2000/svg" height="20px" viewBox="0 -960 960 960" width="20px" fill="currentColor"><path d="m384-360 51-51-69-69 69-69-51-51-120 120 120 120Zm192 0 120-120-120-120-51 51 69 69-69 69 51 51ZM216-144q-29.7 0-50.85-21.15Q144-186.3 144-216v-528q0-29.7 21.15-50.85Q186.3-816 216-816h528q29.7 0 50.85 21.15Q816-773.7 816-744v528q0 29.7-21.15 50.85Q773.7-144 744-144H216Zm0-72h528v-528H216v528Zm0-528v528-528Z"/></svg> JSON</button>
-                <button id="export-pdf-btn"><svg xmlns="http://www.w3.org/2000/svg" height="20px" viewBox="0 -960 960 960" width="20px" fill="currentColor"><path d="M360-456h48v-72h24q20.4 0 34.2-13.8Q480-555.6 480-576v-24q0-20.4-13.8-34.2Q452.4-648 432-648h-72v192Zm48-120v-24h24v24h-24Zm96 120h72q20.4 0 34.2-13.8Q624-483.6 624-504v-96q0-20.4-13.8-34.2Q596.4-648 576-648h-72v192Zm48-48v-96h24v96h-24Zm96 48h48v-72h48v-48h-48v-24h48v-48h-96v192ZM312-240q-29.7 0-50.85-21.15Q240-282.3 240-312v-480q0-29.7 21.15-50.85Q282.3-864 312-864h480q29.7 0 50.85 21.15Q864-821.7 864-792v480q0 29.7-21.15 50.85Q821.7-240 792-240H312Zm0-72h480v-480H312v480ZM168-96q-29.7 0-50.85-21.15Q96-138.3 96-168v-552h72v552h552v72H168Zm144-696v480-480Z"/></svg> PDF</button>
-            </fieldset>
+                <button id="export-json-btn"><svg xmlns="http://www.w3.org/2000/svg" height="20px" viewBox="0 -960 960 960" width="20px" fill="currentColor"><path d="m384-360 51-51-69-69 69-69-51-51-120 120 120 120Zm192 0 120-120-120-120-51 51 69 69-69 69 51 51ZM216-144q-29.7 0-50.85-21.15Q144-186.3 144-216v-528q0-29.7 21.15-50.85Q186.3-816 216-816h528q29.7 0 50.85 21.15Q816-773.7 816-744v528q0 29.7-21.15 50.85Q773.7-144 744-144H216Zm0-72h528v-528H216v528Zm0-528v528-528Z"/></svg> JSON</button>            </fieldset>
             <p>Note: JSON files contain all map data, meaning you can import it back into the editor and modify them. PNG, SVG and PDF are visual exports.
-            <br><br>PDF-files will look slightly different from the preview, as they are optimized for printing.</p>
+            <br><br>PDF-exports are not available on TMM v5.</p>
         </div>
     </dialog>
 
@@ -249,6 +246,9 @@
         <details open>
             <summary>Changelog</summary>
             <ul>
+                <li><details><summary>[BETA] v5 (<time datetime="2025-10-23">23-10-2025</time>)</summary>
+                    [BETA] v5.00.0 (<time datetime="2025-10-23">23-10-2025</time>)<br>First test for SVG viewbox controls<br>
+                </details></li>
                 <li>v4.06.0 (<time datetime="2025-10-20">20-10-2025</time>)<br>Added welcome popup</li>
                 <li>v4.05.0 (<time datetime="2025-10-19">19-10-2025</time>)<br>Made lines and stations list alphabetically everywhere<br>Removed already used stations from the "add station to line" dropdown<br>Major JS structure changes<br>Fixes mistakes in both example maps<br>Small fix for PDF exports</li>
                 <li>v4.04.1 (<time datetime="2025-10-17">17-10-2025</time>)<br>Small dialog tweaks and fixes<br>Performance and CSS optimizations<br>Minor content updates and accessibility improvements</li>
@@ -285,8 +285,8 @@
     <!-- Welcome popup -->
     <dialog id="dialog-welcome">
         <button data-close aria-label="Close"><svg xmlns="http://www.w3.org/2000/svg" height="20px" viewBox="0 -960 960 960" width="20px" fill="currentColor"><path d="m291-240-51-51 189-189-189-189 51-51 189 189 189-189 51 51-189 189 189 189-51 51-189-189-189 189Z"/></svg></button>
-        <h2>Welcome to Transit Map Maker</h2>
-        <p>Start by creating a new map or importing an existing one. Try <a href="/v5">TMM v5 BETA here</a>.</p>
+        <h2>Welcome to Transit Map Maker BETA</h2>
+        <p>Start by creating a new map or importing an existing one. You can <a href="../">return to TMM v4 here</a>.</p>
         <div>
             <div>
                 <button id="intro-option-6" data-close>
@@ -346,5 +346,6 @@
     <script src="scripts/main.js" defer></script>
 
     <script src="scripts/sound.js" defer></script>
+    <script src="scripts/mapcontrol.js" defer></script>
 </body>
 </html>
