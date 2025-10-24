@@ -1,5 +1,5 @@
 // ===== Version & basic elements =====
-const version = "5.00.2";
+const version = "5.00.3";
 document.querySelector("#version-text").textContent = "Version " + version;
 document.querySelector("#version-text2").textContent = "Version " + version;
 
