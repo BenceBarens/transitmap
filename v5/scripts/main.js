@@ -1,5 +1,5 @@
 // ===== Version & basic elements =====
-const version = "5.00.3";
+const version = "5.00.4";
 document.querySelector("#version-text").textContent = "Version " + version;
 document.querySelector("#version-text2").textContent = "Version " + version;
 
@@ -548,27 +548,27 @@ document.querySelector("#export-json-btn").addEventListener("click", () => {
 });
 
 // Export PDF button
-// document.querySelector("#export-pdf-btn").addEventListener("click", () => {
-//   const oldTitle = document.title;
-//   document.title = "My Transit Map";
-//   window.print();
-//   setTimeout(() => { document.title = oldTitle }, 10);
-// });
+document.querySelector("#export-pdf-btn").addEventListener("click", () => {
+  const oldTitle = document.title;
+  document.title = "My Transit Map";
+  window.print();
+  setTimeout(() => { document.title = oldTitle }, 10);
+});
 
 
-// window.addEventListener('beforeprint', () => {
+window.addEventListener('beforeprint', () => {
 
-//   setSvgSize();
-//   drawGrid();
-//   drawLines();
-//   drawStations();
+  setSvgSize();
+  drawGrid();
+  drawLines();
+  drawStations();
 
-//   document.querySelector("#legend").classList.toggle("hidden", !toggleShowLegend.checked);
-// });
+  document.querySelector("#legend").classList.toggle("hidden", !toggleShowLegend.checked);
+});
 
-// window.addEventListener('afterprint', () => {
-//   scheduleRender();
-// });
+window.addEventListener('afterprint', () => {
+  scheduleRender();
+});
 
 // Export PNG button
 document.querySelector("#export-png-btn").addEventListener("click", () => {
@@ -744,7 +744,6 @@ function loadMetroData(path){
       renderStationList();
       scheduleRender();
       updateMapInfo();
-      // updateZoomInfo();
     })
     .catch(err => alert("Error loading example: " + err.message));
 }
@@ -808,7 +807,6 @@ document.addEventListener("DOMContentLoaded", () => {
     scheduleRender();
     renderStationList();
     updateMapInfo();
-    // updateZoomInfo();
   }
 
   const params = new URLSearchParams(location.search);
@@ -841,7 +839,6 @@ document.addEventListener("DOMContentLoaded", () => {
       scheduleRender();
       renderStationList();
       updateMapInfo();
-      // updateZoomInfo();
     }
   }
 

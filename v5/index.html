@@ -111,7 +111,7 @@
           <section class="stage-wrap">
             <h2 class="visually-hidden">Transit map</h2>
               <div class="svg-wrap">
-                  <svg id="map" xmlns="http://www.w3.org/2000/svg" aria-label="Transit map">
+                  <svg id="map" xmlns="http://www.w3.org/2000/svg" aria-label="Transit map" viewBox="0 0 1000 1000">
                         <g id="layer-grid"></g>
                         <g id="layer-lines"></g>
                         <g id="layer-stations"></g>
@@ -199,9 +199,11 @@
     <!-- Export popup -->
     <dialog id="dialog-export">
         <h2>Export transit map</h2>
+        <br>
         <button data-close aria-label="Close"><svg xmlns="http://www.w3.org/2000/svg" height="20px" viewBox="0 -960 960 960" width="20px" fill="currentColor"><path d="m291-240-51-51 189-189-189-189 51-51 189 189 189-189 51 51-189 189 189 189-51 51-189-189-189 189Z"/></svg></button>
         <div>
             <img id="export-preview-img" alt="Preview of export">
+            <p>IMPORTANT: exports are not yet working correctly in this version on TMM5.</p>
             <fieldset>
                 <legend>Legend position</legend>
                 <label><input type="radio" name="legend-position" value="tl">Top left</label>
@@ -214,20 +216,33 @@
                 <legend>File format</legend>
                 <button id="export-png-btn"><svg xmlns="http://www.w3.org/2000/svg" height="20px" viewBox="0 -960 960 960" width="20px" fill="currentColor"><path d="M216-144q-29.7 0-50.85-21.5Q144-187 144-216v-528q0-29 21.15-50.5T216-816h528q29.7 0 50.85 21.5Q816-773 816-744v528q0 29-21.15 50.5T744-144H216Zm0-72h528v-528H216v528Zm48-72h432L552-480 444-336l-72-96-108 144Zm-48 72v-528 528Z"/></svg> PNG</button>
                 <button id="export-svg-btn"><svg xmlns="http://www.w3.org/2000/svg" height="20px" viewBox="0 -960 960 960" width="20px" fill="currentColor"><path d="M600-96v-86L317-336H144v-216h152l112-132v-180h216v216H472L360-516v121l240 131v-48h216v216H600ZM480-720h72v-72h-72v72ZM216-408h72v-72h-72v72Zm456 240h72v-72h-72v72ZM516-755ZM252-444Zm455 240Z"/></svg> SVG</button>
-                <button id="export-json-btn"><svg xmlns="http://www.w3.org/2000/svg" height="20px" viewBox="0 -960 960 960" width="20px" fill="currentColor"><path d="m384-360 51-51-69-69 69-69-51-51-120 120 120 120Zm192 0 120-120-120-120-51 51 69 69-69 69 51 51ZM216-144q-29.7 0-50.85-21.15Q144-186.3 144-216v-528q0-29.7 21.15-50.85Q186.3-816 216-816h528q29.7 0 50.85 21.15Q816-773.7 816-744v528q0 29.7-21.15 50.85Q773.7-144 744-144H216Zm0-72h528v-528H216v528Zm0-528v528-528Z"/></svg> JSON</button>            </fieldset>
+                <button id="export-json-btn"><svg xmlns="http://www.w3.org/2000/svg" height="20px" viewBox="0 -960 960 960" width="20px" fill="currentColor"><path d="m384-360 51-51-69-69 69-69-51-51-120 120 120 120Zm192 0 120-120-120-120-51 51 69 69-69 69 51 51ZM216-144q-29.7 0-50.85-21.15Q144-186.3 144-216v-528q0-29.7 21.15-50.85Q186.3-816 216-816h528q29.7 0 50.85 21.15Q816-773.7 816-744v528q0 29.7-21.15 50.85Q773.7-144 744-144H216Zm0-72h528v-528H216v528Zm0-528v528-528Z"/></svg> JSON</button>
+                <button id="export-pdf-btn"><svg xmlns="http://www.w3.org/2000/svg" height="20px" viewBox="0 -960 960 960" width="20px" fill="currentColor"><path d="M360-456h48v-72h24q20.4 0 34.2-13.8Q480-555.6 480-576v-24q0-20.4-13.8-34.2Q452.4-648 432-648h-72v192Zm48-120v-24h24v24h-24Zm96 120h72q20.4 0 34.2-13.8Q624-483.6 624-504v-96q0-20.4-13.8-34.2Q596.4-648 576-648h-72v192Zm48-48v-96h24v96h-24Zm96 48h48v-72h48v-48h-48v-24h48v-48h-96v192ZM312-240q-29.7 0-50.85-21.15Q240-282.3 240-312v-480q0-29.7 21.15-50.85Q282.3-864 312-864h480q29.7 0 50.85 21.15Q864-821.7 864-792v480q0 29.7-21.15 50.85Q821.7-240 792-240H312Zm0-72h480v-480H312v480ZM168-96q-29.7 0-50.85-21.15Q96-138.3 96-168v-552h72v552h552v72H168Zm144-696v480-480Z"/></svg> PDF</button>
+            </fieldset>
             <p>Note: JSON files contain all map data, meaning you can import it back into the editor and modify them. PNG, SVG and PDF are visual exports.
-            <br><br>PDF-exports are not available on TMM v5.</p>
+            <br><br>PDF-files will look slightly different from the preview, as they are optimized for printing.</p>
         </div>
     </dialog>
 
     <!-- Changelog popup -->
     <dialog id="dialog-changelog">
         <button data-close aria-label="Close"><svg xmlns="http://www.w3.org/2000/svg" height="20px" viewBox="0 -960 960 960" width="20px" fill="currentColor"><path d="m291-240-51-51 189-189-189-189 51-51 189 189 189-189 51 51-189 189 189 189-51 51-189-189-189 189Z"/></svg></button>
+        <details open>
+            <summary>Planned BETA patches</summary>
+            <ul>
+                <li>Adding station button</li>
+                <li>Export viewboxes</li>
+                <li>Fix small hickup in inertia</li>
+                <li>Fix 0.5x movement speed</li>
+            </ul>
+        </details>
         <details>
             <summary>Planned features</summary>
             <ol>
-                <li>More (UI) sounds</li>
+                <li>Added loading cursor before all JS has loaded in</li>
+                <li>More and better (UI) sounds</li>
                 <li>More station shapes</li>
+                <li>Ability to rotate station names</li>
                 <li>Parallel line support (finally!)</li>
                 <li>Re-organization of the page (display:grid) for better scalability</li>
                 <li>Improve "hide legend" logic in exports</li>
@@ -239,10 +254,11 @@
         <details open>
             <summary>Changelog</summary>
             <ul>
-                <li><details><summary>[BETA] v5 (<time datetime="2025-10-23">23-10-2025</time>)</summary>
-                    [BETA] v5.00.3 (<time datetime="2025-10-24">24-10-2025</time>)<br>Improved SVG viewbox control stability<br>
-                    [BETA] v5.00.2 (<time datetime="2025-10-24">24-10-2025</time>)<br>Cleaned up redundent code<br>Stability improvements<br>
-                    [BETA] v5.00.1 (<time datetime="2025-10-23">23-10-2025</time>)<br>Stability improvements<br>Re-organised CSS<br>
+                <li><details><summary>[BETA] v5 (<time datetime="2025-10-23">23-10-2025</time>)</summary><br>
+                    [BETA] v5.00.4 (<time datetime="2025-10-24">24-10-2025</time>)<br>Added touch support<br>Limited map movement to within viewport<br><br>
+                    [BETA] v5.00.3 (<time datetime="2025-10-24">24-10-2025</time>)<br>Improved SVG viewbox control stability<br><br>
+                    [BETA] v5.00.2 (<time datetime="2025-10-24">24-10-2025</time>)<br>Cleaned up redundent code<br>Stability improvements<br><br>
+                    [BETA] v5.00.1 (<time datetime="2025-10-23">23-10-2025</time>)<br>Stability improvements<br>Re-organised CSS<br><br>
                     [BETA] v5.00.0 (<time datetime="2025-10-23">23-10-2025</time>)<br>First test for SVG viewbox controls<br>
                 </details></li>
                 <li>v4.06.0 (<time datetime="2025-10-20">20-10-2025</time>)<br>Added welcome popup</li>
@@ -256,15 +272,15 @@
                 <li>v4.01.2 (<time datetime="2025-09-10">10-09-2025</time>)<br>Bug fix for URL sharing<br>Made station ID's shorter to save export and URL space<br>Made legends look better in exports</li>
                 <li>v4.01.1 (<time datetime="2025-09-09">09-09-2025</time>)<br>Added preview to export function<br>Added SVG export<br>Added the legend to PNG and SVG exports</li>
                 <li>v4.01.0 (<time datetime="2025-09-07">07-09-2025</time>)<br>Complete fundamental update to make maps vector-based<br>Completely new UI</li>
-                <li><details><summary>[BETA] v4 (<time datetime="2025-09-04">04-09-2025</time>)</summary>
-                    [BETA] v4.00.7 (<time datetime="2025-09-04">04-09-2025</time>)<br>Fixed the PNG export<br>Added zoom level percentage<br>Made fonts self-hosted<br>
-                    [BETA] v4.00.6 (<time datetime="2025-09-02">02-09-2025</time>)<br>Changed vector export to PDF through print page<br>Limited availablity on smaller devices<br>
-                    [BETA] v4.00.5 (<time datetime="2025-09-01">01-09-2025</time>)<br>Minor cosmetic changes<br>
-                    [BETA] v4.00.4 (<time datetime="2025-08-24">24-08-2025</time>)<br>UI fixes<br>Made BETA the default version<br>
-                    [BETA] v4.00.3 (<time datetime="2025-08-15">15-08-2025</time>)<br>UI fixes<br>Added SVG export<br>
-                    [BETA] v4.00.2 (<time datetime="2025-08-14">14-08-2025</time>)<br>UI fixes<br>Re-added link share functionality<br>
-                    [BETA] v4.00.1 (<time datetime="2025-08-14">14-08-2025</time>)<br>UI fixes<br>
-                    [BETA] v4.00.0 (<time datetime="2025-08-13">13-08-2025</time>)<br>Complete fundamental update to make maps vector-based<br>
+                <li><details><summary>[BETA] v4 (<time datetime="2025-09-04">04-09-2025</time>)</summary><br>
+                    [BETA] v4.00.7 (<time datetime="2025-09-04">04-09-2025</time>)<br>Fixed the PNG export<br>Added zoom level percentage<br>Made fonts self-hosted<br><br>
+                    [BETA] v4.00.6 (<time datetime="2025-09-02">02-09-2025</time>)<br>Changed vector export to PDF through print page<br>Limited availablity on smaller devices<br><br>
+                    [BETA] v4.00.5 (<time datetime="2025-09-01">01-09-2025</time>)<br>Minor cosmetic changes<br><br>
+                    [BETA] v4.00.4 (<time datetime="2025-08-24">24-08-2025</time>)<br>UI fixes<br>Made BETA the default version<br><br>
+                    [BETA] v4.00.3 (<time datetime="2025-08-15">15-08-2025</time>)<br>UI fixes<br>Added SVG export<br><br>
+                    [BETA] v4.00.2 (<time datetime="2025-08-14">14-08-2025</time>)<br>UI fixes<br>Re-added link share functionality<br><br>
+                    [BETA] v4.00.1 (<time datetime="2025-08-14">14-08-2025</time>)<br>UI fixes<br><br>
+                    [BETA] v4.00.0 (<time datetime="2025-08-13">13-08-2025</time>)<br>Complete fundamental update to make maps vector-based<br><br>
                 </details></li>
                 <li>v3.20.0 (<time datetime="2025-08-13">13-08-2025</time>)<br>Complete restructuring of the codebase (shouldn't be any visible changes)</li>
                 <li>v3.10.1 (<time datetime="2025-07-09">09-07-2025</time>)<br>New feature: line styles and width can now be changed (backwards compatible)</li>
