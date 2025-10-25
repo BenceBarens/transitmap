@@ -151,3 +151,5 @@ function drawStations(){
     }
   });
 }
+
+console.info("%c✔%c draw.js %cloaded in fully", "background-color: #b8e986; border-color: #417505; border-radius: 100px; padding: 3px", "font-weight: bold;", "  ");

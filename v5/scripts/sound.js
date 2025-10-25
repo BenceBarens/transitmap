@@ -37,3 +37,5 @@ document.addEventListener('mouseenter', e => {
 document.addEventListener('click', e => {
   if (matchesElement(e.target)) playBuffer(bufferClick, 1);
 }, true);
+
+console.info("%c✔%c sound.js %cloaded in fully", "background-color: #b8e986; border-color: #417505; border-radius: 100px; padding: 3px", "font-weight: bold;", "  ");

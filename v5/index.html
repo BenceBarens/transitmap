@@ -220,7 +220,7 @@
                 <button id="export-pdf-btn"><svg xmlns="http://www.w3.org/2000/svg" height="20px" viewBox="0 -960 960 960" width="20px" fill="currentColor"><path d="M360-456h48v-72h24q20.4 0 34.2-13.8Q480-555.6 480-576v-24q0-20.4-13.8-34.2Q452.4-648 432-648h-72v192Zm48-120v-24h24v24h-24Zm96 120h72q20.4 0 34.2-13.8Q624-483.6 624-504v-96q0-20.4-13.8-34.2Q596.4-648 576-648h-72v192Zm48-48v-96h24v96h-24Zm96 48h48v-72h48v-48h-48v-24h48v-48h-96v192ZM312-240q-29.7 0-50.85-21.15Q240-282.3 240-312v-480q0-29.7 21.15-50.85Q282.3-864 312-864h480q29.7 0 50.85 21.15Q864-821.7 864-792v480q0 29.7-21.15 50.85Q821.7-240 792-240H312Zm0-72h480v-480H312v480ZM168-96q-29.7 0-50.85-21.15Q96-138.3 96-168v-552h72v552h552v72H168Zm144-696v480-480Z"/></svg> PDF</button>
             </fieldset>
             <p>Note: JSON files contain all map data, meaning you can import it back into the editor and modify them. PNG, SVG and PDF are visual exports.
-            <br><br>PDF-files will look slightly different from the preview, as they are optimized for printing.</p>
+            <br><br>PDF-files will look slightly different from the preview, as they are optimized for printing. Results might vary depending on your browser.</p>
         </div>
     </dialog>
 
@@ -230,10 +230,8 @@
         <details open>
             <summary>Planned BETA patches</summary>
             <ul>
-                <li>Adding station button</li>
-                <li>Export viewboxes</li>
-                <li>Fix small hickup in inertia</li>
-                <li>Fix 0.5x movement speed</li>
+                <li>Fixing the "adding station" button</li>
+                <li>Fixing the export viewports</li>
             </ul>
         </details>
         <details>
@@ -254,7 +252,9 @@
         <details open>
             <summary>Changelog</summary>
             <ul>
-                <li><details><summary>[BETA] v5 (<time datetime="2025-10-23">23-10-2025</time>)</summary><br>
+                <!-- <li>v5.01.0 (<time datetime="2025-10-">-10-2025</time>)<br>Changed movement controls</li> -->
+                <li><details open><summary>[BETA] v5 (<time datetime="2025-10-25">25-10-2025</time>)</summary><br>
+                    [BETA] v5.00.5 (<time datetime="2025-10-25">25-10-2025</time>)<br>Fixed 0.5x movement speed<br>Fixed small hickup in inertia<br>Fix interia allowing allowing map out of viewport<br><br>
                     [BETA] v5.00.4 (<time datetime="2025-10-24">24-10-2025</time>)<br>Added touch support<br>Limited map movement to within viewport<br><br>
                     [BETA] v5.00.3 (<time datetime="2025-10-24">24-10-2025</time>)<br>Improved SVG viewbox control stability<br><br>
                     [BETA] v5.00.2 (<time datetime="2025-10-24">24-10-2025</time>)<br>Cleaned up redundent code<br>Stability improvements<br><br>

@@ -99,6 +99,11 @@ a{
     cursor: pointer;
 }
 
+time{
+    font-family: inherit;
+    font-weight: inherit;
+}
+
 .round-button{
     border-radius: 10rem;
     height: 2rem;

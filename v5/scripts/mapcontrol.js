@@ -4,11 +4,12 @@ const inner = document.querySelectorAll("#layer-grid, #layer-lines, #layer-stati
 let transform = { x: 0, y: 0, scale: 1 };
 let velocity = { x: 0, y: 0 };
 
+//Change to tweak map control behaviour
 const MIN_SCALE = 1;
-const MAX_SCALE = 2.5;
-const INERTIA = 0.9;
-const STOP_THRESHOLD = 0.1;
-const ZOOM_SPEED = 0.005; // lager = langzamer scroll-zoom
+const MAX_SCALE = 3;
+const INERTIA = 0.87; //Scale from 0-1
+const STOP_THRESHOLD = 0.01;
+const ZOOM_SPEED = 0.006;
 
 const pointers = new Map();
 let lastDistance = null;
@@ -33,13 +34,16 @@ svg.addEventListener("pointermove", e => {
   const entries = Array.from(pointers.values());
 
   if (entries.length === 1) {
-    const dx = e.movementX;
-    const dy = e.movementY;
-    transform.x += dx;
-    transform.y += dy;
-    velocity.x = dx;
-    velocity.y = dy;
-    updateTransform();
+  const dx = e.movementX;
+  const dy = e.movementY;
+  const speed = 2; // tweak voor snellere panning
+
+  transform.x += dx * speed;
+  transform.y += dy * speed;
+  velocity.x = dx * speed;
+  velocity.y = dy * speed;
+
+  updateTransform();
 
   } else if (entries.length === 2) {
     const [p1, p2] = entries;
@@ -67,13 +71,20 @@ svg.addEventListener("pointermove", e => {
 svg.addEventListener("pointerup", e => {
   pointers.delete(e.pointerId);
   lastDistance = null;
-  smoothClamp();
+
+  // wacht even zodat inertia eerst werkt
+  setTimeout(() => {
+    if (pointers.size === 0 && (Math.abs(velocity.x) < 0.5 && Math.abs(velocity.y) < 0.5)) {
+      smoothClamp();
+    }
+  }, 200);
 });
+
 svg.addEventListener("pointercancel", e => {
   pointers.delete(e.pointerId);
   lastDistance = null;
-  smoothClamp();
 });
+
 
 // Scroll/touchpad zoom
 svg.addEventListener("wheel", e => {
@@ -101,12 +112,33 @@ function animateInertia() {
     transform.y += velocity.y;
     velocity.x *= INERTIA;
     velocity.y *= INERTIA;
+
     if (Math.abs(velocity.x) < STOP_THRESHOLD) velocity.x = 0;
     if (Math.abs(velocity.y) < STOP_THRESHOLD) velocity.y = 0;
+
+    clampTransform();
     updateTransform();
   }
   requestAnimationFrame(animateInertia);
 }
+
+function clampTransform() {
+  const containerRect = svgWrap.getBoundingClientRect();
+  const layerBBox = inner[0].getBBox();
+  const scaledWidth = layerBBox.width * transform.scale;
+  const scaledHeight = layerBBox.height * transform.scale;
+
+  const maxOffsetX = scaledWidth * 0.2;
+  const maxOffsetY = scaledHeight * 0.1;
+  const minX = containerRect.width - scaledWidth - maxOffsetX;
+  const maxX = maxOffsetX;
+  const minY = containerRect.height - scaledHeight - maxOffsetY;
+  const maxY = maxOffsetY;
+
+  transform.x = Math.min(maxX, Math.max(minX, transform.x));
+  transform.y = Math.min(maxY, Math.max(minY, transform.y));
+}
+
 animateInertia();
 
 // Smooth clamp
@@ -141,3 +173,5 @@ function smoothClamp() {
   }
   requestAnimationFrame(animateClamp);
 }
+
+console.info("%c✔%c mapcontrol.js %cloaded in fully", "background-color: #b8e986; border-color: #417505; border-radius: 100px; padding: 3px", "font-weight: bold;", "  ");

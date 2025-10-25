@@ -1,5 +1,5 @@
 // ===== Version & basic elements =====
-const version = "5.00.4";
+const version = "5.00.5";
 document.querySelector("#version-text").textContent = "Version " + version;
 document.querySelector("#version-text2").textContent = "Version " + version;
 
@@ -867,3 +867,5 @@ document.addEventListener("DOMContentLoaded", () => {
   console.log("\n%c Transit Map Maker %c\n\nInitiation succesful%c | Made with love by Bence\n", "font-family: Helvetica; font-weight: bold; color: #232322; font-size: 25px; background-color: #f7f4ed; border-style: solid; border-color: #232322; border-width: 2px; border-radius: 5px;", "font-family: Helvetica; font-weight: bold;", "font-family: Helvetica;");
 
 });
+
+console.info("%c✔%c main.js %cloaded in fully", "background-color: #b8e986; border-color: #417505; border-radius: 100px; padding: 3px", "font-weight: bold;", "  ");

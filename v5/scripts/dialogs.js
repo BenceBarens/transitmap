@@ -28,3 +28,5 @@ document.querySelectorAll("dialog").forEach(d => {
     if (clickedOutside) d.close();
   });
 });
+
+console.info("%c✔%c dialogs.js %cloaded in fully", "background-color: #b8e986; border-color: #417505; border-radius: 100px; padding: 3px", "font-weight: bold;", "  ");
