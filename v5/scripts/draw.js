@@ -71,7 +71,7 @@ function drawGrid(){
 function drawLines(){
   clearNode(gLines);
 
-  lines.forEach(line => {
+  lines.forEach((line, index) => {
     let points = [];
     let prev = null;
 
@@ -102,6 +102,7 @@ function drawLines(){
 
     const poly = document.createElementNS("http://www.w3.org/2000/svg","polyline");
     poly.setAttribute("data-role","line");
+    poly.setAttribute("data-index", index);
     poly.setAttribute("fill","none");
     poly.setAttribute("stroke", line.color || "#000");
 
@@ -112,6 +113,10 @@ function drawLines(){
     poly.setAttribute("stroke-width", widthPx);
 
     poly.setAttribute("points", points.map(p => p.join(",")).join(" "));
+    poly.style.cursor = "pointer";
+
+    poly.addEventListener("click", () => openLinePopup(index));
+
     gLines.appendChild(poly);
   });
 }

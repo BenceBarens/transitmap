@@ -147,39 +147,85 @@ ul{
     width: 1px;
 }
 
-.toggle-label input{
+.toggle-label input {
     width: 2rem;
+    height: 1rem;
+    position: relative;
 }
 
-.toggle-label input::before{
+.toggle-label input::before {
     content: "";
-    height: 1rem;
     width: 2rem;
+    height: 1rem;
     display: inline-block;
     border-radius: 50rem;
     background-color: var(--colour-weak);
+    transition: all 0.1s ease;
     cursor: pointer;
 }
 
-.toggle-label input:checked::before{
+.toggle-label input:checked::before {
     background-color: var(--colour-secondary);
 }
 
-.toggle-label input::after{
+.toggle-label input::after {
     content: "";
-    height: 0.75rem;
     width: 0.75rem;
-    display: inline-block;
-    margin-left: -1.85rem;
-    margin-bottom: 0.125rem;
+    height: 0.75rem;
     border-radius: 50rem;
-    transition: all 0.1s ease;
     background-color: var(--colour-primary);
+    cursor: pointer;
+    position: absolute;
+    top: 50%;
+    left: 0.125rem;
+    transform: translateY(-50%);
+    transition: all 0.1s ease;
+}
+
+.toggle-label input:checked::after {
+    left: calc(100% - 0.875rem);
+}
+
+.radio-label input {
+    width: 1rem;
+    height: 1rem;
+    position: relative;
+}
+
+.radio-label input::before {
+    content: "";
+    width: calc(100% - 0.05rem);
+    height: calc(100% - 0.05rem);
+    display: inline-block;
+    border-radius: 50rem;
+    background-color: var(--colour-secondary);
+    border: 0.1rem solid var(--colour-weak);
+    cursor: pointer;
+    transition: all 0.1s ease;
+}
+
+.radio-label:hover input::before,
+.radio-label input:checked::before{
+    border-color: var(--colour-accent);
+}
+
+.radio-label input::after {
+    content: "";
+    width: 0rem;
+    aspect-ratio: 1;
+    border-radius: 50rem;
+    background-color: var(--colour-accent);
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    transition: all 0.1s ease;
     cursor: pointer;
 }
 
-.toggle-label input:checked:after{
-    margin-left: -0.9rem;
+.radio-label input:checked::after {
+    width: 0.6rem;
+    margin: 0.05rem;
 }
 
 .danger{
@@ -281,7 +327,7 @@ summary{
 }
 
 aside section:first-child{
-    margin-bottom: 3rem;
+    margin-bottom: 2rem;
 }
 
 #toggleAddStationLabel{
@@ -315,7 +361,8 @@ aside section:first-child{
     border-radius: 50rem;
     font-size: 0.8rem;
     background-color: var(--colour-accent);
-    color: var(--colour-secondary)
+    color: var(--colour-secondary);
+    z-index: 3;
 }
 
 #toggleAddStation{

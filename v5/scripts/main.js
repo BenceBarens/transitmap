@@ -1,5 +1,5 @@
 // ===== Version & basic elements =====
-const version = "5.00.5";
+const version = "5.00.6";
 document.querySelector("#version-text").textContent = "Version " + version;
 document.querySelector("#version-text2").textContent = "Version " + version;
 
@@ -101,13 +101,19 @@ function addLine(line){
 function renderStationList() {
   const stationList = document.querySelector('#station-list');
   stationList.innerHTML = '';
-  stations.sort((a, b) => a.name.localeCompare(b.name));
 
-  stations.forEach((station, index) => {
+  const sortedStations = [...stations].sort((a, b) => a.name.localeCompare(b.name));
+
+  sortedStations.forEach(station => {
     const li = document.createElement('li');
     const btn = document.createElement("button");
     btn.textContent = `${station.name} (${station.x}, ${station.y})`;
-    btn.addEventListener("click", () => editStation(index));
+
+    btn.addEventListener("click", () => {
+      const idx = stations.findIndex(s => s.id === station.id);
+      if (idx !== -1) editStation(idx);
+    });
+
     li.appendChild(btn);
     stationList.appendChild(li);
   });
@@ -292,6 +298,15 @@ function closeStationPopup(){
 
 // ===== Lines editing =====
 let selectedLineIndex = null;
+
+function editLine(line) {
+  window.selectedLine = line;
+
+  openLinePopup(line);
+
+  const dialog = document.querySelector("#line-popup");
+  if (dialog) dialog.focus({ preventScroll: true });
+}
 
 function openLinePopup(index){
   selectedLineIndex = index;

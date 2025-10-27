@@ -4,10 +4,9 @@ const inner = document.querySelectorAll("#layer-grid, #layer-lines, #layer-stati
 let transform = { x: 0, y: 0, scale: 1 };
 let velocity = { x: 0, y: 0 };
 
-//Change to tweak map control behaviour
 const MIN_SCALE = 1;
 const MAX_SCALE = 3;
-const INERTIA = 0.87; //Scale from 0-1
+const INERTIA = 0.87;
 const STOP_THRESHOLD = 0.01;
 const ZOOM_SPEED = 0.006;
 
@@ -20,36 +19,45 @@ function updateTransform() {
   });
 }
 
+// ---------------- Pointer events ----------------
 svg.addEventListener("pointerdown", e => {
-  svg.setPointerCapture(e.pointerId);
-  pointers.set(e.pointerId, { x: e.clientX, y: e.clientY });
+  pointers.set(e.pointerId, { x: e.clientX, y: e.clientY, moved: false });
   velocity.x = 0;
   velocity.y = 0;
 });
 
 svg.addEventListener("pointermove", e => {
   if (!pointers.has(e.pointerId)) return;
-  pointers.set(e.pointerId, { x: e.clientX, y: e.clientY });
 
-  const entries = Array.from(pointers.values());
+  const pointer = pointers.get(e.pointerId);
+  const dx = e.clientX - pointer.x;
+  const dy = e.clientY - pointer.y;
 
-  if (entries.length === 1) {
-  const dx = e.movementX;
-  const dy = e.movementY;
-  const speed = 2; // tweak voor snellere panning
+  // update pointer position
+  pointer.x = e.clientX;
+  pointer.y = e.clientY;
 
-  transform.x += dx * speed;
-  transform.y += dy * speed;
-  velocity.x = dx * speed;
-  velocity.y = dy * speed;
+  // mark as moved if beyond tiny threshold
+  if (!pointer.moved && (Math.abs(dx) > 0 || Math.abs(dy) > 0)) {
+    pointer.moved = true;
+  }
 
-  updateTransform();
+  // single-finger drag
+  if (pointers.size === 1 && pointer.moved) {
+    const speed = 2;
+    transform.x += dx * speed;
+    transform.y += dy * speed;
+    velocity.x = dx * speed;
+    velocity.y = dy * speed;
+    updateTransform();
+  }
 
-  } else if (entries.length === 2) {
-    const [p1, p2] = entries;
-    const dx = p2.x - p1.x;
-    const dy = p2.y - p1.y;
-    const dist = Math.hypot(dx, dy);
+  // pinch zoom
+  if (pointers.size === 2) {
+    const [p1, p2] = Array.from(pointers.values());
+    const dx2 = p2.x - p1.x;
+    const dy2 = p2.y - p1.y;
+    const dist = Math.hypot(dx2, dy2);
 
     if (lastDistance != null) {
       const delta = dist / lastDistance;
@@ -69,12 +77,17 @@ svg.addEventListener("pointermove", e => {
 });
 
 svg.addEventListener("pointerup", e => {
+  const pointer = pointers.get(e.pointerId);
+  const clickThreshold = 3; // pixels, als minder dan dit is het een klik
+  if (!pointer.moved || (Math.abs(pointer.x - e.clientX) < clickThreshold && Math.abs(pointer.y - e.clientY) < clickThreshold)) {
+    // laat klik event doorgaan naar <g> stations
+    // niks nodig hier, gewoon niet blokkeren
+  }
   pointers.delete(e.pointerId);
   lastDistance = null;
 
-  // wacht even zodat inertia eerst werkt
   setTimeout(() => {
-    if (pointers.size === 0 && (Math.abs(velocity.x) < 0.5 && Math.abs(velocity.y) < 0.5)) {
+    if (pointers.size === 0 && Math.abs(velocity.x) < 0.5 && Math.abs(velocity.y) < 0.5) {
       smoothClamp();
     }
   }, 200);
@@ -85,8 +98,8 @@ svg.addEventListener("pointercancel", e => {
   lastDistance = null;
 });
 
+// ---------------- Wheel zoom ----------------
 
-// Scroll/touchpad zoom
 svg.addEventListener("wheel", e => {
   e.preventDefault();
   const rect = svg.getBoundingClientRect();
@@ -105,7 +118,8 @@ svg.addEventListener("wheel", e => {
   updateTransform();
 }, { passive: false });
 
-// Inertia
+// ---------------- Inertia ----------------
+
 function animateInertia() {
   if (pointers.size === 0) {
     transform.x += velocity.x;
@@ -141,7 +155,6 @@ function clampTransform() {
 
 animateInertia();
 
-// Smooth clamp
 function smoothClamp() {
   const containerRect = svgWrap.getBoundingClientRect();
   const layerBBox = inner[0].getBBox();

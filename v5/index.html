@@ -206,11 +206,11 @@
             <p>IMPORTANT: exports are not yet working correctly in this version on TMM5.</p>
             <fieldset>
                 <legend>Legend position</legend>
-                <label><input type="radio" name="legend-position" value="tl">Top left</label>
-                <label><input type="radio" name="legend-position" value="tr">Top right</label>
-                <label><input type="radio" name="legend-position" value="bl">Bottom left</label>
-                <label><input type="radio" name="legend-position" value="br" checked>Bottom right</label>
-                <label><input type="radio" name="legend-position" value="none">Hide legend</label>
+                <label class="radio-label"><input type="radio" name="legend-position" value="tl">Top left</label>
+                <label class="radio-label"><input type="radio" name="legend-position" value="tr">Top right</label>
+                <label class="radio-label"><input type="radio" name="legend-position" value="bl">Bottom left</label>
+                <label class="radio-label"><input type="radio" name="legend-position" value="br" checked>Bottom right</label>
+                <label class="radio-label"><input type="radio" name="legend-position" value="none">Hide legend</label>
             </fieldset>
             <fieldset>
                 <legend>File format</legend>
@@ -230,6 +230,7 @@
         <details open>
             <summary>Planned BETA patches</summary>
             <ul>
+                <li>Bringing back the zoom buttons</li>
                 <li>Fixing the "adding station" button</li>
                 <li>Fixing the export viewports</li>
             </ul>
@@ -238,22 +239,21 @@
             <summary>Planned features</summary>
             <ol>
                 <li>Added loading cursor before all JS has loaded in</li>
-                <li>More and better (UI) sounds</li>
                 <li>More station shapes</li>
                 <li>Ability to rotate station names</li>
                 <li>Parallel line support (finally!)</li>
                 <li>Re-organization of the page (display:grid) for better scalability</li>
                 <li>Improve "hide legend" logic in exports</li>
                 <li>Legend line style support</li>
-                <li>More direct map interaction (like clicking on lines to edit them)</li>
                 <li>Terrain backgrounds</li>
             </ol>
         </details>
         <details open>
             <summary>Changelog</summary>
             <ul>
-                <!-- <li>v5.01.0 (<time datetime="2025-10-">-10-2025</time>)<br>Changed movement controls</li> -->
-                <li><details open><summary>[BETA] v5 (<time datetime="2025-10-25">25-10-2025</time>)</summary><br>
+                <!-- <li>v5.01.0 (<time datetime="2025-10-">-10-2025</time>)<br>Changed movement controls (SVG viewbox)<br>Changed UI sounds (not yet final)<br>Customized radio buttons<br>Added clicking lines to edit them</li> -->
+                <li><details open><summary>[BETA] v5 (<time datetime="2025-10-27">27-10-2025</time>)</summary><br>
+                    [BETA] v5.00.6 (<time datetime="2025-10-27">27-10-2025</time>)<br>Fixed clicking on stations to edit them<br>Changed UI sounds (not yet final)<br>Added custom radio buttons<br>Added clicking lines to edit them<br><br>
                     [BETA] v5.00.5 (<time datetime="2025-10-25">25-10-2025</time>)<br>Fixed 0.5x movement speed<br>Fixed small hickup in inertia<br>Fix interia allowing allowing map out of viewport<br><br>
                     [BETA] v5.00.4 (<time datetime="2025-10-24">24-10-2025</time>)<br>Added touch support<br>Limited map movement to within viewport<br><br>
                     [BETA] v5.00.3 (<time datetime="2025-10-24">24-10-2025</time>)<br>Improved SVG viewbox control stability<br><br>
